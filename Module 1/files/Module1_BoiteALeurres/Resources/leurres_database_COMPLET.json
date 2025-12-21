@@ -1,0 +1,3865 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "dateCreation": "2024-12-04",
+    "nombreTotal": 63,
+    "description": "Base de données complète des 63 leurres - Nouvelle-Calédonie",
+    "proprietaire": "Sébastien",
+    "source": "Tableau CPS + Techniques de pêche côtière 2023"
+  },
+  "leurres": [
+    {
+      "id": 1,
+      "nom": "Magnum Stretch 30+",
+      "marque": "Manns",
+      "modele": "Magnum Stretch 30+",
+      "reference": "ID 1",
+      "type": "poissonNageurPlongeant",
+      "categoriePeche": [
+        "hauturier",
+        "passes"
+      ],
+      "longueur": 21.0,
+      "poids": 130.0,
+      "couleurPrincipale": "roseFuchsia",
+      "couleursSecondaires": [],
+      "contraste": "flashy",
+      "finition": "holographique",
+      "typeTete": "bavetteProfonde",
+      "actionNage": "moderate",
+      "profondeurMin": 9.0,
+      "profondeurMax": 10.0,
+      "vitesseMinimale": 6.0,
+      "vitesseOptimale": 8.0,
+      "vitesseMaximale": 10.0,
+      "especesCibles": [
+        "carangue",
+        "thon",
+        "barracuda",
+        "wahoo"
+      ],
+      "positionsSpread": [
+        "shortCorner",
+        "longCorner"
+      ],
+      "notes": "Grande bavette plongeante, trolling",
+      "conditionsOptimales": {
+        "moments": [
+          "matinee",
+          "apres_midi"
+        ],
+        "etatMer": [
+          "agitee",
+          "formee"
+        ],
+        "turbidite": [
+          "claire",
+          "legerementTrouble"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "nouvelleLune",
+          "premierQuartier"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 2,
+      "nom": "Slipstream 200 Flying Fish",
+      "marque": "Nomad Design",
+      "modele": "Slipstream 200 Flying Fish",
+      "reference": "ID 2",
+      "type": "leurreDeTrainePoissonVolant",
+      "categoriePeche": [
+        "hauturier",
+        "large"
+      ],
+      "longueur": 20.0,
+      "poids": 95.0,
+      "couleurPrincipale": "noirViolet",
+      "couleursSecondaires": [],
+      "contraste": "sombre",
+      "finition": "holographique",
+      "typeTete": "siffleuse",
+      "actionNage": "moderate",
+      "profondeurMin": 0.0,
+      "profondeurMax": 1.0,
+      "vitesseMinimale": 2.0,
+      "vitesseOptimale": 6.0,
+      "vitesseMaximale": 8.0,
+      "especesCibles": [
+        "thon",
+        "marlin",
+        "mahiMahi",
+        "wahoo"
+      ],
+      "positionsSpread": [
+        "shotgun"
+      ],
+      "notes": "Imitation poisson volant SHOTGUN IDÉAL",
+      "conditionsOptimales": {
+        "moments": [
+          "aube",
+          "crepuscule",
+          "nuit"
+        ],
+        "etatMer": [
+          "agitee",
+          "formee"
+        ],
+        "turbidite": [
+          "trouble",
+          "tresTrouble"
+        ],
+        "maree": [
+          "descendante"
+        ],
+        "phasesLunaires": [
+          "nouvelleLune"
+        ]
+      },
+      "quantite": 2
+    },
+    {
+      "id": 3,
+      "nom": "Magnum 180 s",
+      "marque": "YoZuri",
+      "modele": "Magnum 180 s",
+      "reference": "ID 3",
+      "type": "poissonNageurPlongeant",
+      "categoriePeche": [
+        "hauturier",
+        "passes"
+      ],
+      "longueur": 18.0,
+      "poids": 100.0,
+      "couleurPrincipale": "violetFonce",
+      "couleursSecondaires": [],
+      "contraste": "sombre",
+      "finition": "holographique",
+      "typeTete": "bavetteProfonde",
+      "actionNage": "moderate",
+      "profondeurMin": 5.0,
+      "profondeurMax": 6.5,
+      "vitesseMinimale": 6.0,
+      "vitesseOptimale": 8.0,
+      "vitesseMaximale": 10.0,
+      "especesCibles": [
+        "carangue",
+        "barracuda",
+        "wahoo"
+      ],
+      "positionsSpread": [
+        "longCorner",
+        "shortCorner"
+      ],
+      "notes": "Violet foncé stable Long Corner",
+      "conditionsOptimales": {
+        "moments": [
+          "crepuscule",
+          "apres_midi"
+        ],
+        "etatMer": [
+          "agitee",
+          "formee"
+        ],
+        "turbidite": [
+          "trouble",
+          "tresTrouble"
+        ],
+        "maree": [
+          "descendante"
+        ],
+        "phasesLunaires": [
+          "nouvelleLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 4,
+      "nom": "Frenzy FSM 18 S",
+      "marque": "Berkley",
+      "modele": "Frenzy FSM 18 S",
+      "reference": "ID 4",
+      "type": "poissonNageur",
+      "categoriePeche": [
+        "hauturier",
+        "passes",
+        "lagonCotier"
+      ],
+      "longueur": 18.0,
+      "poids": 84.0,
+      "couleurPrincipale": "chartreuse",
+      "couleursSecondaires": [],
+      "contraste": "flashy",
+      "finition": "holographique",
+      "typeTete": "bavetteMoyenne",
+      "actionNage": "moderate",
+      "profondeurMin": 2.0,
+      "profondeurMax": 3.0,
+      "vitesseMinimale": 5.0,
+      "vitesseOptimale": 7.0,
+      "vitesseMaximale": 9.0,
+      "especesCibles": [
+        "carangue",
+        "thon"
+      ],
+      "positionsSpread": [
+        "riggerBabord",
+        "riggerTribord"
+      ],
+      "notes": "Chartreuse TRÈS VISIBLE RIGGER",
+      "conditionsOptimales": {
+        "moments": [
+          "aube",
+          "matinee",
+          "crepuscule"
+        ],
+        "etatMer": [
+          "agitee"
+        ],
+        "turbidite": [
+          "trouble",
+          "legerementTrouble"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "pleineLune",
+          "dernierQuartier"
+        ]
+      },
+      "quantite": 2
+    },
+    {
+      "id": 5,
+      "nom": "3D Magnum 160 s",
+      "marque": "YoZuri",
+      "modele": "3D Magnum 160 s",
+      "reference": "ID 5",
+      "type": "poissonNageur",
+      "categoriePeche": [
+        "hauturier",
+        "passes"
+      ],
+      "longueur": 16.0,
+      "poids": 70.0,
+      "couleurPrincipale": "vert",
+      "couleursSecondaires": [],
+      "contraste": "naturel",
+      "finition": "holographique",
+      "typeTete": "bavetteProfonde",
+      "actionNage": "moderate",
+      "profondeurMin": 5.0,
+      "profondeurMax": 6.0,
+      "vitesseMinimale": 6.0,
+      "vitesseOptimale": 8.0,
+      "vitesseMaximale": 10.0,
+      "especesCibles": [
+        "carangue",
+        "barracuda",
+        "wahoo"
+      ],
+      "positionsSpread": [
+        "longCorner"
+      ],
+      "notes": "3D prism trolling vert/argenté",
+      "conditionsOptimales": {
+        "moments": [
+          "matinee",
+          "midi",
+          "apres_midi"
+        ],
+        "etatMer": [
+          "calme",
+          "peuAgitee"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante",
+          "etale"
+        ],
+        "phasesLunaires": [
+          "pleineLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 6,
+      "nom": "Countdown Magnum 180",
+      "marque": "Rapala",
+      "modele": "Countdown Magnum 180",
+      "reference": "ID 6",
+      "type": "poissonNageurCoulant",
+      "categoriePeche": [
+        "hauturier",
+        "passes"
+      ],
+      "longueur": 18.0,
+      "poids": 90.0,
+      "couleurPrincipale": "bleu",
+      "couleursSecondaires": [],
+      "contraste": "naturel",
+      "finition": "holographique",
+      "typeTete": "bavetteMoyenne",
+      "actionNage": "moderate",
+      "profondeurMin": 2.0,
+      "profondeurMax": 6.0,
+      "vitesseMinimale": 6.0,
+      "vitesseOptimale": 8.0,
+      "vitesseMaximale": 10.0,
+      "especesCibles": [
+        "thazard",
+        "carangue",
+        "bonite",
+        "wahoo"
+      ],
+      "positionsSpread": [
+        "longCorner"
+      ],
+      "notes": "Sinking trolling bleu/blanc",
+      "conditionsOptimales": {
+        "moments": [
+          "matinee",
+          "midi"
+        ],
+        "etatMer": [
+          "calme",
+          "peuAgitee"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "pleineLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 7,
+      "nom": "Frenzy Mungo 140",
+      "marque": "Berkley",
+      "modele": "Frenzy Mungo 140",
+      "reference": "ID 7",
+      "type": "poissonNageur",
+      "categoriePeche": [
+        "lagonCotier",
+        "passes"
+      ],
+      "longueur": 14.0,
+      "poids": 42.0,
+      "couleurPrincipale": "sardine",
+      "couleursSecondaires": [],
+      "contraste": "naturel",
+      "finition": "holographique",
+      "typeTete": "bavetteMoyenne",
+      "actionNage": "moderate",
+      "profondeurMin": 3.0,
+      "profondeurMax": 4.0,
+      "vitesseMinimale": 4.0,
+      "vitesseOptimale": 6.0,
+      "vitesseMaximale": 8.0,
+      "especesCibles": [
+        "carangue",
+        "thon",
+        "barracuda",
+        "thazard"
+      ],
+      "positionsSpread": [
+        "longCorner",
+        "libre"
+      ],
+      "notes": "RÉFÉRENCE LAGON eau claire 14cm",
+      "conditionsOptimales": {
+        "moments": [
+          "matinee",
+          "midi",
+          "apres_midi"
+        ],
+        "etatMer": [
+          "calme",
+          "peuAgitee"
+        ],
+        "turbidite": [
+          "claire",
+          "legerementTrouble"
+        ],
+        "maree": [
+          "montante",
+          "etale"
+        ],
+        "phasesLunaires": [
+          "pleineLune"
+        ]
+      },
+      "quantite": 3
+    },
+    {
+      "id": 8,
+      "nom": "X-Rap Magnum 140",
+      "marque": "Rapala",
+      "modele": "X-Rap Magnum 140",
+      "reference": "ID 8",
+      "type": "poissonNageur",
+      "categoriePeche": [
+        "passes",
+        "hauturier"
+      ],
+      "longueur": 14.0,
+      "poids": 46.0,
+      "couleurPrincipale": "bleuNoir",
+      "couleursSecondaires": [],
+      "contraste": "sombre",
+      "finition": "holographique",
+      "typeTete": "bavetteProfonde",
+      "actionNage": "moderate",
+      "profondeurMin": 5.0,
+      "profondeurMax": 6.0,
+      "vitesseMinimale": 6.0,
+      "vitesseOptimale": 8.0,
+      "vitesseMaximale": 10.0,
+      "especesCibles": [
+        "loche",
+        "carangue",
+        "thon"
+      ],
+      "positionsSpread": [
+        "shortCorner",
+        "longCorner"
+      ],
+      "notes": "Bleu noir/gris sombre",
+      "conditionsOptimales": {
+        "moments": [
+          "crepuscule",
+          "apres_midi"
+        ],
+        "etatMer": [
+          "agitee"
+        ],
+        "turbidite": [
+          "trouble"
+        ],
+        "maree": [
+          "descendante"
+        ],
+        "phasesLunaires": [
+          "nouvelleLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 9,
+      "nom": "X-Rap Magnum 140",
+      "marque": "Rapala",
+      "modele": "X-Rap Magnum 140",
+      "reference": "ID 9",
+      "type": "poissonNageur",
+      "categoriePeche": [
+        "passes",
+        "hauturier",
+        "lagonCotier"
+      ],
+      "longueur": 14.0,
+      "poids": 46.0,
+      "couleurPrincipale": "blancRouge",
+      "couleursSecondaires": [],
+      "contraste": "contraste",
+      "finition": "holographique",
+      "typeTete": "bavetteProfonde",
+      "actionNage": "moderate",
+      "profondeurMin": 5.0,
+      "profondeurMax": 6.0,
+      "vitesseMinimale": 6.0,
+      "vitesseOptimale": 8.0,
+      "vitesseMaximale": 10.0,
+      "especesCibles": [
+        "carangue",
+        "thon",
+        "wahoo"
+      ],
+      "positionsSpread": [
+        "shortCorner"
+      ],
+      "notes": "SHORT CORNER RÉFÉRENCE",
+      "conditionsOptimales": {
+        "moments": [
+          "aube",
+          "matinee"
+        ],
+        "etatMer": [
+          "calme",
+          "peuAgitee"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "nouvelleLune"
+        ]
+      },
+      "quantite": 2
+    },
+    {
+      "id": 10,
+      "nom": "3D Magnum 140",
+      "marque": "YoZuri",
+      "modele": "3D Magnum 140",
+      "reference": "ID 10",
+      "type": "poissonNageur",
+      "categoriePeche": [
+        "lagonCotier",
+        "passes"
+      ],
+      "longueur": 14.0,
+      "poids": 48.0,
+      "couleurPrincipale": "bleu",
+      "couleursSecondaires": [],
+      "contraste": "naturel",
+      "finition": "holographique",
+      "typeTete": "bavetteCourte",
+      "actionNage": "moderate",
+      "profondeurMin": 1.0,
+      "profondeurMax": 2.0,
+      "vitesseMinimale": 5.0,
+      "vitesseOptimale": 7.0,
+      "vitesseMaximale": 9.0,
+      "especesCibles": [
+        "carangueGT",
+        "thazard"
+      ],
+      "positionsSpread": [
+        "libre"
+      ],
+      "notes": "3D prism bavette courte lagon",
+      "conditionsOptimales": {
+        "moments": [
+          "matinee",
+          "midi"
+        ],
+        "etatMer": [
+          "calme",
+          "peuAgitee"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "pleineLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 11,
+      "nom": "Magnum 140",
+      "marque": "YoZuri",
+      "modele": "Magnum 140",
+      "reference": "ID 11",
+      "type": "poissonNageur",
+      "categoriePeche": [
+        "passes",
+        "hauturier"
+      ],
+      "longueur": 14.0,
+      "poids": 48.0,
+      "couleurPrincipale": "vert",
+      "couleursSecondaires": [],
+      "contraste": "naturel",
+      "finition": "holographique",
+      "typeTete": "bavetteMoyenne",
+      "actionNage": "moderate",
+      "profondeurMin": 3.5,
+      "profondeurMax": 5.5,
+      "vitesseMinimale": 6.0,
+      "vitesseOptimale": 8.0,
+      "vitesseMaximale": 10.0,
+      "especesCibles": [
+        "carangue",
+        "barracuda",
+        "wahoo"
+      ],
+      "positionsSpread": [
+        "longCorner"
+      ],
+      "notes": "Trolling vert/argenté",
+      "conditionsOptimales": {
+        "moments": [
+          "matinee",
+          "midi"
+        ],
+        "etatMer": [
+          "calme",
+          "peuAgitee"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "pleineLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 12,
+      "nom": "X-Rap Magnum 140",
+      "marque": "Rapala",
+      "modele": "X-Rap Magnum 140",
+      "reference": "ID 12",
+      "type": "poissonNageur",
+      "categoriePeche": [
+        "passes",
+        "hauturier"
+      ],
+      "longueur": 14.0,
+      "poids": 46.0,
+      "couleurPrincipale": "blancOrange",
+      "couleursSecondaires": [],
+      "contraste": "flashy",
+      "finition": "holographique",
+      "typeTete": "bavetteProfonde",
+      "actionNage": "moderate",
+      "profondeurMin": 5.0,
+      "profondeurMax": 6.0,
+      "vitesseMinimale": 6.0,
+      "vitesseOptimale": 8.0,
+      "vitesseMaximale": 10.0,
+      "especesCibles": [
+        "carangue",
+        "thon"
+      ],
+      "positionsSpread": [
+        "riggerBabord",
+        "riggerTribord"
+      ],
+      "notes": "Blanc/orange flashy rigger",
+      "conditionsOptimales": {
+        "moments": [
+          "aube",
+          "crepuscule"
+        ],
+        "etatMer": [
+          "agitee"
+        ],
+        "turbidite": [
+          "legerementTrouble"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "premierQuartier"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 13,
+      "nom": "X-Rap Magnum 140",
+      "marque": "Rapala",
+      "modele": "X-Rap Magnum 140",
+      "reference": "ID 13",
+      "type": "poissonNageur",
+      "categoriePeche": [
+        "passes",
+        "hauturier"
+      ],
+      "longueur": 14.0,
+      "poids": 46.0,
+      "couleurPrincipale": "jauneHolographique",
+      "couleursSecondaires": [],
+      "contraste": "flashy",
+      "finition": "holographique",
+      "typeTete": "bavetteProfonde",
+      "actionNage": "moderate",
+      "profondeurMin": 5.0,
+      "profondeurMax": 6.0,
+      "vitesseMinimale": 6.0,
+      "vitesseOptimale": 8.0,
+      "vitesseMaximale": 10.0,
+      "especesCibles": [
+        "loche",
+        "carangue",
+        "thon"
+      ],
+      "positionsSpread": [
+        "riggerBabord",
+        "riggerTribord"
+      ],
+      "notes": "Jaune/vert flashy",
+      "conditionsOptimales": {
+        "moments": [
+          "aube",
+          "matinee"
+        ],
+        "etatMer": [
+          "agitee"
+        ],
+        "turbidite": [
+          "legerementTrouble"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "premierQuartier"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 14,
+      "nom": "X-Rap Magnum 140",
+      "marque": "Rapala",
+      "modele": "X-Rap Magnum 140",
+      "reference": "ID 14",
+      "type": "poissonNageur",
+      "categoriePeche": [
+        "passes",
+        "hauturier"
+      ],
+      "longueur": 14.0,
+      "poids": 46.0,
+      "couleurPrincipale": "bleuFonce",
+      "couleursSecondaires": [],
+      "contraste": "sombre",
+      "finition": "holographique",
+      "typeTete": "bavetteProfonde",
+      "actionNage": "moderate",
+      "profondeurMin": 5.0,
+      "profondeurMax": 6.0,
+      "vitesseMinimale": 6.0,
+      "vitesseOptimale": 8.0,
+      "vitesseMaximale": 10.0,
+      "especesCibles": [
+        "carangue",
+        "thon",
+        "wahoo"
+      ],
+      "positionsSpread": [
+        "shortCorner",
+        "longCorner"
+      ],
+      "notes": "EAU TROUBLE EXCELLENT",
+      "conditionsOptimales": {
+        "moments": [
+          "apres_midi",
+          "crepuscule"
+        ],
+        "etatMer": [
+          "agitee"
+        ],
+        "turbidite": [
+          "trouble",
+          "tresTrouble"
+        ],
+        "maree": [
+          "descendante"
+        ],
+        "phasesLunaires": [
+          "nouvelleLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 15,
+      "nom": "Minnow 120",
+      "marque": "Noeby",
+      "modele": "Minnow 120",
+      "reference": "ID 15",
+      "type": "poissonNageur",
+      "categoriePeche": [
+        "lagonCotier",
+        "passes"
+      ],
+      "longueur": 12.0,
+      "poids": 35.0,
+      "couleurPrincipale": "argente",
+      "couleursSecondaires": [],
+      "contraste": "naturel",
+      "finition": "holographique",
+      "typeTete": "bavetteProfonde",
+      "actionNage": "moderate",
+      "profondeurMin": 4.0,
+      "profondeurMax": 5.0,
+      "vitesseMinimale": 5.0,
+      "vitesseOptimale": 7.0,
+      "vitesseMaximale": 9.0,
+      "especesCibles": [
+        "carangue",
+        "thazard",
+        "bonite"
+      ],
+      "positionsSpread": [
+        "longCorner"
+      ],
+      "notes": "Argenté/bleu naturel lagon",
+      "conditionsOptimales": {
+        "moments": [
+          "matinee",
+          "midi"
+        ],
+        "etatMer": [
+          "calme",
+          "peuAgitee"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "pleineLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 16,
+      "nom": "Minnow 120",
+      "marque": "Noeby",
+      "modele": "Minnow 120",
+      "reference": "ID 16",
+      "type": "poissonNageur",
+      "categoriePeche": [
+        "lagonCotier"
+      ],
+      "longueur": 12.0,
+      "poids": 35.0,
+      "couleurPrincipale": "argente",
+      "couleursSecondaires": [],
+      "contraste": "naturel",
+      "finition": "holographique",
+      "typeTete": "bavetteProfonde",
+      "actionNage": "moderate",
+      "profondeurMin": 4.0,
+      "profondeurMax": 5.0,
+      "vitesseMinimale": 5.0,
+      "vitesseOptimale": 7.0,
+      "vitesseMaximale": 9.0,
+      "especesCibles": [
+        "carangue"
+      ],
+      "positionsSpread": [
+        "libre"
+      ],
+      "notes": "Argenté tête bleue lagon",
+      "conditionsOptimales": {
+        "moments": [
+          "matinee",
+          "midi"
+        ],
+        "etatMer": [
+          "calme"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "pleineLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 17,
+      "nom": "Minnow 120",
+      "marque": "Noeby",
+      "modele": "Minnow 120",
+      "reference": "ID 17",
+      "type": "stickbait",
+      "categoriePeche": [
+        "lagonCotier",
+        "passes"
+      ],
+      "longueur": 12.0,
+      "poids": 30.0,
+      "couleurPrincipale": "argente",
+      "couleursSecondaires": [],
+      "contraste": "naturel",
+      "finition": "holographique",
+      "typeTete": "stickbait",
+      "actionNage": "moderate",
+      "profondeurMin": 0.0,
+      "profondeurMax": 1.0,
+      "vitesseMinimale": 3.0,
+      "vitesseOptimale": 5.0,
+      "vitesseMaximale": 7.0,
+      "especesCibles": [
+        "carangueGT",
+        "barracuda"
+      ],
+      "positionsSpread": [
+        "libre"
+      ],
+      "notes": "Surface argenté/dos bleu",
+      "conditionsOptimales": {
+        "moments": [
+          "aube",
+          "crepuscule"
+        ],
+        "etatMer": [
+          "calme"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "pleineLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 18,
+      "nom": "Minnow 130",
+      "marque": "Tike Pro",
+      "modele": "Minnow 130",
+      "reference": "ID 18",
+      "type": "poissonNageur",
+      "categoriePeche": [
+        "lagonCotier"
+      ],
+      "longueur": 13.0,
+      "poids": 38.0,
+      "couleurPrincipale": "marron",
+      "couleursSecondaires": [],
+      "contraste": "naturel",
+      "finition": "holographique",
+      "typeTete": "bavetteCourte",
+      "actionNage": "moderate",
+      "profondeurMin": 0.5,
+      "profondeurMax": 2.0,
+      "vitesseMinimale": 4.0,
+      "vitesseOptimale": 6.0,
+      "vitesseMaximale": 8.0,
+      "especesCibles": [
+        "carangue"
+      ],
+      "positionsSpread": [
+        "libre"
+      ],
+      "notes": "Marron/orange imitation",
+      "conditionsOptimales": {
+        "moments": [
+          "matinee",
+          "apres_midi"
+        ],
+        "etatMer": [
+          "calme"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "pleineLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 19,
+      "nom": "Minnow 110",
+      "marque": "Sebile",
+      "modele": "Minnow 110",
+      "reference": "ID 19",
+      "type": "poissonNageur",
+      "categoriePeche": [
+        "lagonCotier",
+        "recif"
+      ],
+      "longueur": 11.0,
+      "poids": 28.0,
+      "couleurPrincipale": "vertOlive",
+      "couleursSecondaires": [],
+      "contraste": "naturel",
+      "finition": "holographique",
+      "typeTete": "bavetteCourte",
+      "actionNage": "moderate",
+      "profondeurMin": 0.0,
+      "profondeurMax": 1.0,
+      "vitesseMinimale": 3.0,
+      "vitesseOptimale": 4.0,
+      "vitesseMaximale": 6.0,
+      "especesCibles": [
+        "loche"
+      ],
+      "positionsSpread": [
+        "libre"
+      ],
+      "notes": "Petit leurre récif",
+      "conditionsOptimales": {
+        "moments": [
+          "matinee",
+          "apres_midi"
+        ],
+        "etatMer": [
+          "calme"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "pleineLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 20,
+      "nom": "Deep Thunder 15",
+      "marque": "Storm",
+      "modele": "Deep Thunder 15",
+      "reference": "ID 20",
+      "type": "poissonNageurPlongeant",
+      "categoriePeche": [
+        "passes",
+        "hauturier"
+      ],
+      "longueur": 15.0,
+      "poids": 60.0,
+      "couleurPrincipale": "rouge",
+      "couleursSecondaires": [],
+      "contraste": "flashy",
+      "finition": "holographique",
+      "typeTete": "bavetteTresProfonde",
+      "actionNage": "moderate",
+      "profondeurMin": 6.0,
+      "profondeurMax": 9.0,
+      "vitesseMinimale": 6.0,
+      "vitesseOptimale": 8.0,
+      "vitesseMaximale": 10.0,
+      "especesCibles": [
+        "carangue",
+        "barracuda",
+        "thon",
+        "bonite"
+      ],
+      "positionsSpread": [
+        "shortCorner",
+        "longCorner"
+      ],
+      "notes": "Deep diver rouge/jaune",
+      "conditionsOptimales": {
+        "moments": [
+          "matinee",
+          "apres_midi"
+        ],
+        "etatMer": [
+          "agitee"
+        ],
+        "turbidite": [
+          "legerementTrouble"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "premierQuartier"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 21,
+      "nom": "Takumi 95",
+      "marque": "SFT",
+      "modele": "Takumi 95",
+      "reference": "ID 21",
+      "type": "jigStickbaitCoulant",
+      "categoriePeche": [
+        "passes",
+        "hauturier"
+      ],
+      "longueur": 9.5,
+      "poids": 40.0,
+      "couleurPrincipale": "argente",
+      "couleursSecondaires": [],
+      "contraste": "flashy",
+      "finition": "holographique",
+      "typeTete": "jig",
+      "actionNage": "moderate",
+      "profondeurMin": 5.0,
+      "profondeurMax": 30.0,
+      "vitesseMinimale": 4.0,
+      "vitesseOptimale": 6.0,
+      "vitesseMaximale": 8.0,
+      "especesCibles": [
+        "carangue",
+        "thon"
+      ],
+      "positionsSpread": [
+        "libre"
+      ],
+      "notes": "Sinking 40g jigging/lancer",
+      "conditionsOptimales": {
+        "moments": [
+          "matinee",
+          "apres_midi"
+        ],
+        "etatMer": [
+          "calme",
+          "peuAgitee"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "pleineLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 22,
+      "nom": "Loaded S 140",
+      "marque": "Maria",
+      "modele": "Loaded S 140",
+      "reference": "ID 22",
+      "type": "jigMetallique",
+      "categoriePeche": [
+        "passes",
+        "hauturier"
+      ],
+      "longueur": 14.0,
+      "poids": 43.0,
+      "couleurPrincipale": "bleu",
+      "couleursSecondaires": [],
+      "contraste": "naturel",
+      "finition": "holographique",
+      "typeTete": "jig",
+      "actionNage": "moderate",
+      "profondeurMin": 10.0,
+      "profondeurMax": 50.0,
+      "vitesseMinimale": 5.0,
+      "vitesseOptimale": 7.0,
+      "vitesseMaximale": 9.0,
+      "especesCibles": [
+        "thazard",
+        "carangue",
+        "bonite",
+        "thon"
+      ],
+      "positionsSpread": [
+        "libre"
+      ],
+      "notes": "Slow jig 40g bleu/argenté",
+      "conditionsOptimales": {
+        "moments": [
+          "matinee",
+          "apres_midi"
+        ],
+        "etatMer": [
+          "calme",
+          "peuAgitee"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "pleineLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 23,
+      "nom": "Lawbreaker 125",
+      "marque": "Yakamito",
+      "modele": "Lawbreaker 125",
+      "reference": "ID 23",
+      "type": "stickbait",
+      "categoriePeche": [
+        "lagonCotier",
+        "passes"
+      ],
+      "longueur": 12.5,
+      "poids": 28.0,
+      "couleurPrincipale": "violet",
+      "couleursSecondaires": [],
+      "contraste": "sombre",
+      "finition": "holographique",
+      "typeTete": "stickbait",
+      "actionNage": "moderate",
+      "profondeurMin": 0.0,
+      "profondeurMax": 0.5,
+      "vitesseMinimale": 2.0,
+      "vitesseOptimale": 4.0,
+      "vitesseMaximale": 6.0,
+      "especesCibles": [
+        "carangueGT",
+        "thazard"
+      ],
+      "positionsSpread": [
+        "libre"
+      ],
+      "notes": "WTD violet/noir surface",
+      "conditionsOptimales": {
+        "moments": [
+          "aube",
+          "crepuscule"
+        ],
+        "etatMer": [
+          "calme"
+        ],
+        "turbidite": [
+          "claire",
+          "legerementTrouble"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "nouvelleLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 24,
+      "nom": "DTX Minnow 125",
+      "marque": "Nomad Design",
+      "modele": "DTX Minnow 125",
+      "reference": "ID 24",
+      "type": "poissonNageur",
+      "categoriePeche": [
+        "passes",
+        "hauturier"
+      ],
+      "longueur": 12.5,
+      "poids": 40.0,
+      "couleurPrincipale": "vertArgente",
+      "couleursSecondaires": [],
+      "contraste": "naturel",
+      "finition": "holographique",
+      "typeTete": "bavetteProfonde",
+      "actionNage": "moderate",
+      "profondeurMin": 5.0,
+      "profondeurMax": 6.0,
+      "vitesseMinimale": 6.0,
+      "vitesseOptimale": 8.0,
+      "vitesseMaximale": 10.0,
+      "especesCibles": [
+        "carangue",
+        "thon"
+      ],
+      "positionsSpread": [
+        "longCorner"
+      ],
+      "notes": "Autotune vert/argenté",
+      "conditionsOptimales": {
+        "moments": [
+          "matinee",
+          "midi"
+        ],
+        "etatMer": [
+          "calme",
+          "peuAgitee"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "pleineLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 25,
+      "nom": "DTX Minnow 125",
+      "marque": "Nomad Design",
+      "modele": "DTX Minnow 125",
+      "reference": "ID 25",
+      "type": "poissonNageur",
+      "categoriePeche": [
+        "passes",
+        "hauturier"
+      ],
+      "longueur": 12.5,
+      "poids": 40.0,
+      "couleurPrincipale": "argente",
+      "couleursSecondaires": [],
+      "contraste": "naturel",
+      "finition": "holographique",
+      "typeTete": "bavetteProfonde",
+      "actionNage": "moderate",
+      "profondeurMin": 5.0,
+      "profondeurMax": 6.0,
+      "vitesseMinimale": 6.0,
+      "vitesseOptimale": 8.0,
+      "vitesseMaximale": 10.0,
+      "especesCibles": [
+        "thazard",
+        "bonite",
+        "thon"
+      ],
+      "positionsSpread": [
+        "longCorner"
+      ],
+      "notes": "Autotune argenté pur",
+      "conditionsOptimales": {
+        "moments": [
+          "matinee",
+          "midi"
+        ],
+        "etatMer": [
+          "calme"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "pleineLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 26,
+      "nom": "Popper 10cm",
+      "marque": "Noeby",
+      "modele": "Popper 10cm",
+      "reference": "ID 26",
+      "type": "popper",
+      "categoriePeche": [
+        "lagonCotier",
+        "passes"
+      ],
+      "longueur": 10.0,
+      "poids": 19.0,
+      "couleurPrincipale": "blanc",
+      "couleursSecondaires": [],
+      "contraste": "contraste",
+      "finition": "holographique",
+      "typeTete": "popper",
+      "actionNage": "moderate",
+      "profondeurMin": 0.0,
+      "profondeurMax": 0.2,
+      "vitesseMinimale": 2.0,
+      "vitesseOptimale": 4.0,
+      "vitesseMaximale": 6.0,
+      "especesCibles": [
+        "carangueGT",
+        "thazard"
+      ],
+      "positionsSpread": [
+        "libre"
+      ],
+      "notes": "19g blanc/rouge surface",
+      "conditionsOptimales": {
+        "moments": [
+          "aube",
+          "crepuscule"
+        ],
+        "etatMer": [
+          "calme",
+          "peuAgitee"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "pleineLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 27,
+      "nom": "Minnow 10cm",
+      "marque": "Generic",
+      "modele": "Minnow 10cm",
+      "reference": "ID 27",
+      "type": "poissonNageur",
+      "categoriePeche": [
+        "lagonCotier"
+      ],
+      "longueur": 10.0,
+      "poids": 25.0,
+      "couleurPrincipale": "blanc",
+      "couleursSecondaires": [],
+      "contraste": "contraste",
+      "finition": "holographique",
+      "typeTete": "bavetteLongue",
+      "actionNage": "moderate",
+      "profondeurMin": 1.0,
+      "profondeurMax": 3.0,
+      "vitesseMinimale": 4.0,
+      "vitesseOptimale": 6.0,
+      "vitesseMaximale": 8.0,
+      "especesCibles": [
+        "carangue",
+        "thon"
+      ],
+      "positionsSpread": [
+        "libre"
+      ],
+      "notes": "Grande bavette blanc/rouge",
+      "conditionsOptimales": {
+        "moments": [
+          "matinee",
+          "apres_midi"
+        ],
+        "etatMer": [
+          "calme"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "pleineLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 28,
+      "nom": "Minnow 9cm",
+      "marque": "Generic",
+      "modele": "Minnow 9cm",
+      "reference": "ID 28",
+      "type": "poissonNageur",
+      "categoriePeche": [
+        "lagonCotier",
+        "recif"
+      ],
+      "longueur": 9.0,
+      "poids": 20.0,
+      "couleurPrincipale": "orange",
+      "couleursSecondaires": [],
+      "contraste": "flashy",
+      "finition": "holographique",
+      "typeTete": "bavetteProfonde",
+      "actionNage": "moderate",
+      "profondeurMin": 4.0,
+      "profondeurMax": 5.0,
+      "vitesseMinimale": 3.0,
+      "vitesseOptimale": 4.0,
+      "vitesseMaximale": 6.0,
+      "especesCibles": [
+        "loche",
+        "picot"
+      ],
+      "positionsSpread": [
+        "libre"
+      ],
+      "notes": "Imitation orange récif",
+      "conditionsOptimales": {
+        "moments": [
+          "matinee",
+          "apres_midi"
+        ],
+        "etatMer": [
+          "calme"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "pleineLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 29,
+      "nom": "Sorcerer 125",
+      "marque": "Halco",
+      "modele": "Sorcerer 125",
+      "reference": "ID 29",
+      "type": "poissonNageur",
+      "categoriePeche": [
+        "lagonCotier",
+        "passes"
+      ],
+      "longueur": 12.5,
+      "poids": 35.0,
+      "couleurPrincipale": "argente",
+      "couleursSecondaires": [],
+      "contraste": "flashy",
+      "finition": "holographique",
+      "typeTete": "bavetteProfonde",
+      "actionNage": "moderate",
+      "profondeurMin": 4.0,
+      "profondeurMax": 5.0,
+      "vitesseMinimale": 5.0,
+      "vitesseOptimale": 7.0,
+      "vitesseMaximale": 9.0,
+      "especesCibles": [
+        "carangue",
+        "thon"
+      ],
+      "positionsSpread": [
+        "riggerBabord",
+        "riggerTribord"
+      ],
+      "notes": "Argenté/chartreuse rigger",
+      "conditionsOptimales": {
+        "moments": [
+          "aube",
+          "crepuscule"
+        ],
+        "etatMer": [
+          "agitee"
+        ],
+        "turbidite": [
+          "legerementTrouble",
+          "trouble"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "premierQuartier"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 30,
+      "nom": "Sorcerer 125",
+      "marque": "Halco",
+      "modele": "Sorcerer 125",
+      "reference": "ID 30",
+      "type": "poissonNageur",
+      "categoriePeche": [
+        "lagonCotier",
+        "passes"
+      ],
+      "longueur": 12.5,
+      "poids": 35.0,
+      "couleurPrincipale": "rose",
+      "couleursSecondaires": [],
+      "contraste": "flashy",
+      "finition": "holographique",
+      "typeTete": "bavetteProfonde",
+      "actionNage": "moderate",
+      "profondeurMin": 4.0,
+      "profondeurMax": 5.0,
+      "vitesseMinimale": 5.0,
+      "vitesseOptimale": 7.0,
+      "vitesseMaximale": 9.0,
+      "especesCibles": [
+        "carangue",
+        "barracuda"
+      ],
+      "positionsSpread": [
+        "riggerBabord",
+        "riggerTribord"
+      ],
+      "notes": "IDÉAL AUBE LAGON rose/blanc",
+      "conditionsOptimales": {
+        "moments": [
+          "aube",
+          "crepuscule"
+        ],
+        "etatMer": [
+          "calme",
+          "peuAgitee"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "nouvelleLune",
+          "premierQuartier"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 31,
+      "nom": "Sorcerer 125",
+      "marque": "Halco",
+      "modele": "Sorcerer 125",
+      "reference": "ID 31",
+      "type": "poissonNageur",
+      "categoriePeche": [
+        "lagonCotier",
+        "passes"
+      ],
+      "longueur": 12.5,
+      "poids": 35.0,
+      "couleurPrincipale": "chartreuse",
+      "couleursSecondaires": [],
+      "contraste": "flashy",
+      "finition": "holographique",
+      "typeTete": "bavetteProfonde",
+      "actionNage": "moderate",
+      "profondeurMin": 4.0,
+      "profondeurMax": 5.0,
+      "vitesseMinimale": 5.0,
+      "vitesseOptimale": 7.0,
+      "vitesseMaximale": 9.0,
+      "especesCibles": [
+        "carangue",
+        "thon"
+      ],
+      "positionsSpread": [
+        "riggerBabord",
+        "riggerTribord"
+      ],
+      "notes": "Chartreuse/jaune TRÈS VISIBLE",
+      "conditionsOptimales": {
+        "moments": [
+          "aube",
+          "matinee",
+          "crepuscule"
+        ],
+        "etatMer": [
+          "agitee"
+        ],
+        "turbidite": [
+          "trouble",
+          "tresTrouble"
+        ],
+        "maree": [
+          "montante",
+          "descendante"
+        ],
+        "phasesLunaires": [
+          "premierQuartier"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 32,
+      "nom": "Sorcerer 125",
+      "marque": "Halco",
+      "modele": "Sorcerer 125",
+      "reference": "ID 32",
+      "type": "poissonNageur",
+      "categoriePeche": [
+        "lagonCotier",
+        "passes"
+      ],
+      "longueur": 12.5,
+      "poids": 35.0,
+      "couleurPrincipale": "violetFonce",
+      "couleursSecondaires": [],
+      "contraste": "sombre",
+      "finition": "holographique",
+      "typeTete": "bavetteProfonde",
+      "actionNage": "moderate",
+      "profondeurMin": 4.0,
+      "profondeurMax": 5.0,
+      "vitesseMinimale": 5.0,
+      "vitesseOptimale": 7.0,
+      "vitesseMaximale": 9.0,
+      "especesCibles": [
+        "thazard",
+        "bonite",
+        "carangue"
+      ],
+      "positionsSpread": [
+        "longCorner",
+        "shortCorner"
+      ],
+      "notes": "Violet foncé/argenté sombre",
+      "conditionsOptimales": {
+        "moments": [
+          "crepuscule",
+          "apres_midi"
+        ],
+        "etatMer": [
+          "agitee"
+        ],
+        "turbidite": [
+          "trouble"
+        ],
+        "maree": [
+          "descendante"
+        ],
+        "phasesLunaires": [
+          "nouvelleLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 33,
+      "nom": "Sorcerer 150",
+      "marque": "Halco",
+      "modele": "Sorcerer 150",
+      "reference": "ID 33",
+      "type": "poissonNageur",
+      "categoriePeche": [
+        "passes",
+        "hauturier"
+      ],
+      "longueur": 15.0,
+      "poids": 50.0,
+      "couleurPrincipale": "violetFonce",
+      "couleursSecondaires": [],
+      "contraste": "sombre",
+      "finition": "holographique",
+      "typeTete": "bavetteTresProfonde",
+      "actionNage": "moderate",
+      "profondeurMin": 7.0,
+      "profondeurMax": 8.0,
+      "vitesseMinimale": 6.0,
+      "vitesseOptimale": 8.0,
+      "vitesseMaximale": 10.0,
+      "especesCibles": [
+        "carangue",
+        "thon"
+      ],
+      "positionsSpread": [
+        "shortCorner",
+        "longCorner"
+      ],
+      "notes": "Version 15cm plus profonde",
+      "conditionsOptimales": {
+        "moments": [
+          "crepuscule",
+          "apres_midi"
+        ],
+        "etatMer": [
+          "agitee",
+          "formee"
+        ],
+        "turbidite": [
+          "trouble"
+        ],
+        "maree": [
+          "descendante"
+        ],
+        "phasesLunaires": [
+          "nouvelleLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 34,
+      "nom": "Sorcerer 125",
+      "marque": "Halco",
+      "modele": "Sorcerer 125",
+      "reference": "ID 34",
+      "type": "poissonNageur",
+      "categoriePeche": [
+        "lagonCotier",
+        "passes"
+      ],
+      "longueur": 12.5,
+      "poids": 35.0,
+      "couleurPrincipale": "vert",
+      "couleursSecondaires": [],
+      "contraste": "naturel",
+      "finition": "holographique",
+      "typeTete": "bavetteProfonde",
+      "actionNage": "moderate",
+      "profondeurMin": 4.0,
+      "profondeurMax": 5.0,
+      "vitesseMinimale": 5.0,
+      "vitesseOptimale": 7.0,
+      "vitesseMaximale": 9.0,
+      "especesCibles": [
+        "carangue",
+        "thon"
+      ],
+      "positionsSpread": [
+        "longCorner"
+      ],
+      "notes": "Vert/argenté naturel",
+      "conditionsOptimales": {
+        "moments": [
+          "matinee",
+          "midi",
+          "apres_midi"
+        ],
+        "etatMer": [
+          "calme",
+          "peuAgitee"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "pleineLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 35,
+      "nom": "Sorcerer 150",
+      "marque": "Halco",
+      "modele": "Sorcerer 150",
+      "reference": "ID 35",
+      "type": "poissonNageur",
+      "categoriePeche": [
+        "passes",
+        "hauturier"
+      ],
+      "longueur": 15.0,
+      "poids": 50.0,
+      "couleurPrincipale": "roseFluo",
+      "couleursSecondaires": [],
+      "contraste": "flashy",
+      "finition": "holographique",
+      "typeTete": "bavetteProfonde",
+      "actionNage": "moderate",
+      "profondeurMin": 4.0,
+      "profondeurMax": 5.0,
+      "vitesseMinimale": 6.0,
+      "vitesseOptimale": 8.0,
+      "vitesseMaximale": 10.0,
+      "especesCibles": [
+        "carangueGT",
+        "thazard"
+      ],
+      "positionsSpread": [
+        "riggerBabord",
+        "riggerTribord"
+      ],
+      "notes": "Rose fluo/chartreuse ULTRA",
+      "conditionsOptimales": {
+        "moments": [
+          "aube",
+          "crepuscule"
+        ],
+        "etatMer": [
+          "agitee"
+        ],
+        "turbidite": [
+          "trouble",
+          "legerementTrouble"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "nouvelleLune",
+          "premierQuartier"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 36,
+      "nom": "Skim Stick 185",
+      "marque": "Halco",
+      "modele": "Skim Stick 185",
+      "reference": "ID 36",
+      "type": "stickbait",
+      "categoriePeche": [
+        "passes",
+        "hauturier"
+      ],
+      "longueur": 18.5,
+      "poids": 45.0,
+      "couleurPrincipale": "chartreuse",
+      "couleursSecondaires": [],
+      "contraste": "flashy",
+      "finition": "holographique",
+      "typeTete": "stickbait",
+      "actionNage": "moderate",
+      "profondeurMin": 0.0,
+      "profondeurMax": 0.5,
+      "vitesseMinimale": 2.0,
+      "vitesseOptimale": 4.0,
+      "vitesseMaximale": 6.0,
+      "especesCibles": [
+        "carangueGT",
+        "thazard",
+        "wahoo"
+      ],
+      "positionsSpread": [
+        "libre"
+      ],
+      "notes": "Stickbait chartreuse/jaune",
+      "conditionsOptimales": {
+        "moments": [
+          "aube",
+          "crepuscule"
+        ],
+        "etatMer": [
+          "calme",
+          "peuAgitee"
+        ],
+        "turbidite": [
+          "legerementTrouble",
+          "trouble"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "premierQuartier"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 37,
+      "nom": "Roosta Popper 105",
+      "marque": "Halco",
+      "modele": "Roosta Popper 105",
+      "reference": "ID 37",
+      "type": "popper",
+      "categoriePeche": [
+        "lagonCotier",
+        "passes"
+      ],
+      "longueur": 10.5,
+      "poids": 25.0,
+      "couleurPrincipale": "blanc",
+      "couleursSecondaires": [],
+      "contraste": "contraste",
+      "finition": "holographique",
+      "typeTete": "popper",
+      "actionNage": "moderate",
+      "profondeurMin": 0.0,
+      "profondeurMax": 0.2,
+      "vitesseMinimale": 2.0,
+      "vitesseOptimale": 4.0,
+      "vitesseMaximale": 6.0,
+      "especesCibles": [
+        "carangueGT",
+        "thon",
+        "thazard"
+      ],
+      "positionsSpread": [
+        "libre"
+      ],
+      "notes": "Halco Roosta blanc/rouge",
+      "conditionsOptimales": {
+        "moments": [
+          "aube",
+          "crepuscule"
+        ],
+        "etatMer": [
+          "calme"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "pleineLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 38,
+      "nom": "Popper Topwater 120",
+      "marque": "Noeby",
+      "modele": "Popper Topwater 120",
+      "reference": "ID 38",
+      "type": "popper",
+      "categoriePeche": [
+        "lagonCotier",
+        "passes"
+      ],
+      "longueur": 12.0,
+      "poids": 30.0,
+      "couleurPrincipale": "argente",
+      "couleursSecondaires": [],
+      "contraste": "naturel",
+      "finition": "holographique",
+      "typeTete": "popper",
+      "actionNage": "moderate",
+      "profondeurMin": 0.0,
+      "profondeurMax": 0.2,
+      "vitesseMinimale": 2.0,
+      "vitesseOptimale": 4.0,
+      "vitesseMaximale": 6.0,
+      "especesCibles": [
+        "carangueGT",
+        "barracuda"
+      ],
+      "positionsSpread": [
+        "libre"
+      ],
+      "notes": "Argenté dos vert-bleu",
+      "conditionsOptimales": {
+        "moments": [
+          "matinee",
+          "apres_midi"
+        ],
+        "etatMer": [
+          "calme"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "pleineLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 39,
+      "nom": "Trembler 110",
+      "marque": "Halco",
+      "modele": "Trembler 110",
+      "reference": "ID 39",
+      "type": "poissonNageurVibrant",
+      "categoriePeche": [
+        "lagonCotier",
+        "passes",
+        "recif"
+      ],
+      "longueur": 11.0,
+      "poids": 28.0,
+      "couleurPrincipale": "vert",
+      "couleursSecondaires": [],
+      "contraste": "flashy",
+      "finition": "holographique",
+      "typeTete": "bavetteProfonde",
+      "actionNage": "moderate",
+      "profondeurMin": 4.0,
+      "profondeurMax": 5.0,
+      "vitesseMinimale": 4.0,
+      "vitesseOptimale": 6.0,
+      "vitesseMaximale": 8.0,
+      "especesCibles": [
+        "predateurs_recif"
+      ],
+      "positionsSpread": [
+        "libre"
+      ],
+      "notes": "WTD vert/jaune-orange",
+      "conditionsOptimales": {
+        "moments": [
+          "matinee",
+          "apres_midi"
+        ],
+        "etatMer": [
+          "calme",
+          "peuAgitee"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "pleineLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 40,
+      "nom": "HD Minnow 90",
+      "marque": "Molix",
+      "modele": "HD Minnow 90",
+      "reference": "ID 40",
+      "type": "poissonNageur",
+      "categoriePeche": [
+        "lagonCotier"
+      ],
+      "longueur": 9.0,
+      "poids": 20.0,
+      "couleurPrincipale": "argente",
+      "couleursSecondaires": [],
+      "contraste": "flashy",
+      "finition": "holographique",
+      "typeTete": "bavetteCourte",
+      "actionNage": "moderate",
+      "profondeurMin": 0.5,
+      "profondeurMax": 2.0,
+      "vitesseMinimale": 4.0,
+      "vitesseOptimale": 6.0,
+      "vitesseMaximale": 8.0,
+      "especesCibles": [
+        "carangue",
+        "thon"
+      ],
+      "positionsSpread": [
+        "libre"
+      ],
+      "notes": "Baitfish argenté/rose",
+      "conditionsOptimales": {
+        "moments": [
+          "aube",
+          "matinee"
+        ],
+        "etatMer": [
+          "calme"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "pleineLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 41,
+      "nom": "SeaSuke 120",
+      "marque": "Noeby",
+      "modele": "SeaSuke 120",
+      "reference": "ID 41",
+      "type": "poissonNageur",
+      "categoriePeche": [
+        "lagonCotier",
+        "passes"
+      ],
+      "longueur": 12.0,
+      "poids": 32.0,
+      "couleurPrincipale": "blanc",
+      "couleursSecondaires": [],
+      "contraste": "contraste",
+      "finition": "holographique",
+      "typeTete": "bavetteProfonde",
+      "actionNage": "moderate",
+      "profondeurMin": 4.0,
+      "profondeurMax": 5.0,
+      "vitesseMinimale": 5.0,
+      "vitesseOptimale": 7.0,
+      "vitesseMaximale": 9.0,
+      "especesCibles": [
+        "carangue",
+        "barracuda"
+      ],
+      "positionsSpread": [
+        "longCorner"
+      ],
+      "notes": "Blanc/rouge contrasté",
+      "conditionsOptimales": {
+        "moments": [
+          "matinee",
+          "apres_midi"
+        ],
+        "etatMer": [
+          "peuAgitee"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "pleineLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 42,
+      "nom": "Crystal Minnow DD 110",
+      "marque": "YoZuri",
+      "modele": "Crystal Minnow DD 110",
+      "reference": "ID 42",
+      "type": "poissonNageurPlongeant",
+      "categoriePeche": [
+        "lagonCotier",
+        "passes"
+      ],
+      "longueur": 11.0,
+      "poids": 28.0,
+      "couleurPrincipale": "jauneFluo",
+      "couleursSecondaires": [],
+      "contraste": "flashy",
+      "finition": "holographique",
+      "typeTete": "bavetteMoyenne",
+      "actionNage": "moderate",
+      "profondeurMin": 2.0,
+      "profondeurMax": 4.0,
+      "vitesseMinimale": 5.0,
+      "vitesseOptimale": 7.0,
+      "vitesseMaximale": 9.0,
+      "especesCibles": [
+        "thazard",
+        "bonite",
+        "thon"
+      ],
+      "positionsSpread": [
+        "riggerBabord",
+        "riggerTribord"
+      ],
+      "notes": "Deep diver jaune fluo",
+      "conditionsOptimales": {
+        "moments": [
+          "aube",
+          "crepuscule"
+        ],
+        "etatMer": [
+          "agitee"
+        ],
+        "turbidite": [
+          "trouble"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "premierQuartier"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 43,
+      "nom": "Minnow 8cm",
+      "marque": "Generic",
+      "modele": "Minnow 8cm",
+      "reference": "ID 43",
+      "type": "poissonNageur",
+      "categoriePeche": [
+        "lagonCotier",
+        "recif"
+      ],
+      "longueur": 8.0,
+      "poids": 18.0,
+      "couleurPrincipale": "brun",
+      "couleursSecondaires": [],
+      "contraste": "naturel",
+      "finition": "holographique",
+      "typeTete": "bavetteProfonde",
+      "actionNage": "moderate",
+      "profondeurMin": 4.0,
+      "profondeurMax": 5.0,
+      "vitesseMinimale": 3.0,
+      "vitesseOptimale": 4.0,
+      "vitesseMaximale": 6.0,
+      "especesCibles": [
+        "loche",
+        "picot"
+      ],
+      "positionsSpread": [
+        "libre"
+      ],
+      "notes": "Imitation brun/beige récif",
+      "conditionsOptimales": {
+        "moments": [
+          "matinee",
+          "apres_midi"
+        ],
+        "etatMer": [
+          "calme"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "pleineLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 44,
+      "nom": "Minnow 9cm",
+      "marque": "Generic",
+      "modele": "Minnow 9cm",
+      "reference": "ID 44",
+      "type": "poissonNageur",
+      "categoriePeche": [
+        "lagonCotier"
+      ],
+      "longueur": 9.0,
+      "poids": 20.0,
+      "couleurPrincipale": "argente",
+      "couleursSecondaires": [],
+      "contraste": "naturel",
+      "finition": "holographique",
+      "typeTete": "bavetteProfonde",
+      "actionNage": "moderate",
+      "profondeurMin": 4.0,
+      "profondeurMax": 5.0,
+      "vitesseMinimale": 4.0,
+      "vitesseOptimale": 6.0,
+      "vitesseMaximale": 8.0,
+      "especesCibles": [
+        "carangue"
+      ],
+      "positionsSpread": [
+        "libre"
+      ],
+      "notes": "Argenté pur simple",
+      "conditionsOptimales": {
+        "moments": [
+          "matinee",
+          "midi"
+        ],
+        "etatMer": [
+          "calme"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "pleineLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 45,
+      "nom": "Leurre à jupe 200",
+      "marque": "Generic",
+      "modele": "Leurre à jupe 200",
+      "reference": "ID 45",
+      "type": "leurreAJupe",
+      "categoriePeche": [
+        "hauturier",
+        "passes"
+      ],
+      "longueur": 20.0,
+      "poids": 80.0,
+      "couleurPrincipale": "bleu",
+      "couleursSecondaires": [],
+      "contraste": "flashy",
+      "finition": "holographique",
+      "typeTete": "jupe",
+      "actionNage": "moderate",
+      "profondeurMin": 0.0,
+      "profondeurMax": 3.0,
+      "vitesseMinimale": 5.0,
+      "vitesseOptimale": 7.0,
+      "vitesseMaximale": 10.0,
+      "especesCibles": [
+        "carangueGT",
+        "thazard"
+      ],
+      "positionsSpread": [
+        "shortCorner",
+        "riggerBabord",
+        "riggerTribord"
+      ],
+      "notes": "Jupe bleu arc-en-ciel",
+      "conditionsOptimales": {
+        "moments": [
+          "matinee",
+          "apres_midi"
+        ],
+        "etatMer": [
+          "peuAgitee",
+          "agitee"
+        ],
+        "turbidite": [
+          "claire",
+          "legerementTrouble"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "pleineLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 46,
+      "nom": "Leurre à jupe 130",
+      "marque": "Generic",
+      "modele": "Leurre à jupe 130",
+      "reference": "ID 46",
+      "type": "leurreAJupe",
+      "categoriePeche": [
+        "lagonCotier",
+        "passes"
+      ],
+      "longueur": 13.0,
+      "poids": 40.0,
+      "couleurPrincipale": "argente",
+      "couleursSecondaires": [],
+      "contraste": "naturel",
+      "finition": "holographique",
+      "typeTete": "jupe",
+      "actionNage": "moderate",
+      "profondeurMin": 0.0,
+      "profondeurMax": 2.0,
+      "vitesseMinimale": 4.0,
+      "vitesseOptimale": 6.0,
+      "vitesseMaximale": 8.0,
+      "especesCibles": [
+        "carangue",
+        "thon"
+      ],
+      "positionsSpread": [
+        "longCorner"
+      ],
+      "notes": "Tête orange argenté/bleu",
+      "conditionsOptimales": {
+        "moments": [
+          "matinee",
+          "midi"
+        ],
+        "etatMer": [
+          "calme",
+          "peuAgitee"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "pleineLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 47,
+      "nom": "3D Squirt 190",
+      "marque": "YoZuri",
+      "modele": "3D Squirt 190",
+      "reference": "ID 47",
+      "type": "popper",
+      "categoriePeche": [
+        "passes",
+        "hauturier"
+      ],
+      "longueur": 19.0,
+      "poids": 60.0,
+      "couleurPrincipale": "rose",
+      "couleursSecondaires": [],
+      "contraste": "flashy",
+      "finition": "holographique",
+      "typeTete": "popper",
+      "actionNage": "moderate",
+      "profondeurMin": 0.0,
+      "profondeurMax": 0.2,
+      "vitesseMinimale": 2.0,
+      "vitesseOptimale": 4.0,
+      "vitesseMaximale": 6.0,
+      "especesCibles": [
+        "carangueGT",
+        "thon"
+      ],
+      "positionsSpread": [
+        "libre"
+      ],
+      "notes": "3D prism gros popper rose/bleu",
+      "conditionsOptimales": {
+        "moments": [
+          "aube",
+          "crepuscule"
+        ],
+        "etatMer": [
+          "calme",
+          "peuAgitee"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "pleineLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 48,
+      "nom": "3D Squirt 190",
+      "marque": "YoZuri",
+      "modele": "3D Squirt 190",
+      "reference": "ID 48",
+      "type": "popper",
+      "categoriePeche": [
+        "passes",
+        "hauturier"
+      ],
+      "longueur": 19.0,
+      "poids": 60.0,
+      "couleurPrincipale": "orangeJaune",
+      "couleursSecondaires": [],
+      "contraste": "flashy",
+      "finition": "holographique",
+      "typeTete": "popper",
+      "actionNage": "moderate",
+      "profondeurMin": 0.0,
+      "profondeurMax": 0.2,
+      "vitesseMinimale": 2.0,
+      "vitesseOptimale": 4.0,
+      "vitesseMaximale": 6.0,
+      "especesCibles": [
+        "thazard",
+        "bonite",
+        "carangue"
+      ],
+      "positionsSpread": [
+        "libre"
+      ],
+      "notes": "3D prism orange-jaune/argenté",
+      "conditionsOptimales": {
+        "moments": [
+          "aube",
+          "crepuscule"
+        ],
+        "etatMer": [
+          "calme",
+          "peuAgitee"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "premierQuartier"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 49,
+      "nom": "3D Squirt 190",
+      "marque": "YoZuri",
+      "modele": "3D Squirt 190",
+      "reference": "ID 49",
+      "type": "popper",
+      "categoriePeche": [
+        "passes",
+        "hauturier"
+      ],
+      "longueur": 19.0,
+      "poids": 60.0,
+      "couleurPrincipale": "rouge",
+      "couleursSecondaires": [],
+      "contraste": "flashy",
+      "finition": "holographique",
+      "typeTete": "popper",
+      "actionNage": "moderate",
+      "profondeurMin": 0.0,
+      "profondeurMax": 0.2,
+      "vitesseMinimale": 2.0,
+      "vitesseOptimale": 4.0,
+      "vitesseMaximale": 6.0,
+      "especesCibles": [
+        "carangueGT",
+        "thazard"
+      ],
+      "positionsSpread": [
+        "libre"
+      ],
+      "notes": "3D prism rouge/argenté",
+      "conditionsOptimales": {
+        "moments": [
+          "aube",
+          "matinee"
+        ],
+        "etatMer": [
+          "calme"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "pleineLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 50,
+      "nom": "Popper 140",
+      "marque": "Noeby",
+      "modele": "Popper 140",
+      "reference": "ID 50",
+      "type": "popper",
+      "categoriePeche": [
+        "passes",
+        "hauturier"
+      ],
+      "longueur": 14.0,
+      "poids": 40.0,
+      "couleurPrincipale": "chartreuse",
+      "couleursSecondaires": [],
+      "contraste": "flashy",
+      "finition": "holographique",
+      "typeTete": "popper",
+      "actionNage": "moderate",
+      "profondeurMin": 0.0,
+      "profondeurMax": 0.2,
+      "vitesseMinimale": 2.0,
+      "vitesseOptimale": 4.0,
+      "vitesseMaximale": 6.0,
+      "especesCibles": [
+        "carangueGT"
+      ],
+      "positionsSpread": [
+        "libre"
+      ],
+      "notes": "Chartreuse/dos bleu visible",
+      "conditionsOptimales": {
+        "moments": [
+          "aube",
+          "crepuscule"
+        ],
+        "etatMer": [
+          "calme",
+          "peuAgitee"
+        ],
+        "turbidite": [
+          "legerementTrouble"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "premierQuartier"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 51,
+      "nom": "Popper 140",
+      "marque": "Noeby",
+      "modele": "Popper 140",
+      "reference": "ID 51",
+      "type": "popper",
+      "categoriePeche": [
+        "passes",
+        "hauturier"
+      ],
+      "longueur": 14.0,
+      "poids": 40.0,
+      "couleurPrincipale": "rose",
+      "couleursSecondaires": [],
+      "contraste": "flashy",
+      "finition": "holographique",
+      "typeTete": "popper",
+      "actionNage": "moderate",
+      "profondeurMin": 0.0,
+      "profondeurMax": 0.2,
+      "vitesseMinimale": 2.0,
+      "vitesseOptimale": 4.0,
+      "vitesseMaximale": 6.0,
+      "especesCibles": [
+        "carangueGT"
+      ],
+      "positionsSpread": [
+        "libre"
+      ],
+      "notes": "Rose/argenté holographique",
+      "conditionsOptimales": {
+        "moments": [
+          "aube",
+          "crepuscule"
+        ],
+        "etatMer": [
+          "calme"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "nouvelleLune",
+          "premierQuartier"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 52,
+      "nom": "Riptide 125 SNK",
+      "marque": "Nomad Design",
+      "modele": "Riptide 125 SNK",
+      "reference": "ID 52",
+      "type": "stickbaitCoulant",
+      "categoriePeche": [
+        "passes",
+        "hauturier"
+      ],
+      "longueur": 12.5,
+      "poids": 45.0,
+      "couleurPrincipale": "vertNoir",
+      "couleursSecondaires": [],
+      "contraste": "sombre",
+      "finition": "holographique",
+      "typeTete": "stickbait",
+      "actionNage": "moderate",
+      "profondeurMin": 2.0,
+      "profondeurMax": 10.0,
+      "vitesseMinimale": 3.0,
+      "vitesseOptimale": 5.0,
+      "vitesseMaximale": 7.0,
+      "especesCibles": [
+        "carangue",
+        "barracuda"
+      ],
+      "positionsSpread": [
+        "libre"
+      ],
+      "notes": "Sinking vert noir holographique",
+      "conditionsOptimales": {
+        "moments": [
+          "crepuscule",
+          "apres_midi"
+        ],
+        "etatMer": [
+          "calme",
+          "peuAgitee"
+        ],
+        "turbidite": [
+          "claire",
+          "legerementTrouble"
+        ],
+        "maree": [
+          "descendante"
+        ],
+        "phasesLunaires": [
+          "nouvelleLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 53,
+      "nom": "Takumi 95",
+      "marque": "SFT",
+      "modele": "Takumi 95",
+      "reference": "ID 53",
+      "type": "jigStickbaitCoulant",
+      "categoriePeche": [
+        "passes",
+        "hauturier"
+      ],
+      "longueur": 9.5,
+      "poids": 40.0,
+      "couleurPrincipale": "argente",
+      "couleursSecondaires": [],
+      "contraste": "naturel",
+      "finition": "holographique",
+      "typeTete": "jig",
+      "actionNage": "moderate",
+      "profondeurMin": 1.5,
+      "profondeurMax": 30.0,
+      "vitesseMinimale": 4.0,
+      "vitesseOptimale": 6.0,
+      "vitesseMaximale": 8.0,
+      "especesCibles": [
+        "thazard",
+        "bonite",
+        "thon"
+      ],
+      "positionsSpread": [
+        "libre"
+      ],
+      "notes": "Sinking 40g argenté/bleu",
+      "conditionsOptimales": {
+        "moments": [
+          "matinee",
+          "apres_midi"
+        ],
+        "etatMer": [
+          "calme",
+          "peuAgitee"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "pleineLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 54,
+      "nom": "Riptide 105 FSNK",
+      "marque": "Nomad Design",
+      "modele": "Riptide 105 FSNK",
+      "reference": "ID 54",
+      "type": "stickbaitCoulant",
+      "categoriePeche": [
+        "passes",
+        "hauturier"
+      ],
+      "longueur": 10.5,
+      "poids": 38.0,
+      "couleurPrincipale": "argente",
+      "couleursSecondaires": [],
+      "contraste": "naturel",
+      "finition": "holographique",
+      "typeTete": "stickbait",
+      "actionNage": "moderate",
+      "profondeurMin": 2.0,
+      "profondeurMax": 15.0,
+      "vitesseMinimale": 4.0,
+      "vitesseOptimale": 6.0,
+      "vitesseMaximale": 8.0,
+      "especesCibles": [
+        "carangue",
+        "thon"
+      ],
+      "positionsSpread": [
+        "libre"
+      ],
+      "notes": "Fast sinking argenté/dos bleu",
+      "conditionsOptimales": {
+        "moments": [
+          "matinee",
+          "apres_midi"
+        ],
+        "etatMer": [
+          "calme",
+          "peuAgitee"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "pleineLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 55,
+      "nom": "Flitz 75",
+      "marque": "Flitz",
+      "modele": "Flitz 75",
+      "reference": "ID 55",
+      "type": "jigStickbait",
+      "categoriePeche": [
+        "passes",
+        "hauturier"
+      ],
+      "longueur": 12.0,
+      "poids": 75.0,
+      "couleurPrincipale": "roseHolographique",
+      "couleursSecondaires": [],
+      "contraste": "flashy",
+      "finition": "holographique",
+      "typeTete": "jig",
+      "actionNage": "moderate",
+      "profondeurMin": 2.0,
+      "profondeurMax": 20.0,
+      "vitesseMinimale": 4.0,
+      "vitesseOptimale": 6.0,
+      "vitesseMaximale": 8.0,
+      "especesCibles": [
+        "carangueGT",
+        "thazard"
+      ],
+      "positionsSpread": [
+        "libre"
+      ],
+      "notes": "Rose holographique/jaune or",
+      "conditionsOptimales": {
+        "moments": [
+          "aube",
+          "crepuscule"
+        ],
+        "etatMer": [
+          "calme",
+          "peuAgitee"
+        ],
+        "turbidite": [
+          "claire",
+          "legerementTrouble"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "premierQuartier"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 56,
+      "nom": "Riptide 125 SNK",
+      "marque": "Nomad Design",
+      "modele": "Riptide 125 SNK",
+      "reference": "ID 56",
+      "type": "stickbaitCoulant",
+      "categoriePeche": [
+        "passes",
+        "hauturier"
+      ],
+      "longueur": 12.5,
+      "poids": 45.0,
+      "couleurPrincipale": "rouge",
+      "couleursSecondaires": [],
+      "contraste": "flashy",
+      "finition": "holographique",
+      "typeTete": "stickbait",
+      "actionNage": "moderate",
+      "profondeurMin": 2.0,
+      "profondeurMax": 10.0,
+      "vitesseMinimale": 3.0,
+      "vitesseOptimale": 5.0,
+      "vitesseMaximale": 7.0,
+      "especesCibles": [
+        "carangue",
+        "thon"
+      ],
+      "positionsSpread": [
+        "libre"
+      ],
+      "notes": "Sinking rouge tâches bleu/jaune",
+      "conditionsOptimales": {
+        "moments": [
+          "aube",
+          "crepuscule"
+        ],
+        "etatMer": [
+          "calme"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "premierQuartier"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 57,
+      "nom": "Buffalo 60g",
+      "marque": "Nomad Design",
+      "modele": "Buffalo 60g",
+      "reference": "ID 57",
+      "type": "jigMetallique",
+      "categoriePeche": [
+        "passes",
+        "hauturier",
+        "profond"
+      ],
+      "longueur": 10.0,
+      "poids": 60.0,
+      "couleurPrincipale": "blow",
+      "couleursSecondaires": [],
+      "contraste": "flashy",
+      "finition": "holographique",
+      "typeTete": "jig",
+      "actionNage": "moderate",
+      "profondeurMin": 10.0,
+      "profondeurMax": 100.0,
+      "vitesseMinimale": 5.0,
+      "vitesseOptimale": 7.0,
+      "vitesseMaximale": 9.0,
+      "especesCibles": [
+        "carangueGT",
+        "barracuda",
+        "thon"
+      ],
+      "positionsSpread": [
+        "libre"
+      ],
+      "notes": "Jig 60g blow rayures rouges",
+      "conditionsOptimales": {
+        "moments": [
+          "matinee",
+          "apres_midi"
+        ],
+        "etatMer": [
+          "calme",
+          "peuAgitee"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "pleineLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 58,
+      "nom": "Buffalo",
+      "marque": "Nomad Design",
+      "modele": "Buffalo",
+      "reference": "ID 58",
+      "type": "jigMetallique",
+      "categoriePeche": [
+        "passes",
+        "hauturier",
+        "profond"
+      ],
+      "longueur": 10.0,
+      "poids": 60.0,
+      "couleurPrincipale": "blow",
+      "couleursSecondaires": [],
+      "contraste": "naturel",
+      "finition": "holographique",
+      "typeTete": "jig",
+      "actionNage": "moderate",
+      "profondeurMin": 10.0,
+      "profondeurMax": 100.0,
+      "vitesseMinimale": 5.0,
+      "vitesseOptimale": 7.0,
+      "vitesseMaximale": 9.0,
+      "especesCibles": [
+        "thazard",
+        "carangue"
+      ],
+      "positionsSpread": [
+        "libre"
+      ],
+      "notes": "Blow/marron jigging",
+      "conditionsOptimales": {
+        "moments": [
+          "matinee",
+          "apres_midi"
+        ],
+        "etatMer": [
+          "calme",
+          "peuAgitee"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "pleineLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 59,
+      "nom": "Buffalo 80g",
+      "marque": "Nomad Design",
+      "modele": "Buffalo 80g",
+      "reference": "ID 59",
+      "type": "jigMetallique",
+      "categoriePeche": [
+        "passes",
+        "hauturier",
+        "profond"
+      ],
+      "longueur": 11.0,
+      "poids": 80.0,
+      "couleurPrincipale": "rose",
+      "couleursSecondaires": [],
+      "contraste": "flashy",
+      "finition": "holographique",
+      "typeTete": "jig",
+      "actionNage": "moderate",
+      "profondeurMin": 15.0,
+      "profondeurMax": 120.0,
+      "vitesseMinimale": 6.0,
+      "vitesseOptimale": 8.0,
+      "vitesseMaximale": 10.0,
+      "especesCibles": [
+        "thazard",
+        "carangue",
+        "thon"
+      ],
+      "positionsSpread": [
+        "libre"
+      ],
+      "notes": "Jig 80g rose/argenté flashy",
+      "conditionsOptimales": {
+        "moments": [
+          "matinee",
+          "apres_midi"
+        ],
+        "etatMer": [
+          "calme",
+          "peuAgitee"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "pleineLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 60,
+      "nom": "Buffalo 60g",
+      "marque": "Nomad Design",
+      "modele": "Buffalo 60g",
+      "reference": "ID 60",
+      "type": "jigMetallique",
+      "categoriePeche": [
+        "passes",
+        "hauturier",
+        "profond"
+      ],
+      "longueur": 10.0,
+      "poids": 60.0,
+      "couleurPrincipale": "argente",
+      "couleursSecondaires": [],
+      "contraste": "naturel",
+      "finition": "holographique",
+      "typeTete": "jig",
+      "actionNage": "moderate",
+      "profondeurMin": 10.0,
+      "profondeurMax": 100.0,
+      "vitesseMinimale": 5.0,
+      "vitesseOptimale": 7.0,
+      "vitesseMaximale": 9.0,
+      "especesCibles": [
+        "carangue",
+        "thon"
+      ],
+      "positionsSpread": [
+        "libre"
+      ],
+      "notes": "Jig 60g argenté/dos bleu",
+      "conditionsOptimales": {
+        "moments": [
+          "matinee",
+          "midi",
+          "apres_midi"
+        ],
+        "etatMer": [
+          "calme",
+          "peuAgitee"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "pleineLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 61,
+      "nom": "Buffalo 120g",
+      "marque": "Nomad Design",
+      "modele": "Buffalo 120g",
+      "reference": "ID 61",
+      "type": "jigMetallique",
+      "categoriePeche": [
+        "profond"
+      ],
+      "longueur": 13.0,
+      "poids": 120.0,
+      "couleurPrincipale": "blow",
+      "couleursSecondaires": [],
+      "contraste": "naturel",
+      "finition": "holographique",
+      "typeTete": "jig",
+      "actionNage": "moderate",
+      "profondeurMin": 50.0,
+      "profondeurMax": 200.0,
+      "vitesseMinimale": 6.0,
+      "vitesseOptimale": 8.0,
+      "vitesseMaximale": 10.0,
+      "especesCibles": [
+        "loche",
+        "picot",
+        "thonProfond"
+      ],
+      "positionsSpread": [
+        "libre"
+      ],
+      "notes": "Heavy jig 120g loches profondes",
+      "conditionsOptimales": {
+        "moments": [
+          "matinee",
+          "apres_midi"
+        ],
+        "etatMer": [
+          "calme",
+          "peuAgitee"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante",
+          "etale"
+        ],
+        "phasesLunaires": [
+          "pleineLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 62,
+      "nom": "The Streaker 160g",
+      "marque": "Nomad Design",
+      "modele": "The Streaker 160g",
+      "reference": "ID 62",
+      "type": "jigMetallique",
+      "categoriePeche": [
+        "profond"
+      ],
+      "longueur": 15.0,
+      "poids": 160.0,
+      "couleurPrincipale": "bleu",
+      "couleursSecondaires": [],
+      "contraste": "naturel",
+      "finition": "holographique",
+      "typeTete": "jig",
+      "actionNage": "moderate",
+      "profondeurMin": 80.0,
+      "profondeurMax": 250.0,
+      "vitesseMinimale": 7.0,
+      "vitesseOptimale": 9.0,
+      "vitesseMaximale": 11.0,
+      "especesCibles": [
+        "thonProfond",
+        "carangueGT"
+      ],
+      "positionsSpread": [
+        "libre"
+      ],
+      "notes": "Heavy jig 160g très profond",
+      "conditionsOptimales": {
+        "moments": [
+          "matinee",
+          "apres_midi"
+        ],
+        "etatMer": [
+          "calme",
+          "peuAgitee"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "pleineLune"
+        ]
+      },
+      "quantite": 1
+    },
+    {
+      "id": 63,
+      "nom": "Squidtrex 110",
+      "marque": "Nomad Design",
+      "modele": "Squidtrex 110",
+      "reference": "ID 63",
+      "type": "poissonNageurVibrant",
+      "categoriePeche": [
+        "passes",
+        "hauturier"
+      ],
+      "longueur": 11.0,
+      "poids": 35.0,
+      "couleurPrincipale": "roseFluo",
+      "couleursSecondaires": [],
+      "contraste": "flashy",
+      "finition": "holographique",
+      "typeTete": "jig",
+      "actionNage": "moderate",
+      "profondeurMin": 1.0,
+      "profondeurMax": 10.0,
+      "vitesseMinimale": 4.0,
+      "vitesseOptimale": 6.0,
+      "vitesseMaximale": 8.0,
+      "especesCibles": [
+        "carangue",
+        "barracuda",
+        "thon"
+      ],
+      "positionsSpread": [
+        "libre"
+      ],
+      "notes": "Imitation calmar lipless crankbait",
+      "conditionsOptimales": {
+        "moments": [
+          "aube",
+          "matinee"
+        ],
+        "etatMer": [
+          "calme",
+          "peuAgitee"
+        ],
+        "turbidite": [
+          "claire"
+        ],
+        "maree": [
+          "montante"
+        ],
+        "phasesLunaires": [
+          "pleineLune"
+        ]
+      },
+      "quantite": 1
+    }
+  ],
+  "indexation": {
+    "parContraste": {
+      "naturel": [
+        5,
+        6,
+        7,
+        10,
+        11,
+        15,
+        16,
+        17,
+        18,
+        19,
+        22,
+        24,
+        25,
+        34,
+        38,
+        43,
+        44,
+        46,
+        53,
+        54,
+        58,
+        60,
+        61,
+        62
+      ],
+      "flashy": [
+        1,
+        4,
+        12,
+        13,
+        20,
+        21,
+        28,
+        29,
+        30,
+        31,
+        35,
+        36,
+        39,
+        40,
+        42,
+        45,
+        47,
+        48,
+        49,
+        50,
+        51,
+        55,
+        56,
+        57,
+        59,
+        63
+      ],
+      "sombre": [
+        2,
+        3,
+        8,
+        14,
+        23,
+        32,
+        33,
+        52
+      ],
+      "contraste": [
+        9,
+        26,
+        27,
+        37,
+        41
+      ]
+    },
+    "parTaille": {
+      "petit_8_12cm": [
+        19,
+        21,
+        26,
+        27,
+        28,
+        37,
+        39,
+        40,
+        42,
+        43,
+        44,
+        53,
+        54,
+        57,
+        58,
+        59,
+        60,
+        63
+      ],
+      "moyen_12_16cm": [
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        20,
+        22,
+        23,
+        24,
+        25,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        38,
+        41,
+        46,
+        50,
+        51,
+        52,
+        55,
+        56,
+        61,
+        62
+      ],
+      "grand_16_20cm": [
+        3,
+        4,
+        5,
+        6,
+        36,
+        47,
+        48,
+        49
+      ],
+      "tres_grand_20cm_plus": [
+        1,
+        2,
+        45
+      ]
+    },
+    "parZone": {
+      "lagon": [
+        4,
+        7,
+        9,
+        10,
+        15,
+        16,
+        17,
+        18,
+        19,
+        23,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        34,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        46
+      ],
+      "passes": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        17,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        41,
+        42,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        63
+      ],
+      "large": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        8,
+        9,
+        11,
+        12,
+        13,
+        14,
+        20,
+        21,
+        22,
+        24,
+        25,
+        33,
+        35,
+        36,
+        45,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        63
+      ],
+      "profond": [
+        57,
+        58,
+        59,
+        60,
+        61,
+        62
+      ]
+    },
+    "parSpread": {
+      "shortCorner": [
+        1,
+        3,
+        8,
+        9,
+        14,
+        20,
+        32,
+        33,
+        45
+      ],
+      "longCorner": [
+        1,
+        3,
+        5,
+        6,
+        7,
+        8,
+        11,
+        14,
+        15,
+        20,
+        24,
+        25,
+        32,
+        33,
+        34,
+        41,
+        46
+      ],
+      "rigger": [
+        4,
+        12,
+        13,
+        29,
+        30,
+        31,
+        35,
+        42,
+        45
+      ],
+      "shotgun": [
+        2
+      ]
+    },
+    "parMoment": {
+      "aube": [
+        2,
+        4,
+        9,
+        12,
+        13,
+        17,
+        23,
+        26,
+        29,
+        30,
+        31,
+        35,
+        36,
+        37,
+        40,
+        42,
+        47,
+        48,
+        49,
+        50,
+        51,
+        55,
+        56,
+        63
+      ],
+      "midi": [
+        5,
+        6,
+        7,
+        10,
+        11,
+        15,
+        16,
+        24,
+        25,
+        34,
+        44,
+        46,
+        60
+      ],
+      "crepuscule": [
+        2,
+        3,
+        4,
+        8,
+        12,
+        14,
+        17,
+        23,
+        26,
+        29,
+        30,
+        31,
+        32,
+        33,
+        35,
+        36,
+        37,
+        42,
+        47,
+        48,
+        50,
+        51,
+        52,
+        55,
+        56
+      ]
+    },
+    "parTurbidite": {
+      "claire": [
+        1,
+        5,
+        6,
+        7,
+        9,
+        10,
+        11,
+        15,
+        16,
+        17,
+        18,
+        19,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        30,
+        34,
+        37,
+        38,
+        39,
+        40,
+        41,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63
+      ],
+      "trouble": [
+        1,
+        2,
+        3,
+        4,
+        7,
+        8,
+        12,
+        13,
+        14,
+        20,
+        23,
+        29,
+        31,
+        32,
+        33,
+        35,
+        36,
+        42,
+        45,
+        50,
+        52,
+        55
+      ]
+    }
+  }
+}

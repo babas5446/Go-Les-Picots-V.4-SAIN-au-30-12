@@ -3,28 +3,23 @@
 //  Go Les Picots V.4
 //
 //  MODULE 0 - Écran d'accueil
-//  VERSION CORRIGÉE avec NavigationCoordinator
+//  MISE À JOUR : Ajout Module 2 Suggestion IA
 //
 //  Created by LANES Sebastien on 04/12/2025.
-//  Updated: 2024-12-05 (correction navigation Module 2)
+//  Updated: 2024-12-05 (ajout Module 2)
 //
 
 import SwiftUI
 
 struct ContentView: View {
-    // ViewModels partagés pour l'app
-    
+    // ViewModel partagé pour l'app
     @StateObject private var leureViewModel = LeureViewModel()
-    @StateObject private var SuggestionEngine: SuggestionEngine
-    @StateObject private var navigationCoordinator = NavigationCoordinator()
-    
-    // État pour le diagnostic
-    @State private var showingDiagnostic = false
+    @StateObject private var suggestionEngine: SuggestionEngine
     
     init() {
         let lvm = LeureViewModel()
         _leureViewModel = StateObject(wrappedValue: lvm)
-        _SuggestionEngine = StateObject(wrappedValue: Go_Les_Picots_V_4.SuggestionEngine(leureViewModel: lvm))
+        _suggestionEngine = StateObject(wrappedValue: SuggestionEngine(leureViewModel: lvm))
     }
     
     var body: some View {
@@ -36,64 +31,13 @@ struct ContentView: View {
                 // GRILLE 2x2 DES MODULES
                 ModuleGridView(
                     leureViewModel: leureViewModel,
-                    SuggestionEngine: SuggestionEngine,
-                    navigationCoordinator: navigationCoordinator
+                    suggestionEngine: suggestionEngine
                 )
                 .padding(.top, 30)
                 
                 Spacer()
             }
             .background(Color(hex: "F5F5F5"))
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: { showingDiagnostic = true }) {
-                        Image(systemName: "wrench.and.screwdriver")
-                            .foregroundColor(Color(hex: "0277BD"))
-                    }
-                }
-            }
-        }
-        // ✅ FULLSCREEN COVER AU NIVEAU RACINE
-        .fullScreenCover(isPresented: $navigationCoordinator.showResults) {
-            NavigationStack {
-                if !navigationCoordinator.suggestions.isEmpty {
-                    SuggestionResultView(
-                        suggestions: navigationCoordinator.suggestions,
-                        configuration: navigationCoordinator.configuration
-                    )
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbar {
-                        ToolbarItem(placement: .navigationBarLeading) {
-                            Button("Fermer") {
-                                navigationCoordinator.dismissResults()
-                            }
-                        }
-                    }
-                } else {
-                    VStack {
-                        ProgressView()
-                        Text("Chargement des résultats...")
-                            .padding()
-                    }
-                }
-            }
-        }
-        .alert("Erreur de chargement", isPresented: $leureViewModel.showError) {
-            Button("OK", role: .cancel) { }
-            Button("Recharger") {
-                leureViewModel.chargerLeurres()
-            }
-        } message: {
-            if let errorMessage = leureViewModel.errorMessage {
-                Text(errorMessage)
-            }
-        }
-        .sheet(isPresented: $showingDiagnostic) {
-            DiagnosticView()
-        }
-        .onChange(of: navigationCoordinator.showResults) { oldValue, newValue in
-            print("🔄 ContentView - showResults changed: \(oldValue) → \(newValue)")
-            print("📊 ContentView - Nombre de suggestions: \(navigationCoordinator.suggestions.count)")
         }
     }
 }
@@ -120,8 +64,7 @@ struct ModuleItem: Identifiable {
 // MARK: - Grille des 4 modules
 struct ModuleGridView: View {
     let leureViewModel: LeureViewModel
-    let SuggestionEngine: SuggestionEngine
-    let navigationCoordinator: NavigationCoordinator
+    let suggestionEngine: SuggestionEngine
     
     let modules : [ModuleItem] = [
         ModuleItem(
@@ -155,8 +98,7 @@ struct ModuleGridView: View {
                 ModuleButton(
                     module: module,
                     leureViewModel: leureViewModel,
-                    SuggestionEngine: SuggestionEngine,
-                    navigationCoordinator: navigationCoordinator
+                    suggestionEngine: suggestionEngine
                 )
             }
         }
@@ -168,10 +110,21 @@ struct ModuleGridView: View {
 struct ModuleButton: View {
     let module: ModuleItem
     let leureViewModel: LeureViewModel
-    let SuggestionEngine: SuggestionEngine
-    let navigationCoordinator: NavigationCoordinator
+    let suggestionEngine: SuggestionEngine
     
     @State private var showingModule = false
+    
+    @ViewBuilder
+    private var destinationView: some View {
+        if module.title == "Ma Boîte" {
+            BoiteView()
+                .environmentObject(leureViewModel)
+        } else if module.title == "Suggestion IA" {
+            SuggestionInputView(suggestionEngine: suggestionEngine)
+        } else {
+            Text("Module \(module.title) à venir")
+        }
+    }
     
     var body: some View {
         Button(action: {
@@ -215,17 +168,12 @@ struct ModuleButton: View {
         .buttonStyle(PlainButtonStyle())
         .sheet(isPresented: $showingModule) {
             if module.title == "Ma Boîte" {
-                NavigationStack {
+                NavigationView {
                     BoiteView()
                         .environmentObject(leureViewModel)
                 }
             } else if module.title == "Suggestion IA" {
-                NavigationStack {
-                    SuggestionInputView(
-                        suggestionEngine: SuggestionEngine,
-                        navigationCoordinator: navigationCoordinator
-                    )
-                }
+                SuggestionInputView(suggestionEngine: suggestionEngine)
             }
         }
     }
