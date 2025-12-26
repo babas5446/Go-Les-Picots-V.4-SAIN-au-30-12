@@ -48,12 +48,21 @@ enum AnyCouleur: Identifiable, Hashable {
         if case .custom = self { return true }
         return false
     }
+    
+    // 🌈 NOUVEAU : Vérifie si c'est une couleur arc-en-ciel
+    var isRainbow: Bool {
+        if case .custom(let c) = self {
+            return c.isRainbow
+        }
+        return false
+    }
 }
 
 /// Vue de champ de recherche avec autocomplétion pour sélectionner une couleur
 struct CouleurSearchField: View {
     
     @Binding var couleurSelectionnee: Couleur
+    @Binding var couleurCustomSelectionnee: CouleurCustom?  // 🆕 Pour stocker la couleur custom
     let titre: String
     
     @State private var searchText: String = ""
@@ -71,14 +80,29 @@ struct CouleurSearchField: View {
             
             // Champ de recherche
             HStack(spacing: 12) {
-                // Aperçu couleur actuelle
-                Circle()
-                    .fill(couleurSelectionnee.swiftUIColor)
-                    .frame(width: 30, height: 30)
-                    .overlay(
+                // Aperçu couleur actuelle (ou arc-en-ciel si custom rainbow)
+                Group {
+                    // ✅ CORRECTION : Utiliser couleurCustomSelectionnee au lieu de chercher par nom
+                    if let customCouleur = couleurCustomSelectionnee, customCouleur.isRainbow {
+                        RainbowCircle(size: 30)
+                    } else if let customCouleur = couleurCustomSelectionnee {
                         Circle()
-                            .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                    )
+                            .fill(customCouleur.swiftUIColor)
+                            .frame(width: 30, height: 30)
+                            .overlay(
+                                Circle()
+                                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                            )
+                    } else {
+                        Circle()
+                            .fill(couleurSelectionnee.swiftUIColor)
+                            .frame(width: 30, height: 30)
+                            .overlay(
+                                Circle()
+                                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                            )
+                    }
+                }
                 
                 // TextField
                 TextField("Rechercher...", text: $searchText)
@@ -104,9 +128,21 @@ struct CouleurSearchField: View {
             .cornerRadius(10)
             
             // Nom de la couleur actuelle
-            Text(couleurSelectionnee.displayName)
-                .font(.caption)
-                .foregroundColor(.secondary)
+            HStack {
+                Text(couleurCustomSelectionnee?.nom ?? couleurSelectionnee.displayName)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                
+                if couleurCustomSelectionnee != nil {
+                    Text("(Perso)")
+                        .font(.caption2)
+                        .padding(.horizontal, 4)
+                        .padding(.vertical, 2)
+                        .background(Color.blue.opacity(0.2))
+                        .foregroundColor(.blue)
+                        .cornerRadius(3)
+                }
+            }
             
             // Liste de suggestions
             if showSuggestions && !allSuggestions.isEmpty {
@@ -117,13 +153,18 @@ struct CouleurSearchField: View {
                                 selectionnerCouleur(suggestion)
                             } label: {
                                 HStack {
-                                    Circle()
-                                        .fill(suggestion.swiftUIColor)
-                                        .frame(width: 24, height: 24)
-                                        .overlay(
-                                            Circle()
-                                                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                                        )
+                                    // 🌈 Afficher arc-en-ciel ou couleur normale
+                                    if suggestion.isRainbow {
+                                        RainbowCircle(size: 24)
+                                    } else {
+                                        Circle()
+                                            .fill(suggestion.swiftUIColor)
+                                            .frame(width: 24, height: 24)
+                                            .overlay(
+                                                Circle()
+                                                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                                            )
+                                    }
                                     
                                     Text(suggestion.nom)
                                         .font(.body)
@@ -223,22 +264,70 @@ struct CouleurSearchField: View {
         switch couleur {
         case .predefinie(let c):
             couleurSelectionnee = c
+            couleurCustomSelectionnee = nil  // Réinitialiser la couleur custom
             searchText = c.displayName
         case .custom(let c):
-            // Pour l'instant, on garde la couleur prédéfinie la plus proche
-            // (On pourrait étendre le modèle Leurre pour supporter CouleurCustom)
+            // Stocker la couleur custom ET mapper vers une couleur prédéfinie de fallback
+            couleurCustomSelectionnee = c
+            let couleurFallback = trouverCouleurProcheDepuisCustom(c)
+            couleurSelectionnee = couleurFallback
             searchText = c.nom
-            print("⚠️ Couleur custom sélectionnée : \(c.nom)")
+            print("✅ Couleur custom '\(c.nom)' sélectionnée (fallback: '\(couleurFallback.displayName)')")
         }
         
         showSuggestions = false
     }
     
-    private func estSelectionnee(_ couleur: AnyCouleur) -> Bool {
-        if case .predefinie(let c) = couleur {
-            return c == couleurSelectionnee
+    /// Trouve la couleur prédéfinie la plus proche d'une couleur custom
+    private func trouverCouleurProcheDepuisCustom(_ custom: CouleurCustom) -> Couleur {
+        // Si arc-en-ciel, retourner une couleur flashy par défaut
+        if custom.isRainbow {
+            return .chartreuse
         }
-        return false
+        
+        // Chercher par contraste similaire
+        let couleursAvecContraste = Couleur.allCases.filter { 
+            $0.contrasteNaturel == custom.contraste 
+        }
+        
+        if !couleursAvecContraste.isEmpty {
+            // Trouver la couleur avec les valeurs RGB les plus proches
+            let couleurProche = couleursAvecContraste.min(by: { c1, c2 in
+                distanceRGB(entre: custom, et: c1) < distanceRGB(entre: custom, et: c2)
+            })
+            return couleurProche ?? couleursAvecContraste.first!
+        }
+        
+        // Fallback : chercher la couleur la plus proche par distance RGB
+        return Couleur.allCases.min(by: { c1, c2 in
+            distanceRGB(entre: custom, et: c1) < distanceRGB(entre: custom, et: c2)
+        }) ?? .blanc
+    }
+    
+    /// Calcule la distance RGB entre une couleur custom et une couleur prédéfinie
+    private func distanceRGB(entre custom: CouleurCustom, et predefined: Couleur) -> Double {
+        let uiColor = UIColor(predefined.swiftUIColor)
+        var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+        uiColor.getRed(&r, green: &g, blue: &b, alpha: &a)
+        
+        let dr = custom.red - Double(r)
+        let dg = custom.green - Double(g)
+        let db = custom.blue - Double(b)
+        
+        return sqrt(dr*dr + dg*dg + db*db)
+    }
+    
+    private func estSelectionnee(_ couleur: AnyCouleur) -> Bool {
+        switch couleur {
+        case .predefinie(let c):
+            return c == couleurSelectionnee
+        case .custom(let custom):
+            // Une couleur custom est "sélectionnée" si son nom correspond au texte de recherche
+            // et si elle mappe vers la couleur actuellement sélectionnée
+            let couleurMappee = trouverCouleurProcheDepuisCustom(custom)
+            return searchText.lowercased() == custom.nom.lowercased() && 
+                   couleurMappee == couleurSelectionnee
+        }
     }
 }
 
@@ -254,6 +343,7 @@ struct CreateCouleurView: View {
     @State private var nom: String
     @State private var couleur: Color = .blue
     @State private var contraste: Contraste = .naturel
+    @State private var useRainbow: Bool = false  // 🌈 NOUVEAU
     
     init(nomSuggere: String = "", onCreation: @escaping (CouleurCustom) -> Void) {
         self.nomSuggere = nomSuggere
@@ -272,22 +362,54 @@ struct CreateCouleurView: View {
                 }
                 
                 Section {
-                    ColorPicker("Couleur", selection: $couleur, supportsOpacity: false)
+                    // 🌈 Toggle pour activer l'arc-en-ciel
+                    Toggle(isOn: $useRainbow) {
+                        HStack(spacing: 8) {
+                            RainbowCircle(size: 24)
+                            Text("Pastille arc-en-ciel")
+                                .fontWeight(.medium)
+                        }
+                    }
+                    .tint(Color.purple)
+                    
+                    if !useRainbow {
+                        // ColorPicker classique
+                        ColorPicker("Couleur", selection: $couleur, supportsOpacity: false)
+                    } else {
+                        // Info arc-en-ciel
+                        HStack {
+                            Image(systemName: "info.circle.fill")
+                                .foregroundColor(.blue)
+                            Text("La pastille affichera un dégradé arc-en-ciel multicolore")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        .padding(.vertical, 4)
+                    }
                     
                     // Aperçu
                     HStack {
                         Text("Aperçu")
                         Spacer()
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(couleur)
-                            .frame(width: 100, height: 50)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                            )
+                        
+                        if useRainbow {
+                            RainbowCircleHolographic(size: 50)
+                        } else {
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(couleur)
+                                .frame(width: 100, height: 50)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                                )
+                        }
                     }
                 } header: {
                     Text("Apparence")
+                } footer: {
+                    if useRainbow {
+                        Text("💡 Parfait pour les leurres holographiques ou multicolores")
+                    }
                 }
                 
                 Section {
@@ -334,9 +456,18 @@ struct CreateCouleurView: View {
         let nomFinal = nom.trimmingCharacters(in: .whitespaces)
         guard !nomFinal.isEmpty else { return }
         
-        if let nouvelleCouleur = CouleurCustom(nom: nomFinal, from: couleur, contraste: contraste) {
-            onCreation(nouvelleCouleur)
-            dismiss()
+        if useRainbow {
+            // 🌈 Créer une couleur arc-en-ciel
+            if let nouvelleCouleur = CouleurCustom(nom: nomFinal, from: .white, contraste: contraste, isRainbow: true) {
+                onCreation(nouvelleCouleur)
+                dismiss()
+            }
+        } else {
+            // Créer une couleur normale
+            if let nouvelleCouleur = CouleurCustom(nom: nomFinal, from: couleur, contraste: contraste, isRainbow: false) {
+                onCreation(nouvelleCouleur)
+                dismiss()
+            }
         }
     }
 }
@@ -345,10 +476,12 @@ struct CreateCouleurView: View {
 
 #Preview("Search Field") {
     @Previewable @State var couleur: Couleur = .bleuArgente
+    @Previewable @State var couleurCustom: CouleurCustom? = nil  // 🆕
     
     Form {
         CouleurSearchField(
             couleurSelectionnee: $couleur,
+            couleurCustomSelectionnee: $couleurCustom,  // 🆕
             titre: "Couleur principale"
         )
     }

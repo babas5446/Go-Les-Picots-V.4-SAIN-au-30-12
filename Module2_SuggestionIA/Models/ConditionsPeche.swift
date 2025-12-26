@@ -21,7 +21,7 @@ struct ConditionsPeche: Codable, Hashable {
     
     // MARK: - Environnement Visuel
     var momentJournee: MomentJournee
-    var luminosite: Luminosite
+    var luminosite: Luminosite  // Toujours renseignée (calculée auto si besoin)
     var turbiditeEau: Turbidite
     
     // MARK: - Conditions Marines

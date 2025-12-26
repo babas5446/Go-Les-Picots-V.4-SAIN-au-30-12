@@ -401,6 +401,7 @@ struct SuggestionInputView: View {
                     // ✅ ICÔNES SEULES sur une ligne
                     HStack(spacing: 12) {
                         ForEach(Luminosite.allCases, id: \.self) { lum in
+                            let isSelected = conditions.luminosite == lum
                             Button(action: {
                                 conditions.luminosite = lum
                             }) {
@@ -409,13 +410,13 @@ struct SuggestionInputView: View {
                                     .frame(width: 50, height: 50)
                                     .background(
                                         Circle()
-                                            .fill(conditions.luminosite == lum ? Color(hex: "FFBC42") : Color(hex: "F5F5F5"))
+                                            .fill(isSelected ? Color(hex: "FFBC42") : Color(hex: "F5F5F5"))
                                     )
-                                    .foregroundColor(conditions.luminosite == lum ? .white : .gray)
+                                    .foregroundColor(isSelected ? .white : .gray)
                                     .overlay(
                                         Circle()
                                             .strokeBorder(
-                                                conditions.luminosite == lum ? Color(hex: "FFBC42") : Color.clear,
+                                                isSelected ? Color(hex: "FFBC42") : Color.clear,
                                                 lineWidth: 3
                                             )
                                     )
@@ -424,7 +425,7 @@ struct SuggestionInputView: View {
                     }
                     
                     // ✅ Légende sous les boutons (optionnel)
-                    if conditions.luminosite != .forte {  // Affiche seulement si pas la valeur par défaut
+                    if conditions.luminosite != .forte {
                         Text(conditions.luminosite.description)
                             .font(.caption)
                             .foregroundColor(.secondary)
@@ -731,7 +732,7 @@ struct CarteFormulaire<Content: View>: View {
     }
 }
 
-struct PickerRow<T: RawRepresentable & CaseIterable & Hashable>: View where T.RawValue == String, T: Identifiable {
+struct PickerRow<T: CaseIterable & Hashable & Identifiable>: View where T: RawRepresentable, T.RawValue == String {
     let label: String
     @Binding var selection: T
     let cases: [T]
@@ -743,20 +744,40 @@ struct PickerRow<T: RawRepresentable & CaseIterable & Hashable>: View where T.Ra
                 .fontWeight(.semibold)
             Picker(label, selection: $selection) {
                 ForEach(cases, id: \.self) { item in
-                    if let displayable = item as? any RawRepresentable & CaseIterable & Hashable {
-                        Text(String(describing: displayable))
-                    }
+                    // Utiliser le displayName si disponible, sinon description
+                    Text(displayNameFor(item)).tag(item)
                 }
             }
             .pickerStyle(.menu)
         }
     }
+    
+    // Helper pour obtenir le displayName
+    private func displayNameFor(_ item: T) -> String {
+        if let named = item as? any DisplayNamed {
+            return named.displayName
+        }
+        return String(describing: item)
+    }
 }
 
-extension Turbidite: Identifiable { public var id: String { rawValue } }
-extension EtatMer: Identifiable { public var id: String { rawValue } }
-extension TypeMaree: Identifiable { public var id: String { rawValue } }
-extension PhaseLunaire: Identifiable { public var id: String { rawValue } }
+// Protocole helper pour types avec displayName
+protocol DisplayNamed {
+    var displayName: String { get }
+}
+
+extension Turbidite: Identifiable, DisplayNamed { 
+    public var id: String { rawValue }
+}
+extension EtatMer: Identifiable, DisplayNamed { 
+    public var id: String { rawValue }
+}
+extension TypeMaree: Identifiable, DisplayNamed { 
+    public var id: String { rawValue }
+}
+extension PhaseLunaire: Identifiable, DisplayNamed { 
+    public var id: String { rawValue }
+}
 
 
 

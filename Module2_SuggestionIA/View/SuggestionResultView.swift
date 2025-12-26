@@ -269,14 +269,8 @@ struct SuggestionCard: View {
                         
                         // ➕ NOUVEAU : Couleur avec rond
                         HStack(spacing: 4) {
-                            Circle()
-                                .fill(couleurPourAffichage(suggestion.leurre.couleurPrincipale))
-                                .frame(width: 10, height: 10)
-                                .overlay(
-                                    Circle()
-                                        .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                                )
-                            Text(suggestion.leurre.couleurPrincipale.displayName)
+                            CouleurPastille(leurre: suggestion.leurre, isPrincipal: true, size: 10)
+                            Text(suggestion.leurre.couleurPrincipaleAffichage.nom)
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
@@ -482,14 +476,8 @@ struct SuggestionCardCompact: View {
                         .foregroundColor(.secondary)
                     
                     HStack(spacing: 3) {
-                        Circle()
-                            .fill(couleurPourAffichage(suggestion.leurre.couleurPrincipale))
-                            .frame(width: 6, height: 6)
-                            .overlay(
-                                Circle()
-                                    .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
-                            )
-                        Text(suggestion.leurre.couleurPrincipale.displayName)
+                        CouleurPastille(leurre: suggestion.leurre, isPrincipal: true, size: 6)
+                        Text(suggestion.leurre.couleurPrincipaleAffichage.nom)
                             .font(.caption2)
                             .foregroundColor(.secondary)
                     }

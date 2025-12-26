@@ -186,20 +186,31 @@ struct LeurreDetailView: View {
                     
                     VStack(alignment: .leading, spacing: 4) {
                         HStack(spacing: 8) {
-                            Circle()
-                                .fill(leurre.couleurPrincipale.swiftUIColor)
-                                .frame(width: 16, height: 16)
-                            Text(leurre.couleurPrincipale.displayName)
+                            // ✅ CORRECTION : Utiliser couleurPrincipaleAffichage
+                            let principaleInfo = leurre.couleurPrincipaleAffichage
+                            if principaleInfo.isRainbow {
+                                RainbowCircle(size: 16, showBorder: true)
+                            } else {
+                                Circle()
+                                    .fill(principaleInfo.color)
+                                    .frame(width: 16, height: 16)
+                            }
+                            Text(principaleInfo.nom)
                                 .font(.subheadline)
                                 .fontWeight(.semibold)
                         }
                         
-                        if let secondaire = leurre.couleurSecondaire {
+                        // ✅ CORRECTION : Utiliser couleurSecondaireAffichage
+                        if let secondaireInfo = leurre.couleurSecondaireAffichage {
                             HStack(spacing: 8) {
-                                Circle()
-                                    .fill(secondaire.swiftUIColor)
-                                    .frame(width: 16, height: 16)
-                                Text("+ " + secondaire.displayName)
+                                if secondaireInfo.isRainbow {
+                                    RainbowCircle(size: 16, showBorder: true)
+                                } else {
+                                    Circle()
+                                        .fill(secondaireInfo.color)
+                                        .frame(width: 16, height: 16)
+                                }
+                                Text("+ " + secondaireInfo.nom)
                                     .font(.caption)
                                     .foregroundColor(.gray)
                             }

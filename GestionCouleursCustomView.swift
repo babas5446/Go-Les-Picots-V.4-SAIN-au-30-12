@@ -97,14 +97,18 @@ struct GestionCouleursCustomView: View {
                         couleurAModifier = couleur
                     } label: {
                         HStack(spacing: 12) {
-                            // Aperçu couleur
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(couleur.swiftUIColor)
-                                .frame(width: 50, height: 50)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                                )
+                            // 🌈 Aperçu couleur ou arc-en-ciel
+                            if couleur.isRainbow {
+                                RainbowCircle(size: 50, showBorder: true)
+                            } else {
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(couleur.swiftUIColor)
+                                    .frame(width: 50, height: 50)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                                    )
+                            }
                             
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(couleur.nom)
@@ -174,6 +178,7 @@ struct EditCouleurView: View {
     @State private var nom: String
     @State private var couleur: Color
     @State private var contraste: Contraste
+    @State private var useRainbow: Bool  // 🌈 NOUVEAU
     
     init(couleur: CouleurCustom, onSave: @escaping (CouleurCustom) -> Void) {
         self.couleurOriginale = couleur
@@ -182,6 +187,7 @@ struct EditCouleurView: View {
         self._nom = State(initialValue: couleur.nom)
         self._couleur = State(initialValue: couleur.swiftUIColor)
         self._contraste = State(initialValue: couleur.contraste)
+        self._useRainbow = State(initialValue: couleur.isRainbow)  // 🌈 Initialiser
     }
     
     var body: some View {
@@ -195,19 +201,36 @@ struct EditCouleurView: View {
                 }
                 
                 Section {
-                    ColorPicker("Couleur", selection: $couleur, supportsOpacity: false)
+                    // 🌈 Toggle pour activer l'arc-en-ciel
+                    Toggle(isOn: $useRainbow) {
+                        HStack(spacing: 8) {
+                            RainbowCircle(size: 24)
+                            Text("Pastille arc-en-ciel")
+                                .fontWeight(.medium)
+                        }
+                    }
+                    .tint(Color.purple)
+                    
+                    if !useRainbow {
+                        ColorPicker("Couleur", selection: $couleur, supportsOpacity: false)
+                    }
                     
                     // Aperçu
                     HStack {
                         Text("Aperçu")
                         Spacer()
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(couleur)
-                            .frame(width: 100, height: 50)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                            )
+                        
+                        if useRainbow {
+                            RainbowCircleHolographic(size: 50)
+                        } else {
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(couleur)
+                                .frame(width: 100, height: 50)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                                )
+                        }
                     }
                 } header: {
                     Text("Apparence")
@@ -267,18 +290,31 @@ struct EditCouleurView: View {
         let nomFinal = nom.trimmingCharacters(in: .whitespaces)
         guard !nomFinal.isEmpty else { return }
         
-        if let couleurModifiee = CouleurCustom(nom: nomFinal, from: couleur, contraste: contraste) {
-            var updated = couleurModifiee
-            // Garder le même ID et date de création
-            var mutable = couleurOriginale
-            mutable.nom = updated.nom
-            mutable.red = updated.red
-            mutable.green = updated.green
-            mutable.blue = updated.blue
-            mutable.contraste = updated.contraste
-            
-            onSave(mutable)
-            dismiss()
+        if useRainbow {
+            // 🌈 Sauvegarder avec arc-en-ciel
+            if let couleurModifiee = CouleurCustom(nom: nomFinal, from: .white, contraste: contraste, isRainbow: true) {
+                var mutable = couleurOriginale
+                mutable.nom = couleurModifiee.nom
+                mutable.contraste = couleurModifiee.contraste
+                mutable.isRainbow = true
+                
+                onSave(mutable)
+                dismiss()
+            }
+        } else {
+            // Sauvegarder couleur normale
+            if let couleurModifiee = CouleurCustom(nom: nomFinal, from: couleur, contraste: contraste, isRainbow: false) {
+                var mutable = couleurOriginale
+                mutable.nom = couleurModifiee.nom
+                mutable.red = couleurModifiee.red
+                mutable.green = couleurModifiee.green
+                mutable.blue = couleurModifiee.blue
+                mutable.contraste = couleurModifiee.contraste
+                mutable.isRainbow = false
+                
+                onSave(mutable)
+                dismiss()
+            }
         }
     }
     

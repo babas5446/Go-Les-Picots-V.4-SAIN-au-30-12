@@ -35,7 +35,9 @@ struct Leurre: Identifiable, Codable, Hashable {
     var poids: Double?                       // Facultatif (g)
     
     var couleurPrincipale: Couleur           // Obligatoire
+    var couleurPrincipaleCustom: CouleurCustom?  // Optionnel : si défini, override couleurPrincipale pour l'affichage
     var couleurSecondaire: Couleur?          // Facultatif
+    var couleurSecondaireCustom: CouleurCustom?  // Optionnel : si défini, override couleurSecondaire pour l'affichage
     var finition: Finition?                  // Facultatif
     
     // Conditionnel : SI typePeche == .traine
@@ -86,7 +88,9 @@ struct Leurre: Identifiable, Codable, Hashable {
         case longueur                      // ✅ JSON utilise "longueur"
         case poids
         case couleurPrincipale             // ✅ JSON utilise "couleurPrincipale"
+        case couleurPrincipaleCustom       // ✅ NOUVEAU : Couleur personnalisée principale
         case couleurSecondaire = "couleursSecondaires"  // ✅ JSON utilise "couleursSecondaires" (array)
+        case couleurSecondaireCustom       // ✅ NOUVEAU : Couleur personnalisée secondaire
         case finition                      // ✅ JSON utilise "finition"
         case profondeurNageMin = "profondeurMin"
         case profondeurNageMax = "profondeurMax"
@@ -145,6 +149,7 @@ struct Leurre: Identifiable, Codable, Hashable {
         poids = try container.decodeIfPresent(Double.self, forKey: .poids)
         
         couleurPrincipale = try container.decode(Couleur.self, forKey: .couleurPrincipale)
+        couleurPrincipaleCustom = try container.decodeIfPresent(CouleurCustom.self, forKey: .couleurPrincipaleCustom)
         
         // 🔧 GESTION: couleursSecondaires est un array dans le JSON, on prend la première
         if let couleursSecondairesArray = try? container.decode([Couleur].self, forKey: .couleurSecondaire),
@@ -155,6 +160,8 @@ struct Leurre: Identifiable, Codable, Hashable {
         } else {
             couleurSecondaire = nil
         }
+        
+        couleurSecondaireCustom = try container.decodeIfPresent(CouleurCustom.self, forKey: .couleurSecondaireCustom)
         
         finition = try container.decodeIfPresent(Finition.self, forKey: .finition)
         
@@ -196,7 +203,9 @@ struct Leurre: Identifiable, Codable, Hashable {
         try container.encodeIfPresent(poids, forKey: .poids)
         
         try container.encode(couleurPrincipale, forKey: .couleurPrincipale)
+        try container.encodeIfPresent(couleurPrincipaleCustom, forKey: .couleurPrincipaleCustom)
         try container.encodeIfPresent(couleurSecondaire, forKey: .couleurSecondaire)
+        try container.encodeIfPresent(couleurSecondaireCustom, forKey: .couleurSecondaireCustom)
         try container.encodeIfPresent(finition, forKey: .finition)
         
         try container.encodeIfPresent(profondeurNageMin, forKey: .profondeurNageMin)
@@ -232,7 +241,9 @@ struct Leurre: Identifiable, Codable, Hashable {
         longueur: Double,
         poids: Double? = nil,
         couleurPrincipale: Couleur,
+        couleurPrincipaleCustom: CouleurCustom? = nil,
         couleurSecondaire: Couleur? = nil,
+        couleurSecondaireCustom: CouleurCustom? = nil,
         finition: Finition? = nil,
         profondeurNageMin: Double? = nil,
         profondeurNageMax: Double? = nil,
@@ -252,7 +263,9 @@ struct Leurre: Identifiable, Codable, Hashable {
         self.longueur = longueur
         self.poids = poids
         self.couleurPrincipale = couleurPrincipale
+        self.couleurPrincipaleCustom = couleurPrincipaleCustom
         self.couleurSecondaire = couleurSecondaire
+        self.couleurSecondaireCustom = couleurSecondaireCustom
         self.finition = finition
         self.profondeurNageMin = profondeurNageMin
         self.profondeurNageMax = profondeurNageMax
@@ -317,12 +330,49 @@ struct Leurre: Identifiable, Codable, Hashable {
         return techniques
     }
     
-    /// Description des couleurs
+    /// Description des couleurs (affiche custom si disponible, sinon enum)
     var descriptionCouleurs: String {
-        if let secondaire = couleurSecondaire {
-            return "\(couleurPrincipale.displayName) / \(secondaire.displayName)"
+        let principale = couleurPrincipaleCustom?.nom ?? couleurPrincipale.displayName
+        if let custom = couleurSecondaireCustom {
+            return "\(principale) / \(custom.nom)"
+        } else if let secondaire = couleurSecondaire {
+            return "\(principale) / \(secondaire.displayName)"
         }
-        return couleurPrincipale.displayName
+        return principale
+    }
+    
+    /// Indique si la couleur principale est une couleur custom arc-en-ciel
+    var estCouleurPrincipaleRainbow: Bool {
+        return couleurPrincipaleCustom?.isRainbow ?? false
+    }
+    
+    /// Indique si la couleur secondaire est une couleur custom arc-en-ciel
+    var estCouleurSecondaireRainbow: Bool {
+        return couleurSecondaireCustom?.isRainbow ?? false
+    }
+    
+    /// 🆕 Luminosité perçue de la couleur principale (0.0 à 1.0)
+    var luminositePerçueCouleur: Double {
+        if let custom = couleurPrincipaleCustom {
+            return custom.luminositePercue
+        }
+        // Approximation pour les couleurs prédéfinies
+        switch couleurPrincipale.contrasteNaturel {
+        case .flashy: return 0.7      // Couleurs vives claires
+        case .naturel: return 0.5     // Couleurs moyennes
+        case .sombre: return 0.2      // Couleurs foncées
+        case .contraste: return 0.5   // Mélange
+        }
+    }
+    
+    /// 🆕 Vérifie si la couleur principale est claire
+    var estCouleurClaire: Bool {
+        return luminositePerçueCouleur > 0.5
+    }
+    
+    /// 🆕 Vérifie si la couleur principale est foncée
+    var estCouleurFoncee: Bool {
+        return luminositePerçueCouleur < 0.3
     }
     
     // MARK: - 🧠 DÉDUCTIONS INTELLIGENTES (Computed Properties Finales)
@@ -344,6 +394,90 @@ struct Leurre: Identifiable, Codable, Hashable {
         
         // 3. Déduction automatique basée sur caractéristiques du leurre
         return LeurreIntelligenceService.deduireZones(leurre: self)
+    }
+    
+    /// Profil visuel FINAL du leurre (déduit intelligemment de COULEUR + FINITION)
+    /// Principe : La finition AMPLIFIE ou MODIFIE légèrement la couleur, mais ne la remplace pas
+    var profilVisuel: Contraste {
+        // 1. Si contraste explicite dans JSON, l'utiliser (priorité absolue)
+        if let contrasteExplicite = self.contraste {
+            return contrasteExplicite
+        }
+        
+        // 2. Déduction intelligente : COULEUR (base) + FINITION (modificateur)
+        // ✅ AMÉLIORATION : Utiliser le contraste réel (custom ou prédéfini)
+        let contrasteBase = self.contrastePrincipaleReel
+        
+        if let finition = self.finition {
+            switch finition {
+            
+            // ✨ FINITIONS HOLOGRAPHIQUES/CHROME/MIROIR → Amplifient couleur naturelle
+            // Reflets subtils type "écailles de poisson" au soleil
+            // NE forcent PAS flashy si couleur naturelle !
+            case .holographique, .chrome, .miroir, .paillete:
+                switch contrasteBase {
+                case .naturel:
+                    return .naturel  // ✅ Vert holo = naturel amélioré (reflets réalistes)
+                case .flashy:
+                    return .flashy   // Chartreuse holo = ultra-flashy
+                case .sombre:
+                    return .contraste // Noir chrome = contrasté (reflets sur sombre)
+                case .contraste:
+                    return .contraste // Garde le contraste
+                }
+            
+            // 🌑 FINITION MATE → Analyse couleur de base
+            case .mate:
+                switch contrasteBase {
+                case .sombre:
+                    return .sombre  // Noir mat = silhouette pure
+                case .naturel:
+                    return .naturel // Argenté mat = discret naturel
+                case .flashy:
+                    return .flashy  // Chartreuse mat = flashy moins brillant
+                case .contraste:
+                    return .contraste
+                }
+            
+            // 💡 FINITION PHOSPHORESCENT → Profil SOMBRE
+            // Lumineux dans le noir = silhouette visible (principe inversé)
+            case .phosphorescent:
+                return .sombre
+            
+            // 🔦 FINITION UV → Amplification selon couleur
+            case .UV:
+                switch contrasteBase {
+                case .sombre:
+                    return .sombre  // UV + sombre = reste sombre réactif
+                case .naturel:
+                    return .contraste // UV + naturel = devient contrasté
+                case .flashy:
+                    return .flashy  // UV + flashy = ultra-flashy
+                case .contraste:
+                    return .contraste
+                }
+            
+            // ⚡ FINITIONS BRILLANTES CLASSIQUES → Augmentent légèrement contraste
+            case .metallique, .brillante:
+                switch contrasteBase {
+                case .naturel:
+                    return .naturel  // ✅ Reste naturel mais plus brillant
+                case .sombre:
+                    return .contraste // Sombre + brillant = contrasté
+                case .flashy:
+                    return .flashy  // Flashy + brillant = renforcé
+                case .contraste:
+                    return .contraste
+                }
+            
+            // 🌟 FINITION PERLÉE → Garde couleur de base (reflets subtils)
+            case .perlee:
+                return contrasteBase
+            }
+        }
+        
+        // 3. Pas de finition → Contraste naturel de la couleur uniquement
+        return contrasteBase
     }
     
     /// Espèces cibles FINALES (avec déduction automatique si absentes/incomplètes)
@@ -842,6 +976,82 @@ enum Contraste: String, Codable, CaseIterable, Hashable {
         case .contraste:
             return "Bicolore marqué, efficace en eau trouble"
         }
+    }
+    
+    /// Efficacité du profil visuel selon le contexte environnemental
+    /// Basé sur le principe : "Le contraste, c'est d'abord leurre vs environnement"
+    func efficaciteDansContexte(
+        turbidite: Turbidite,
+        luminosite: Luminosite
+    ) -> Double {
+        
+        var score: Double = 5.0  // Score neutre de base (0-10)
+        
+        // RÈGLE 1 : EAU CLAIRE → Naturel excellent
+        if turbidite == .claire {
+            switch self {
+            case .naturel:
+                score = 10.0  // PARFAIT - imitation réaliste visible
+            case .contraste:
+                score = 7.0   // Bon mais moins subtil
+            case .flashy:
+                score = 5.0   // Acceptable mais peut effrayer
+            case .sombre:
+                score = 3.0   // Mauvais - pas assez de contraste
+            }
+        }
+        
+        // RÈGLE 2 : EAU TROUBLE → Contraste avec environnement
+        else if turbidite == .trouble || turbidite == .tresTrouble {
+            
+            // SOUS-RÈGLE 2A : Faible luminosité (aube/crépuscule/nuit/profond)
+            // → Environnement SOMBRE
+            // → Leurres CLAIRS ou FLASHY se détachent
+            if luminosite == .faible || luminosite == .sombre || luminosite == .nuit {
+                switch self {
+                case .flashy:
+                    score = 10.0  // PARFAIT - tache claire visible (chartreuse, jaune)
+                case .contraste:
+                    score = 8.0   // Très bon
+                case .naturel:
+                    score = 6.0   // Acceptable (argenté = clair)
+                case .sombre:
+                    score = 2.0   // MAUVAIS - sombre sur sombre = invisible
+                }
+            }
+            
+            // SOUS-RÈGLE 2B : Forte luminosité (plein soleil, faible profondeur)
+            // → Environnement LUMINEUX
+            // → Leurres SOMBRES créent silhouette nette
+            else if luminosite == .forte || luminosite == .diffuse {
+                switch self {
+                case .sombre:
+                    score = 10.0  // CHAMPION - silhouette nette 🏆
+                case .contraste:
+                    score = 8.0   // Très bon
+                case .flashy:
+                    score = 6.0   // Acceptable mais moins net
+                case .naturel:
+                    score = 3.0   // MAUVAIS - se fond dans l'eau
+                }
+            }
+        }
+        
+        // RÈGLE 3 : EAU LÉGÈREMENT TROUBLE → Intermédiaire
+        else if turbidite == .legerementTrouble {
+            switch self {
+            case .contraste:
+                score = 10.0  // PARFAIT - équilibre idéal
+            case .flashy:
+                score = 8.0   // Très bon
+            case .naturel:
+                score = 6.0   // Acceptable
+            case .sombre:
+                score = luminosite == .forte ? 7.0 : 4.0
+            }
+        }
+        
+        return score
     }
 }
 
@@ -1444,3 +1654,124 @@ enum Espece: String, Codable, CaseIterable, Hashable {
         typesPecheCompatibles.contains(.traine)
     }
 }
+// MARK: - Extensions pour l'affichage des couleurs avec support Custom
+
+extension Leurre {
+    
+    /// Retourne la couleur d'affichage principale (custom si définie, sinon enum)
+    var couleurPrincipaleAffichage: (isRainbow: Bool, color: Color, nom: String) {
+        if let custom = couleurPrincipaleCustom {
+            return (custom.isRainbow, custom.swiftUIColor, custom.nom)
+        }
+        return (false, couleurPrincipale.swiftUIColor, couleurPrincipale.displayName)
+    }
+    
+    /// Retourne la couleur d'affichage secondaire (custom si définie, sinon enum, ou nil)
+    var couleurSecondaireAffichage: (isRainbow: Bool, color: Color, nom: String)? {
+        if let custom = couleurSecondaireCustom {
+            return (custom.isRainbow, custom.swiftUIColor, custom.nom)
+        }
+        if let standard = couleurSecondaire {
+            return (false, standard.swiftUIColor, standard.displayName)
+        }
+        return nil
+    }
+    
+    // MARK: - Propriétés pour le moteur de suggestion (RGB réels)
+    
+    /// Retourne le contraste de la couleur principale (custom ou prédéfinie)
+    var contrastePrincipaleReel: Contraste {
+        if let custom = couleurPrincipaleCustom {
+            return custom.contraste
+        }
+        return couleurPrincipale.contrasteNaturel
+    }
+    
+    /// Retourne le contraste de la couleur secondaire (custom ou prédéfinie)
+    var contrasteSecondaireReel: Contraste? {
+        if let custom = couleurSecondaireCustom {
+            return custom.contraste
+        }
+        return couleurSecondaire?.contrasteNaturel
+    }
+    
+    /// Retourne la luminosité perçue de la couleur principale (0.0 à 1.0)
+    var luminositePrincipaleReelle: Double {
+        if let custom = couleurPrincipaleCustom {
+            return custom.luminositePercue
+        }
+        // Pour les couleurs prédéfinies, extraire les composantes RGB
+        return extraireLuminosite(de: couleurPrincipale.swiftUIColor)
+    }
+    
+    /// Retourne la luminosité perçue de la couleur secondaire (0.0 à 1.0)
+    var luminositeSecondaireReelle: Double? {
+        if let custom = couleurSecondaireCustom {
+            return custom.luminositePercue
+        }
+        if let secondaire = couleurSecondaire {
+            return extraireLuminosite(de: secondaire.swiftUIColor)
+        }
+        return nil
+    }
+    
+    /// Extrait la luminosité perçue d'une couleur SwiftUI (formule ITU-R BT.709)
+    private func extraireLuminosite(de color: Color) -> Double {
+        guard let components = UIColor(color).cgColor.components,
+              components.count >= 3 else {
+            return 0.5 // Fallback
+        }
+        
+        let r = Double(components[0])
+        let g = Double(components[1])
+        let b = Double(components[2])
+        
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b
+    }
+    
+    /// Vérifie si la couleur principale est claire (luminosité > 0.5)
+    var estCouleurPrincipaleClaire: Bool {
+        if let custom = couleurPrincipaleCustom {
+            return custom.estClaire
+        }
+        return luminositePrincipaleReelle > 0.5
+    }
+    
+    /// Vérifie si la couleur principale est foncée (luminosité < 0.3)
+    var estCouleurPrincipaleFoncee: Bool {
+        if let custom = couleurPrincipaleCustom {
+            return custom.estFoncee
+        }
+        return luminositePrincipaleReelle < 0.3
+    }
+    
+    /// Retourne les composantes RGB de la couleur principale (pour calculs avancés)
+    var composantesRGBPrincipale: (r: Double, g: Double, b: Double) {
+        if let custom = couleurPrincipaleCustom {
+            return (custom.red, custom.green, custom.blue)
+        }
+        
+        guard let components = UIColor(couleurPrincipale.swiftUIColor).cgColor.components,
+              components.count >= 3 else {
+            return (0.5, 0.5, 0.5) // Fallback
+        }
+        
+        return (Double(components[0]), Double(components[1]), Double(components[2]))
+    }
+    
+    /// Retourne les composantes RGB de la couleur secondaire (pour calculs avancés)
+    var composantesRGBSecondaire: (r: Double, g: Double, b: Double)? {
+        if let custom = couleurSecondaireCustom {
+            return (custom.red, custom.green, custom.blue)
+        }
+        
+        guard let secondaire = couleurSecondaire,
+              let components = UIColor(secondaire.swiftUIColor).cgColor.components,
+              components.count >= 3 else {
+            return nil
+        }
+        
+        return (Double(components[0]), Double(components[1]), Double(components[2]))
+    }
+}
+

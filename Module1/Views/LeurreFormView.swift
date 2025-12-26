@@ -70,7 +70,9 @@ struct LeurreFormView: View {
     
     // Couleurs
     @State private var couleurPrincipale: Couleur = .bleuArgente
+    @State private var couleurPrincipaleCustom: CouleurCustom? = nil  // 🆕
     @State private var couleurSecondaire: Couleur? = nil
+    @State private var couleurSecondaireCustom: CouleurCustom? = nil  // 🆕
     @State private var hasCouleurSecondaire: Bool = false
     @State private var finitionSelectionnee: Finition? = nil
     
@@ -127,8 +129,10 @@ struct LeurreFormView: View {
             _longueur = State(initialValue: String(format: "%.1f", leurre.longueur))
             _poids = State(initialValue: leurre.poids.map { String(format: "%.0f", $0) } ?? "")
             _couleurPrincipale = State(initialValue: leurre.couleurPrincipale)
+            _couleurPrincipaleCustom = State(initialValue: leurre.couleurPrincipaleCustom)  // 🆕
             _couleurSecondaire = State(initialValue: leurre.couleurSecondaire)
-            _hasCouleurSecondaire = State(initialValue: leurre.couleurSecondaire != nil)
+            _couleurSecondaireCustom = State(initialValue: leurre.couleurSecondaireCustom)  // 🆕
+            _hasCouleurSecondaire = State(initialValue: leurre.couleurSecondaire != nil || leurre.couleurSecondaireCustom != nil)
             _finitionSelectionnee = State(initialValue: leurre.finition)  // ✅ Initialiser la finition
             _profondeurMin = State(initialValue: leurre.profondeurNageMin.map { String(format: "%.1f", $0) } ?? "")
             _profondeurMax = State(initialValue: leurre.profondeurNageMax.map { String(format: "%.1f", $0) } ?? "")
@@ -524,6 +528,7 @@ struct LeurreFormView: View {
             // Couleur principale avec autocomplétion
             CouleurSearchField(
                 couleurSelectionnee: $couleurPrincipale,
+                couleurCustomSelectionnee: $couleurPrincipaleCustom,  // 🆕
                 titre: "Couleur principale"
             )
             .padding(.vertical, 4)
@@ -537,6 +542,7 @@ struct LeurreFormView: View {
                         get: { couleurSecondaire ?? .blanc },
                         set: { couleurSecondaire = $0 }
                     ),
+                    couleurCustomSelectionnee: $couleurSecondaireCustom,  // 🆕
                     titre: "Couleur secondaire"
                 )
                 .padding(.vertical, 4)
@@ -769,7 +775,9 @@ struct LeurreFormView: View {
                 longueur: longueurValue,
                 poids: poidsValue,
                 couleurPrincipale: couleurPrincipale,
+                couleurPrincipaleCustom: couleurPrincipaleCustom,  // 🆕 Ajouter la couleur custom
                 couleurSecondaire: couleurSec,
+                couleurSecondaireCustom: hasCouleurSecondaire ? couleurSecondaireCustom : nil,  // 🆕
                 finition: finitionSelectionnee,  // ✅ Inclure la finition
                 profondeurNageMin: profMinValue,
                 profondeurNageMax: profMaxValue,
@@ -799,7 +807,9 @@ struct LeurreFormView: View {
             leurreModifie.longueur = longueurValue
             leurreModifie.poids = poidsValue
             leurreModifie.couleurPrincipale = couleurPrincipale
+            leurreModifie.couleurPrincipaleCustom = couleurPrincipaleCustom  // 🆕
             leurreModifie.couleurSecondaire = couleurSec
+            leurreModifie.couleurSecondaireCustom = hasCouleurSecondaire ? couleurSecondaireCustom : nil  // 🆕
             leurreModifie.finition = finitionSelectionnee  // ✅ Inclure la finition
             leurreModifie.profondeurNageMin = profMinValue
             leurreModifie.profondeurNageMax = profMaxValue

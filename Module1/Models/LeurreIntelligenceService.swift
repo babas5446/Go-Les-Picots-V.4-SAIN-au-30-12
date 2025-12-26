@@ -296,11 +296,11 @@ class LeurreIntelligenceService {
         var turbidites: [Turbidite] = []
         var etatsMer: [EtatMer] = []
         
-        // Déterminer le contraste (depuis le champ ou depuis la couleur)
-        let contraste = leurre.contraste ?? leurre.couleurPrincipale.contrasteNaturel
+        // ✅ Utiliser le profil visuel (qui tient compte de couleur + finition)
+        let profil = leurre.profilVisuel
         
-        // Règles selon contraste
-        switch contraste {
+        // Règles selon profil visuel
+        switch profil {
         case .naturel:
             moments = [.matinee, .apresMidi]
             turbidites = [.claire, .legerementTrouble]
@@ -323,28 +323,31 @@ class LeurreIntelligenceService {
         }
         
         // Ajustements selon couleurs spécifiques
-        if leurre.couleurPrincipale == .roseFuchsia || 
-           leurre.couleurPrincipale == .roseFluo {
+        // ✅ AMÉLIORATION : Utiliser les composantes RGB réelles
+        let rgb = leurre.composantesRGBPrincipale
+        let estRoseFlashy = (rgb.r > 0.8 && rgb.g < 0.5 && rgb.b > 0.4)
+        let estJauneVert = (rgb.g > 0.7 && rgb.r > 0.4 && rgb.b < 0.3)
+        let estTresSombre = (rgb.r < 0.3 && rgb.g < 0.3 && rgb.b < 0.4)
+        
+        if estRoseFlashy {
             // Rose excellent en mer formée
             if !etatsMer.contains(.formee) {
                 etatsMer.append(.formee)
             }
         }
         
-        if leurre.couleurPrincipale == .chartreuse || 
-           leurre.couleurPrincipale == .jauneFluo {
+        if estJauneVert {
             // Chartreuse/Jaune fluo pour eau trouble
             turbidites = [.trouble, .tresTrouble]
         }
         
-        if leurre.couleurPrincipale == .noir ||
-           leurre.couleurPrincipale == .noirViolet ||
-           leurre.couleurPrincipale == .violetFonce {
+        if estTresSombre {
             // Sombres pour faible luminosité
             moments = [.aube, .crepuscule, .nuit]
         }
         
-        // Ajustements selon finition
+        // Ajustements selon finition (déjà pris en compte dans profilVisuel,
+        // mais on peut affiner les moments/turbidités)
         if let finition = leurre.finition {
             switch finition {
             case .phosphorescent:

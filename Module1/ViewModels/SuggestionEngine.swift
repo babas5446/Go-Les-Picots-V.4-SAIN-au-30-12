@@ -927,12 +927,17 @@ class SuggestionEngine: ObservableObject {
         }
         
         // 3. Bonus contraste spécifique (10 points max)
-        if conditions.turbiditeEau == .tresTrouble &&
-           (leurre.couleurPrincipale == .chartreuse || leurre.couleurPrincipale == .jauneFluo) {
+        // ✅ AMÉLIORATION : Utiliser les composantes RGB réelles
+        let rgb = leurre.composantesRGBPrincipale
+        let estJauneVert = (rgb.g > 0.7 && rgb.r > 0.4 && rgb.b < 0.3) // Jaune/chartreuse
+        let estRoseFlashy = (rgb.r > 0.8 && rgb.g < 0.5 && rgb.b > 0.4) // Rose flashy
+        let estArgente = (abs(rgb.r - rgb.g) < 0.2 && abs(rgb.g - rgb.b) < 0.2 && rgb.r > 0.5) // Argenté/gris clair
+        
+        if conditions.turbiditeEau == .tresTrouble && estJauneVert {
             bonusContraste = 10
         }
         else if conditions.etatMer == .agitee || conditions.etatMer == .formee {
-            if leurre.couleurPrincipale == .roseFuchsia || leurre.couleurPrincipale == .roseFluo {
+            if estRoseFlashy {
                 bonusContraste = 10
             } else if contraste == .flashy {
                 bonusContraste = 7
@@ -940,10 +945,7 @@ class SuggestionEngine: ObservableObject {
                 bonusContraste = 4
             }
         }
-        else if conditions.turbiditeEau == .claire &&
-                (leurre.couleurPrincipale == .argente ||
-                 leurre.couleurPrincipale == .bleuArgente ||
-                 leurre.couleurPrincipale == .sardine) {
+        else if conditions.turbiditeEau == .claire && estArgente {
             bonusContraste = 10
         }
         else {
@@ -1233,15 +1235,21 @@ class SuggestionEngine: ObservableObject {
         }
         
         // Turbidité
+        // ✅ AMÉLIORATION : Utiliser les composantes RGB réelles pour les justifications
+        let rgbPrincipale = leurre.composantesRGBPrincipale
+        let nomCouleur = leurre.couleurPrincipaleAffichage.nom
+        let estJauneVertJustif = (rgbPrincipale.g > 0.7 && rgbPrincipale.r > 0.4 && rgbPrincipale.b < 0.3)
+        let estArgenteJustif = (abs(rgbPrincipale.r - rgbPrincipale.g) < 0.2 && abs(rgbPrincipale.g - rgbPrincipale.b) < 0.2 && rgbPrincipale.r > 0.5)
+        
         if conditions.turbiditeEau == .tresTrouble {
-            if leurre.couleurPrincipale == .chartreuse || leurre.couleurPrincipale == .jauneFluo {
-                justifCouleur += "\n\n💡 Eau très trouble : votre jaune/chartreuse sera ultra-visible !"
+            if estJauneVertJustif {
+                justifCouleur += "\n\n💡 Eau très trouble : votre \(nomCouleur) sera ultra-visible !"
             } else if let contraste = leurre.contraste, contraste == .flashy {
                 justifCouleur += "\n\n⚡️ Flashy parfait pour percer la turbidité."
             }
         } else if conditions.turbiditeEau == .claire {
-            if leurre.couleurPrincipale == .argente || leurre.couleurPrincipale == .bleuArgente {
-                justifCouleur += "\n\n✨ Eau claire + argenté = imitation parfaite des bancs de poissons."
+            if estArgenteJustif {
+                justifCouleur += "\n\n✨ Eau claire + \(nomCouleur) = imitation parfaite des bancs de poissons."
             }
         }
         
@@ -1593,6 +1601,518 @@ class SuggestionEngine: ObservableObject {
         return resultat
     }
 
+    // MARK: - 🎯 Attribution Intelligente des Positions
+    
+    /// Évalue l'adéquation d'un leurre pour chaque position du spread
+    /// EN TENANT COMPTE DU CONTEXTE (turbidité, luminosité)
+    /// 
+    /// RÈGLES DÉFINITIVES :
+    /// - Short Corner : Agressif OU Naturel imitatif (grande taille/couleur naturelle)
+    /// - Long Corner : Discret OU Sombre (poissons méfiants à distance)
+    /// - Riggers : FLASHY (couleurs vives/fluo, attracteurs latéraux)
+    /// - Shotgun : DISCRET (poissons très méfiants, loin derrière)
+    private func evaluerProfilPosition(
+        leurre: Leurre,
+        position: PositionSpread,
+        conditions: ConditionsPeche
+    ) -> Double {
+        
+        var score: Double = 0
+        
+        // ✅ Utiliser le PROFIL VISUEL (déduit de couleur + finition)
+        let profil = leurre.profilVisuel
+        let finition = leurre.finition
+        let couleur = leurre.couleurPrincipale
+        let taille = leurre.longueur
+        
+        // ✅ Calculer l'efficacité contextuelle du profil
+        let efficaciteContexte = profil.efficaciteDansContexte(
+            turbidite: conditions.turbiditeEau,
+            luminosite: conditions.luminosite
+        )
+        
+        switch position {
+            
+        // SHORT CORNER : Agressif OU Naturel imitatif (dans les bulles)
+        case .shortCorner:
+            // Priorité 1 : NATUREL avec finitions holographiques (imitation réaliste)
+            if profil == .naturel {
+                score += 10  // PARFAIT
+                
+                // Bonus finitions holographiques (reflets type écailles)
+                if finition == .holographique || finition == .chrome || finition == .miroir {
+                    score += 4  // Reflets imitent vrai poisson
+                }
+                
+                // Bonus couleurs imitatives
+                // ✅ AMÉLIORATION : Analyser RGB pour identifier couleurs imitatives
+                let rgb = leurre.composantesRGBPrincipale
+                let estArgente = (abs(rgb.r - rgb.g) < 0.2 && abs(rgb.g - rgb.b) < 0.2 && rgb.r > 0.5)
+                let estVertDore = (rgb.g > 0.6 && rgb.r > 0.3 && rgb.b < 0.4)
+                
+                if estArgente {
+                    score += 5  // Imitation fourrage parfaite
+                } else if estVertDore {
+                    score += 3  // Bon
+                }
+            }
+            
+            // Priorité 2 : Grande taille (agressif)
+            if taille >= 15 {
+                score += 5  // Leurre agressif grande taille
+            }
+            
+            // Acceptable : Contraste
+            if profil == .contraste {
+                score += 6
+            }
+            
+            // Moins adapté : Flashy ou Sombre
+            if profil == .flashy {
+                score += 3  // Trop voyant pour position proche
+            }
+            if profil == .sombre {
+                score += 2  // Pas adapté
+            }
+            
+        // LONG CORNER : DISCRET OU SOMBRE (poissons méfiants à distance)
+        case .longCorner:
+            // Priorité 1 : SOMBRE (silhouette pour poissons à distance)
+            if profil == .sombre {
+                score += 15  // CHAMPION
+                
+                // Bonus finition mate (silhouette pure)
+                if finition == .mate {
+                    score += 5
+                }
+                if finition == .phosphorescent {
+                    score += 4
+                }
+            }
+            
+            // Priorité 2 : DISCRET (naturel sobre, pas de reflets agressifs)
+            else if profil == .naturel {
+                // Naturel discret acceptable si finition mate ou sans finition
+                if finition == .mate || finition == nil {
+                    score += 8  // Bon (discret)
+                } else if finition == .perlee {
+                    score += 6
+                } else {
+                    score += 4  // Moins bon (trop brillant)
+                }
+            }
+            
+            // Acceptable : Contraste
+            else if profil == .contraste {
+                score += 5
+            }
+            
+            // Mauvais : Flashy
+            else if profil == .flashy {
+                score += 1  // Trop agressif pour poissons méfiants
+                
+                // Pénalité finitions brillantes
+                if finition == .holographique || finition == .chrome || finition == .miroir {
+                    score -= 2
+                }
+            }
+            
+            // Bonus couleurs sombres
+            switch couleur {
+            case .noir, .violet, .bleuFonce, .marron, .noirViolet:
+                score += 6
+            case .vert, .vertDore:
+                score += 2
+            case .chartreuse, .jauneFluo, .roseFuchsia, .roseFluo:
+                score -= 3  // Trop flashy
+            default:
+                break
+            }
+            
+        // RIGGERS : FLASHY (couleurs vives/fluo, attracteurs 0-2m)
+        case .shortRigger, .longRigger:
+            // Priorité ABSOLUE : FLASHY avec couleurs vives
+            if profil == .flashy {
+                score += 15  // PARFAIT
+                
+                // Bonus couleurs ultra-vives
+                switch couleur {
+                case .chartreuse, .jauneFluo:
+                    score += 8  // Ultra-attracteur
+                case .roseFuchsia, .roseFluo:
+                    score += 8
+                case .orange, .rouge:
+                    score += 6
+                case .rose, .jaune:
+                    score += 5
+                default:
+                    score += 2
+                }
+                
+                // ✅ BONUS CONTEXTUEL : Efficacité selon environnement
+                score += efficaciteContexte * 0.5  // +0 à +5 pts
+            }
+            
+            // Acceptable : Contraste
+            else if profil == .contraste {
+                score += 8
+            }
+            
+            // Mauvais : Naturel ou Sombre
+            else if profil == .naturel {
+                score += 3  // Pas assez attractif
+            }
+            else if profil == .sombre {
+                score += 2  // Pas du tout adapté
+                score -= 3  // Pénalité
+            }
+            
+            // Bonus finitions (toutes acceptées pour riggers)
+            if let fin = finition {
+                switch fin {
+                case .holographique, .chrome, .miroir, .paillete:
+                    score += 3  // Bon
+                case .brillante, .metallique:
+                    score += 2
+                case .UV:
+                    score += 2
+                default:
+                    break
+                }
+            }
+            
+        // SHOTGUN : DISCRET (poissons très méfiants, 70-100m)
+        case .shotgun:
+            // ✅ Priorité : DISCRET et efficace dans le contexte
+            score += efficaciteContexte * 0.8  // 0-8 pts selon contexte
+            
+            // Profil naturel discret parfait
+            if profil == .naturel {
+                score += 8  // PARFAIT (discret)
+                
+                // Bonus finitions discrètes
+                if finition == .mate || finition == nil {
+                    score += 3
+                } else if finition == .perlee {
+                    score += 2
+                }
+            }
+            
+            // Contraste acceptable
+            else if profil == .contraste {
+                score += 6
+            }
+            
+            // Sombre acceptable (discret)
+            else if profil == .sombre {
+                score += 5
+            }
+            
+            // Flashy moins bon (trop agressif pour poissons méfiants)
+            else if profil == .flashy {
+                score += 3
+            }
+            
+            // Couleurs discrètes
+            switch couleur {
+            case .argente, .bleuArgente, .sardine:
+                score += 4  // Discret classique
+            case .vertDore, .vert:
+                score += 3
+            case .noir, .violet:
+                score += 2  // Sombre discret
+            case .chartreuse, .jauneFluo, .roseFuchsia:
+                score -= 2  // Trop voyant
+            default:
+                break
+            }
+            
+        // LIBRE : Position flexible
+        case .libre:
+            score += 5
+        }
+        
+        return score
+    }
+    
+    /// Attribue intelligemment les positions selon les profils des leurres
+    private func attribuerPositionsIntelligentes(
+        suggestions: [SuggestionResult],
+        positionsDisponibles: [PositionSpread],
+        distancesDynamiques: [PositionSpread: Int],
+        conditions: ConditionsPeche
+    ) -> [SuggestionResult] {
+        
+        var resultat: [SuggestionResult] = []
+        var suggestionsRestantes = suggestions
+        var positionsRestantes = positionsDisponibles
+        
+        // Stratégie d'attribution par priorité des positions
+        let ordrePriorite: [PositionSpread] = [
+            .longCorner,    // Le plus difficile à remplir (besoin de leurres sombres)
+            .shortRigger,   // Attracteur important
+            .longRigger,    // Second attracteur
+            .shortCorner,   // Naturel (plus facile)
+            .shotgun,       // Polyvalent
+            .libre          // Flexible
+        ]
+        
+        // Attribution position par position selon priorité
+        for positionPrioritaire in ordrePriorite {
+            // Vérifier si cette position est demandée
+            guard positionsRestantes.contains(positionPrioritaire) else { continue }
+            guard !suggestionsRestantes.isEmpty else { break }
+            
+            // Cas spécial LONG RIGGER : éviter même couleur que SHORT RIGGER
+            if positionPrioritaire == .longRigger {
+                // Chercher si Short Rigger déjà attribué
+                if let shortRiggerSuggestion = resultat.first(where: { $0.positionSpread == .shortRigger }) {
+                    let couleurShortRigger = shortRiggerSuggestion.leurre.couleurPrincipale
+                    let customShortRigger = shortRiggerSuggestion.leurre.couleurPrincipaleCustom
+                    
+                    // Calculer scores en pénalisant les couleurs identiques
+                    var meilleurIndex = 0
+                    var meilleurScore = -1000.0
+                    
+                    for (index, suggestion) in suggestionsRestantes.enumerated() {
+                        var score = evaluerProfilPosition(
+                            leurre: suggestion.leurre,
+                            position: positionPrioritaire,
+                            conditions: conditions  // ✅ Passer les conditions
+                        )
+                        
+                        // Bonus pour diversité du spread : privilégier le score global
+                        score += suggestion.scoreTotal * 0.1
+                        
+                        // ✅ AMÉLIORATION : Pénalité si même couleur (standard ou custom)
+                        let memeCouleur: Bool
+                        if let customCurrent = suggestion.leurre.couleurPrincipaleCustom,
+                           let customShort = customShortRigger {
+                            // Les deux sont custom : comparer par ID
+                            memeCouleur = (customCurrent.id == customShort.id)
+                        } else if customShortRigger == nil && suggestion.leurre.couleurPrincipaleCustom == nil {
+                            // Les deux sont standards : comparer par enum
+                            memeCouleur = (suggestion.leurre.couleurPrincipale == couleurShortRigger)
+                        } else {
+                            // L'une est custom, l'autre standard : couleurs différentes
+                            memeCouleur = false
+                        }
+                        
+                        if memeCouleur {
+                            score -= 10
+                        }
+                        
+                        if score > meilleurScore {
+                            meilleurScore = score
+                            meilleurIndex = index
+                        }
+                    }
+                    
+                    // Attribuer
+                    var suggestion = suggestionsRestantes.remove(at: meilleurIndex)
+                    suggestion = attribuerPositionEtJustification(
+                        suggestion: suggestion,
+                        position: positionPrioritaire,
+                        distance: distancesDynamiques[positionPrioritaire] ?? 20
+                    )
+                    resultat.append(suggestion)
+                    positionsRestantes.removeAll { $0 == positionPrioritaire }
+                    
+                    continue
+                }
+            }
+            
+            // Attribution standard : chercher le leurre le mieux adapté
+            var meilleurIndex = 0
+            var meilleurScore = -1000.0
+            
+            for (index, suggestion) in suggestionsRestantes.enumerated() {
+                var score = evaluerProfilPosition(
+                    leurre: suggestion.leurre,
+                    position: positionPrioritaire,
+                    conditions: conditions  // ✅ Passer les conditions
+                )
+                
+                // Bonus pour le score global (on privilégie quand même les bons leurres)
+                score += suggestion.scoreTotal * 0.1
+                
+                if score > meilleurScore {
+                    meilleurScore = score
+                    meilleurIndex = index
+                }
+            }
+            
+            // Attribuer la position au meilleur candidat
+            var suggestion = suggestionsRestantes.remove(at: meilleurIndex)
+            suggestion = attribuerPositionEtJustification(
+                suggestion: suggestion,
+                position: positionPrioritaire,
+                distance: distancesDynamiques[positionPrioritaire] ?? 20
+            )
+            resultat.append(suggestion)
+            positionsRestantes.removeAll { $0 == positionPrioritaire }
+        }
+        
+        // Trier le résultat selon l'ordre des positions (pour affichage cohérent)
+        let ordreAffichage: [PositionSpread] = [.shortCorner, .longCorner, .shortRigger, .longRigger, .shotgun, .libre]
+        resultat.sort { suggestion1, suggestion2 in
+            guard let pos1 = suggestion1.positionSpread,
+                  let pos2 = suggestion2.positionSpread else {
+                return false
+            }
+            let index1 = ordreAffichage.firstIndex(of: pos1) ?? 999
+            let index2 = ordreAffichage.firstIndex(of: pos2) ?? 999
+            return index1 < index2
+        }
+        
+        return resultat
+    }
+    
+    /// Attribue une position et génère la justification correspondante
+    private func attribuerPositionEtJustification(
+        suggestion: SuggestionResult,
+        position: PositionSpread,
+        distance: Int
+    ) -> SuggestionResult {
+        
+        var suggestionModifiee = suggestion
+        suggestionModifiee.positionSpread = position
+        suggestionModifiee.distanceSpread = distance
+        
+        let leurre = suggestion.leurre
+        var justifPosition = ""
+        
+        switch position {
+        case .libre:
+            justifPosition = "Position LIBRE (\(distance)m) : "
+            justifPosition += "Meilleur leurre en position flexible. "
+            
+        case .shortCorner:
+            justifPosition = "Position SHORT CORNER (\(distance)m) : "
+            
+            // ✅ Justification personnalisée selon profil du leurre
+            let profil = leurre.profilVisuel
+            if profil == .naturel {
+                justifPosition += "Naturel parfait dans les bulles du sillage. "
+                // ✅ AMÉLIORATION : Utiliser RGB réels
+                let rgb = leurre.composantesRGBPrincipale
+                let nomCouleur = leurre.couleurPrincipaleAffichage.nom
+                let estArgente = (abs(rgb.r - rgb.g) < 0.2 && abs(rgb.g - rgb.b) < 0.2 && rgb.r > 0.5)
+                if estArgente {
+                    justifPosition += "Imitation poisson fourrage ultra-réaliste (\(nomCouleur)). "
+                }
+            } else if profil == .contraste {
+                justifPosition += "Contraste visible dans la zone agitée proche. "
+            } else if profil == .flashy {
+                justifPosition += "Flashy attractif même dans les remous. "
+            } else {
+                justifPosition += "Position proche agressive dans le sillage. "
+            }
+            
+        case .longCorner:
+            justifPosition = "Position LONG CORNER (\(distance)m) : "
+            
+            // ✅ Justification selon profil (priorité leurres sombres)
+            let profil = leurre.profilVisuel
+            if profil == .sombre {
+                justifPosition += "Silhouette SOMBRE visible par en-dessous - PARFAIT ! "
+                if leurre.finition == .mate {
+                    justifPosition += "Finition mate crée ombre pure idéale. "
+                } else if leurre.finition == .phosphorescent {
+                    justifPosition += "Phosphorescent crée contraste lumineux. "
+                }
+            } else if profil == .contraste {
+                justifPosition += "Contraste marqué crée bonne silhouette. "
+            } else {
+                justifPosition += "Position éloignée, visible en approche oblique. "
+                if profil == .flashy {
+                    justifPosition += "Note : un leurre plus sombre serait encore mieux ici. "
+                }
+            }
+            
+        case .shortRigger:
+            justifPosition = "Position SHORT RIGGER (\(distance)m) : "
+            
+            // ✅ Justification selon profil (priorité leurres flashy)
+            let profil = leurre.profilVisuel
+            if profil == .flashy {
+                justifPosition += "FLASHY PARFAIT - Attracteur latéral maximum ! "
+                
+                if let finition = leurre.finition {
+                    switch finition {
+                    case .holographique:
+                        justifPosition += "Holographique génère reflets irrésistibles. "
+                    case .chrome, .miroir:
+                        justifPosition += "Finition miroir crée éclats lumineux. "
+                    case .paillete:
+                        justifPosition += "Paillettes scintillent comme écailles. "
+                    default:
+                        break
+                    }
+                }
+                
+                // ✅ AMÉLIORATION : Utiliser RGB réels pour identifier les couleurs flashy
+                let rgb = leurre.composantesRGBPrincipale
+                let nomCouleur = leurre.couleurPrincipaleAffichage.nom
+                let estJauneVert = (rgb.g > 0.7 && rgb.r > 0.4 && rgb.b < 0.3)
+                let estRoseFlashy = (rgb.r > 0.8 && rgb.g < 0.5 && rgb.b > 0.4)
+                
+                if estJauneVert {
+                    justifPosition += "\(nomCouleur) ultra-visible de loin. "
+                } else if estRoseFlashy {
+                    justifPosition += "\(nomCouleur) électrique attire l'œil. "
+                }
+            } else if profil == .contraste {
+                justifPosition += "Contrasté efficace sur tangon latéral. "
+            } else {
+                justifPosition += "Attracteur latéral sur tangon. "
+            }
+            
+        case .longRigger:
+            justifPosition = "Position LONG RIGGER (\(distance)m) : "
+            
+            // ✅ Justification (même logique que Short Rigger + diversité)
+            let profil = leurre.profilVisuel
+            if profil == .flashy {
+                justifPosition += "FLASHY sur tangon opposé - Diversité attracteurs ! "
+                
+                if let finition = leurre.finition {
+                    switch finition {
+                    case .holographique, .chrome, .miroir:
+                        justifPosition += "Finition brillante complémentaire. "
+                    case .paillete:
+                        justifPosition += "Paillettes créent second point focal. "
+                    default:
+                        break
+                    }
+                }
+            } else if profil == .contraste {
+                justifPosition += "Contrasté sur second tangon. "
+            } else {
+                justifPosition += "Position tangon opposé pour couverture latérale. "
+            }
+            
+        case .shotgun:
+            justifPosition = "Position SHOTGUN (\(distance)m) : "
+            justifPosition += "Position centrale lointaine - "
+            
+            let profil = leurre.profilVisuel
+            if profil == .contraste {
+                justifPosition += "Contraste fort efficace à distance. "
+            } else if profil == .naturel {
+                justifPosition += "Discret mais attractif, méfiance réduite. "
+            } else if profil == .flashy {
+                justifPosition += "Flashy visible même très loin. "
+            } else {
+                justifPosition += "Position arrière stratégique. "
+            }
+        }
+        
+        suggestionModifiee.justificationPosition = justifPosition
+        
+        return suggestionModifiee
+    }
+    
     private func genererSpread(
         suggestions: [SuggestionResult],
         conditions: ConditionsPeche,
@@ -1639,47 +2159,15 @@ class SuggestionEngine: ObservableObject {
         // Calcul dynamique des distances
         let distancesDynamiques = calculerDistancesDynamiques(conditions: conditions)
         
-        // Attribution des positions
-        for (index, position) in positionsDisponibles.enumerated() {
-            guard index < suggestionsPourSpread.count else { break }
-            
-            var suggestion = suggestionsPourSpread[index]
-            suggestion.positionSpread = position
-            suggestion.distanceSpread = distancesDynamiques[position] ?? 20
-            
-            // Justification position
-            let distance = distancesDynamiques[position] ?? 20
-            var justifPosition = ""
-            
-            switch position {
-            case .libre:
-                justifPosition = "Position LIBRE (\(distance)m) : "
-                justifPosition += "Meilleur leurre en position flexible. "
-                
-            case .shortCorner:
-                justifPosition = "Position SHORT CORNER (\(distance)m) : "
-                justifPosition += "Agressif, naturel, dans les bulles du sillage. "
-                
-            case .longCorner:
-                justifPosition = "Position LONG CORNER (\(distance)m) : "
-                justifPosition += "Sombre, silhouette visible par en-dessous. "
-                
-            case .shortRigger:
-                justifPosition = "Position SHORT RIGGER (\(distance)m) : "
-                justifPosition += "Flashy, attracteur latéral sur tangon. "
-                
-            case .longRigger:
-                justifPosition = "Position LONG RIGGER (\(distance)m) : "
-                justifPosition += "Flashy, couleur différente sur tangon opposé. "
-                
-            case .shotgun:
-                justifPosition = "Position SHOTGUN (\(distance)m) : "
-                justifPosition += "Discret, fort contraste, très loin en position centrale. "
-            }
-            
-            suggestion.justificationPosition = justifPosition
-            suggestionsAvecPosition.append(suggestion)
-        }
+        // ✅ NOUVEAU : Attribution INTELLIGENTE des positions selon profil des leurres
+        let suggestionsAvecPositionAttribuee = attribuerPositionsIntelligentes(
+            suggestions: suggestionsPourSpread,
+            positionsDisponibles: positionsDisponibles,
+            distancesDynamiques: distancesDynamiques,
+            conditions: conditions
+        )
+        
+        suggestionsAvecPosition = suggestionsAvecPositionAttribuee
         
         // Analyse du spread
         let analyseSpread = genererAnalyseSpread(
@@ -1726,10 +2214,19 @@ class SuggestionEngine: ObservableObject {
             var analyse = "📐 ANALYSE DU SPREAD\n\n"
             
             // Diversité des couleurs
-            let couleurs = Set(suggestions.compactMap { $0.leurre.couleurPrincipale })
-            analyse += "🎨 Diversité couleurs : \(couleurs.count) teintes différentes\n"
+            // ✅ AMÉLIORATION : Compter les couleurs uniques (standard + custom)
+            var couleursUniques = Set<String>()
+            for suggestion in suggestions {
+                if let custom = suggestion.leurre.couleurPrincipaleCustom {
+                    couleursUniques.insert("custom_\(custom.id.uuidString)")
+                } else {
+                    couleursUniques.insert("standard_\(suggestion.leurre.couleurPrincipale.rawValue)")
+                }
+            }
             
-            if couleurs.count == suggestions.count {
+            analyse += "🎨 Diversité couleurs : \(couleursUniques.count) teintes différentes\n"
+            
+            if couleursUniques.count == suggestions.count {
                 analyse += "   ✅ Excellent ! Chaque leurre a une couleur unique.\n\n"
             } else {
                 analyse += "   ⚠️ Certaines couleurs se répètent.\n\n"

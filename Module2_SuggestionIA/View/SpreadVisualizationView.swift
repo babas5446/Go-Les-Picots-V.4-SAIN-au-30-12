@@ -250,14 +250,8 @@ struct LignePecheView: View {
                             .foregroundColor(.secondary)
                         
                         HStack(spacing: 4) {
-                            Circle()
-                                .fill(couleurPourAffichage(suggestion.leurre.couleurPrincipale))
-                                .frame(width: 8, height: 8)
-                                .overlay(
-                                    Circle()
-                                        .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                                )
-                            Text(suggestion.leurre.couleurPrincipale.displayName)
+                            CouleurPastille(leurre: suggestion.leurre, isPrincipal: true, size: 8)
+                            Text(suggestion.leurre.couleurPrincipaleAffichage.nom)
                                 .font(.caption2)
                                 .foregroundColor(.secondary)
                         }
@@ -469,14 +463,8 @@ struct LegendRow: View {
                         .foregroundColor(.secondary)
                     
                     HStack(spacing: 4) {
-                        Circle()
-                            .fill(couleurPourAffichage(suggestion.leurre.couleurPrincipale))
-                            .frame(width: 8, height: 8)
-                            .overlay(
-                                Circle()
-                                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                            )
-                        Text(suggestion.leurre.couleurPrincipale.displayName)
+                        CouleurPastille(leurre: suggestion.leurre, isPrincipal: true, size: 8)
+                        Text(suggestion.leurre.couleurPrincipaleAffichage.nom)
                             .font(.caption2)
                             .foregroundColor(.secondary)
                     }
@@ -547,14 +535,8 @@ struct PositionDetailCard: View {
                                 .foregroundColor(.secondary)
                             
                             HStack(spacing: 3) {
-                                Circle()
-                                    .fill(couleurPourAffichage(suggestion.leurre.couleurPrincipale))
-                                    .frame(width: 6, height: 6)
-                                    .overlay(
-                                        Circle()
-                                            .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
-                                    )
-                                Text(suggestion.leurre.couleurPrincipale.displayName)
+                                CouleurPastille(leurre: suggestion.leurre, isPrincipal: true, size: 6)
+                                Text(suggestion.leurre.couleurPrincipaleAffichage.nom)
                                     .font(.caption2)
                                     .foregroundColor(.secondary)
                             }
@@ -994,4 +976,43 @@ private struct TrianglePointer: Shape {
         return path
     }
 }
+
+// MARK: - Helper : Pastille de couleur avec support Custom et Rainbow
+
+/// Affiche une pastille de couleur (standard ou rainbow custom)
+struct CouleurPastille: View {
+    let leurre: Leurre
+    let isPrincipal: Bool
+    let size: CGFloat
+    
+    init(leurre: Leurre, isPrincipal: Bool = true, size: CGFloat = 8) {
+        self.leurre = leurre
+        self.isPrincipal = isPrincipal
+        self.size = size
+    }
+    
+    var body: some View {
+        let info = isPrincipal ? leurre.couleurPrincipaleAffichage : leurre.couleurSecondaireAffichage
+        
+        Group {
+            if let colorInfo = info {
+                if colorInfo.isRainbow {
+                    RainbowCircle(size: size, showBorder: true)
+                } else {
+                    Circle()
+                        .fill(colorInfo.color)
+                        .frame(width: size, height: size)
+                        .overlay(
+                            Circle()
+                                .stroke(Color.gray.opacity(0.3), lineWidth: size > 10 ? 1 : 0.5)
+                        )
+                }
+            } else if !isPrincipal {
+                // Couleur secondaire absente : ne rien afficher
+                EmptyView()
+            }
+        }
+    }
+}
+
 
