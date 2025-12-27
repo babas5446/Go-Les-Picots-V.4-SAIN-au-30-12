@@ -26,11 +26,13 @@ struct LeurreFormView: View {
     enum Mode {
         case creation
         case edition(Leurre)
+        case duplication(Leurre)
         
         var titre: String {
             switch self {
             case .creation: return "Nouveau leurre"
             case .edition: return "Modifier le leurre"
+            case .duplication: return "Dupliquer le leurre"
             }
         }
         
@@ -38,12 +40,27 @@ struct LeurreFormView: View {
             switch self {
             case .creation: return "Ajouter"
             case .edition: return "Enregistrer"
+            case .duplication: return "Dupliquer"
             }
         }
         
         var isCreation: Bool {
             if case .creation = self { return true }
             return false
+        }
+        
+        var isDuplication: Bool {
+            if case .duplication = self { return true }
+            return false
+        }
+        
+        var leurreSource: Leurre? {
+            switch self {
+            case .edition(let leurre), .duplication(let leurre):
+                return leurre
+            case .creation:
+                return nil
+            }
         }
     }
     
@@ -113,9 +130,12 @@ struct LeurreFormView: View {
         self.viewModel = viewModel
         self.mode = mode
         
-        // Pré-remplir si édition
-        if case .edition(let leurre) = mode {
-            _nom = State(initialValue: leurre.nom)
+        // Pré-remplir si édition ou duplication
+        if let leurre = mode.leurreSource {
+            // Pour duplication, on ajoute " (copie)" au nom
+            let nomModifie = mode.isDuplication ? "\(leurre.nom) (copie)" : leurre.nom
+            
+            _nom = State(initialValue: nomModifie)
             _marque = State(initialValue: leurre.marque)
             _modele = State(initialValue: leurre.modele ?? "")
             _typeLeurre = State(initialValue: leurre.typeLeurre)
@@ -140,7 +160,7 @@ struct LeurreFormView: View {
             _vitesseMax = State(initialValue: leurre.vitesseTraineMax.map { String(format: "%.0f", $0) } ?? "")
             _notes = State(initialValue: leurre.notes ?? "")
             
-            // Charger la photo existante
+            // Charger la photo existante (sauf en mode duplication où on copie la photo)
             if let photoPath = leurre.photoPath,
                let image = LeurreStorageService.shared.chargerPhoto(chemin: photoPath) {
                 _selectedImage = State(initialValue: image)
@@ -760,8 +780,8 @@ struct LeurreFormView: View {
             nil
         
         switch mode {
-        case .creation:
-            // Créer nouveau leurre
+        case .creation, .duplication:
+            // Créer nouveau leurre (création ou duplication)
             let nouvelID = viewModel.genererNouvelID()
             
             var nouveauLeurre = Leurre(
@@ -848,7 +868,7 @@ struct LeurreFormView: View {
         
         let leurreID: Int
         switch mode {
-        case .creation:
+        case .creation, .duplication:
             leurreID = viewModel.genererNouvelID()
         case .edition(let leurre):
             leurreID = leurre.id

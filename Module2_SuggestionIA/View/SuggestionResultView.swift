@@ -117,6 +117,71 @@ struct SuggestionResultView: View {
         suggestions.filter { $0.scoreTotal >= 80 }
     }
     
+    // MARK: - Tri intelligent pour "Tous"
+    
+    /// Retourne la position recommandée basée sur le profil visuel du leurre
+    private func positionRecommandee(pour leurre: Leurre) -> PositionSpread {
+        // Si le leurre a déjà des positions définies, prendre la première
+        if let positions = leurre.positionsSpreadFinales.first {
+            return positions
+        }
+        
+        // Sinon, déduire selon le profil visuel
+        let profil = leurre.profilVisuel
+        
+        switch profil {
+        case .naturel:
+            return .shortCorner  // 🟢 Proche, naturel, dans les bulles
+        case .sombre:
+            return .longCorner   // 🔵 Moyen distance, silhouette
+        case .flashy:
+            return .shortRigger  // 🟡 Latéral proche, attracteur
+        case .contraste:
+            return .shotgun      // 🔴 Très loin, fort contraste
+        }
+    }
+    
+    /// Retourne les suggestions triées par position recommandée, puis par score
+    private func suggestionsTrieesParSpread() -> [SuggestionEngine.SuggestionResult] {
+        // Ordre de priorité des positions
+        let ordrePositions: [PositionSpread] = [
+            .shortCorner,
+            .longCorner,
+            .shortRigger,
+            .longRigger,
+            .shotgun,
+            .libre
+        ]
+        
+        // Grouper les suggestions par position recommandée
+        var groupesParPosition: [PositionSpread: [SuggestionEngine.SuggestionResult]] = [:]
+        
+        for suggestion in suggestions {
+            let position = suggestion.positionSpread ?? positionRecommandee(pour: suggestion.leurre)
+            
+            if groupesParPosition[position] == nil {
+                groupesParPosition[position] = []
+            }
+            groupesParPosition[position]?.append(suggestion)
+        }
+        
+        // Trier chaque groupe par score décroissant
+        for position in groupesParPosition.keys {
+            groupesParPosition[position]?.sort { $0.scoreTotal > $1.scoreTotal }
+        }
+        
+        // Construire le résultat final dans l'ordre des positions
+        var resultat: [SuggestionEngine.SuggestionResult] = []
+        
+        for position in ordrePositions {
+            if let suggestions = groupesParPosition[position] {
+                resultat.append(contentsOf: suggestions)
+            }
+        }
+        
+        return resultat
+    }
+    
     // MARK: - Tab Selector
     
     private var tabSelector: some View {
@@ -163,7 +228,7 @@ struct SuggestionResultView: View {
                     .foregroundColor(Color(hex: "0277BD"))
                     .padding(.top)
                 
-                ForEach(suggestions.prefix(5)) { suggestion in
+                ForEach(suggestions.prefix(10)) { suggestion in
                     SuggestionCard(
                         suggestion: suggestion,
                         isExpanded: expandedCards.contains(suggestion.id),
@@ -212,20 +277,136 @@ struct SuggestionResultView: View {
     // MARK: - Toutes Suggestions View
     
     private var toutesSuggestionsView: some View {
+        ToutesSuggestionsContent(
+            suggestions: suggestions,
+            configuration: configuration,
+            suggestionsFiltrees: suggestionsTrieesParSpread()
+        )
+    }
+}
+
+// MARK: - Toutes Suggestions Content
+
+struct ToutesSuggestionsContent: View {
+    let suggestions: [SuggestionEngine.SuggestionResult]
+    let configuration: SuggestionEngine.ConfigurationSpread?
+    let suggestionsFiltrees: [SuggestionEngine.SuggestionResult]
+    
+    var body: some View {
         ScrollView {
             VStack(spacing: 16) {
-                Text("📋 TOUTES LES SUGGESTIONS (\(suggestions.count))")
+                Text("📋 TOUTES LES SUGGESTIONS PAR POSITION (\(suggestions.count))")
                     .font(.headline)
                     .foregroundColor(Color(hex: "0277BD"))
                     .padding(.top)
                 
-                ForEach(suggestions) { suggestion in
-                    SuggestionCardCompact(suggestion: suggestion)
+                // ✅ Afficher les suggestions regroupées par position
+                ForEach(Array(suggestionsFiltrees.enumerated()), id: \.element.id) { index, suggestion in
+                    
+                    // ✅ Séparateur de position (quand la position change)
+                    if shouldShowPositionHeader(at: index) {
+                        positionHeaderView(for: suggestion)
+                    }
+                    
+                    SuggestionCardCompact(
+                        suggestion: suggestion,
+                        showPositionBadge: true  // ✅ Toujours afficher la position
+                    )
                 }
                 
                 Spacer(minLength: 40)
             }
             .padding()
+        }
+    }
+    
+    private func shouldShowPositionHeader(at index: Int) -> Bool {
+        // Afficher le header si c'est le premier ou si la position change
+        if index == 0 {
+            return true
+        }
+        
+        let currentPos = suggestionsFiltrees[index].positionSpread ?? positionRecommandee(pour: suggestionsFiltrees[index].leurre)
+        let previousPos = suggestionsFiltrees[index - 1].positionSpread ?? positionRecommandee(pour: suggestionsFiltrees[index - 1].leurre)
+        
+        return currentPos != previousPos
+    }
+    
+    private func positionRecommandee(pour leurre: Leurre) -> PositionSpread {
+        // Logique identique à celle de SuggestionResultView
+        if let positions = leurre.positionsSpreadFinales.first {
+            return positions
+        }
+        
+        let profil = leurre.profilVisuel
+        
+        switch profil {
+        case .naturel: return .shortCorner
+        case .sombre: return .longCorner
+        case .flashy: return .shortRigger
+        case .contraste: return .shotgun
+        }
+    }
+    
+    private func positionHeaderView(for suggestion: SuggestionEngine.SuggestionResult) -> some View {
+        let position = suggestion.positionSpread ?? positionRecommandee(pour: suggestion.leurre)
+        let isSpreadPosition = suggestion.positionSpread != nil
+        let count = suggestionsFiltrees.filter {
+            ($0.positionSpread ?? positionRecommandee(pour: $0.leurre)) == position
+        }.count
+        
+        return VStack(spacing: 8) {
+            if isSpreadPosition {
+                // Header pour position du spread final
+                HStack(spacing: 8) {
+                    Text(position.emoji)
+                        .font(.title)
+                    VStack(alignment: .leading, spacing: 2) {
+                        HStack {
+                            Text(position.displayName.uppercased())
+                                .font(.headline)
+                                .fontWeight(.bold)
+                                .foregroundColor(Color(hex: "FFBC42"))
+                            Image(systemName: "trophy.fill")
+                                .foregroundColor(Color(hex: "FFBC42"))
+                        }
+                        Text(position.caracteristiques)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    Spacer()
+                    Text("\(count)")
+                        .font(.title3)
+                        .fontWeight(.bold)
+                        .foregroundColor(Color(hex: "FFBC42"))
+                }
+                .padding()
+                .background(Color(hex: "FFBC42").opacity(0.1))
+                .cornerRadius(12)
+            } else {
+                // Header pour position recommandée
+                HStack(spacing: 8) {
+                    Text(position.emoji)
+                        .font(.title)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(position.displayName.uppercased())
+                            .font(.headline)
+                            .fontWeight(.bold)
+                            .foregroundColor(Color(hex: "0277BD"))
+                        Text(position.caracteristiques)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    Spacer()
+                    Text("\(count)")
+                        .font(.title3)
+                        .fontWeight(.bold)
+                        .foregroundColor(Color(hex: "0277BD"))
+                }
+                .padding()
+                .background(Color(hex: "0277BD").opacity(0.05))
+                .cornerRadius(12)
+            }
         }
     }
 }
@@ -238,193 +419,238 @@ struct SuggestionCard: View {
     let onToggle: () -> Void
     @StateObject private var viewModel = LeureViewModel()
     
+    private var scoreInt: Int {
+        Int(suggestion.scoreTotal)
+    }
+    
+    private var nombreEtoiles: Int {
+        min(5, max(1, Int(suggestion.scoreTotal / 20)))
+    }
+    
+    private var longueurInt: Int {
+        Int(suggestion.leurre.longueur)
+    }
+    
+    private var profondeurTexte: String {
+        if let profMin = suggestion.leurre.profondeurNageMin,
+           let profMax = suggestion.leurre.profondeurNageMax {
+            return "\(Int(profMin))-\(Int(profMax))m"
+        }
+        return "-"
+    }
+    
+    private var vitesseTexte: String {
+        if let vitMin = suggestion.leurre.vitesseTraineMin,
+           let vitMax = suggestion.leurre.vitesseTraineMax {
+            return "\(Int(vitMin))-\(Int(vitMax))kts"
+        }
+        return "-"
+    }
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             // Header (toujours visible)
-            Button(action: onToggle) {
-                HStack(spacing: 12) {
-                    // Badge score
-                    VStack(spacing: 4) {
-                        Text("\(Int(suggestion.scoreTotal))")
-                            .font(.title2)
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
-                        Text("/100")
-                            .font(.caption2)
-                            .foregroundColor(.white.opacity(0.8))
-                    }
-                    .frame(width: 60, height: 60)
-                    .background(couleurScore(suggestion.scoreTotal))
-                    .cornerRadius(12)
-                    
-                    // Info leurre
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(suggestion.leurre.nom)
-                            .font(.headline)
-                            .foregroundColor(.primary)
-                        
-                        Text(suggestion.leurre.marque)
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                        
-                        // ➕ NOUVEAU : Couleur avec rond
-                        HStack(spacing: 4) {
-                            CouleurPastille(leurre: suggestion.leurre, isPrincipal: true, size: 10)
-                            Text(suggestion.leurre.couleurPrincipaleAffichage.nom)
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
-                        
-                        HStack(spacing: 8) {
-                            EtoilesView(nombre: min(5, max(1, Int(suggestion.scoreTotal / 20))))
-                            
-                            // ✅ CORRECTION : Calcul niveau qualité depuis score
-                            Text(qualiteDepuisScore(suggestion.scoreTotal))
-                                .font(.caption)
-                                .fontWeight(.semibold)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 4)
-                                .background(couleurScore(suggestion.scoreTotal).opacity(0.2))
-                                .foregroundColor(couleurScore(suggestion.scoreTotal))
-                                .cornerRadius(8)
-                        }
-                    }
-                    
-                    Spacer()
-                    
-                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                        .foregroundColor(Color(hex: "0277BD"))
-                }
-                .padding()
-            }
-            .buttonStyle(PlainButtonStyle())
+            headerButton
             
             // Détails (si expandé)
             if isExpanded {
-                VStack(alignment: .leading, spacing: 16) {
-                    Divider()
-                    
-                    // 📸 PHOTO DU LEURRE
-                    if let image = viewModel.chargerPhoto(pourLeurre: suggestion.leurre) {
-                        Image(uiImage: image)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(maxHeight: 250)
-                            .cornerRadius(12)
-                            .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
-                            .padding(.horizontal)
-                    }
-                    
-                    // Modèle (si disponible)
-                    if let modele = suggestion.leurre.modele, !modele.isEmpty {
-                        HStack(spacing: 8) {
-                            Image(systemName: "tag.fill")
-                                .foregroundColor(Color(hex: "0277BD"))
-                            Text("Modèle : \(modele)")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                        }
-                        .padding(.horizontal)
-                    }
-                    
-                    // Position spread
-                    if let position = suggestion.positionSpread,
-                       let distance = suggestion.distanceSpread {
-                        HStack {
-                            Image(systemName: "location.fill")
-                                .foregroundColor(Color(hex: "FFBC42"))
-                            Text(position.displayName)
-                                .font(.subheadline)
-                                .fontWeight(.semibold)
-                            Text("(\(distance)m)")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
-                        .padding(.horizontal)
-                    }
-                    
-                    // Caractéristiques
-                    HStack(spacing: 16) {
-                        CaracBadge(
-                            label: "Longueur",
-                            valeur: "\(Int(suggestion.leurre.longueur))cm"
-                        )
-                    CaracBadge(
-                        label: "Profondeur",
-                        valeur: {
-                            if let profMin = suggestion.leurre.profondeurNageMin,
-                               let profMax = suggestion.leurre.profondeurNageMax {
-                                return "\(Int(profMin))-\(Int(profMax))m"
-                            }
-                            return "-"
-                        }()
-                    )
-                    CaracBadge(
-                        label: "Vitesse",
-                        valeur: {
-                            if let vitMin = suggestion.leurre.vitesseTraineMin,
-                               let vitMax = suggestion.leurre.vitesseTraineMax {
-                                return "\(Int(vitMin))-\(Int(vitMax))kts"
-                            }
-                            return "-"
-                        }()
-                    )
-                    }
-                    .padding(.horizontal)
-                    
-                    // Justifications
-                    JustificationSection(
-                        titre: "TECHNIQUE",
-                        score: Int(suggestion.scoreTechnique),
-                        max: 40,
-                        texte: suggestion.justificationTechnique,
-                        couleur: Color(hex: "0277BD")
-                    )
-                    
-                    JustificationSection(
-                        titre: "COULEUR",
-                        score: Int(suggestion.scoreCouleur),
-                        max: 30,
-                        texte: suggestion.justificationCouleur,
-                        couleur: Color(hex: "FFBC42")
-                    )
-                    
-                    JustificationSection(
-                        titre: "CONDITIONS",
-                        score: Int(suggestion.scoreConditions),
-                        max: 30,
-                        texte: suggestion.justificationConditions,
-                        couleur: .green
-                    )
-                    
-                    // Astuce pro
-                    HStack(alignment: .top, spacing: 12) {
-                        Image(systemName: "lightbulb.fill")
-                            .foregroundColor(.orange)
-                            .font(.title3)
-                        
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("ASTUCE PRO")
-                                .font(.caption)
-                                .fontWeight(.bold)
-                                .foregroundColor(.orange)
-                            
-                            Text(suggestion.astucePro)
-                                .font(.caption)
-                                .foregroundColor(.primary)
-                        }
-                    }
-                    .padding()
-                    .background(Color.orange.opacity(0.1))
-                    .cornerRadius(12)
-                    .padding(.horizontal)
-                    .padding(.bottom)
-                }
+                expandedContent
             }
         }
         .background(Color.white)
         .cornerRadius(16)
         .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 4)
+    }
+    
+    private var headerButton: some View {
+        Button(action: onToggle) {
+            HStack(spacing: 12) {
+                scoreBadge
+                infoSection
+                Spacer()
+                chevronIcon
+            }
+            .padding()
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+    
+    private var scoreBadge: some View {
+        VStack(spacing: 4) {
+            Text("\(scoreInt)")
+                .font(.title2)
+                .fontWeight(.bold)
+                .foregroundColor(.white)
+            Text("/100")
+                .font(.caption2)
+                .foregroundColor(.white.opacity(0.8))
+        }
+        .frame(width: 60, height: 60)
+        .background(couleurScore(suggestion.scoreTotal))
+        .cornerRadius(12)
+    }
+    
+    private var infoSection: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(suggestion.leurre.nom)
+                .font(.headline)
+                .foregroundColor(.primary)
+            
+            Text(suggestion.leurre.marque)
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+            
+            couleurRow
+            qualiteRow
+        }
+    }
+    
+    private var couleurRow: some View {
+        HStack(spacing: 4) {
+            CouleurPastille(leurre: suggestion.leurre, isPrincipal: true, size: 10)
+            Text(suggestion.leurre.couleurPrincipaleAffichage.nom)
+                .font(.caption)
+                .foregroundColor(.secondary)
+        }
+    }
+    
+    private var qualiteRow: some View {
+        HStack(spacing: 8) {
+            EtoilesView(nombre: nombreEtoiles)
+            
+            Text(qualiteDepuisScore(suggestion.scoreTotal))
+                .font(.caption)
+                .fontWeight(.semibold)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(couleurScore(suggestion.scoreTotal).opacity(0.2))
+                .foregroundColor(couleurScore(suggestion.scoreTotal))
+                .cornerRadius(8)
+        }
+    }
+    
+    private var chevronIcon: some View {
+        Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+            .foregroundColor(Color(hex: "0277BD"))
+    }
+    
+    private var expandedContent: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Divider()
+            
+            photoSection
+            modeleSection
+            positionSection
+            caracteristiquesSection
+            justificationsSection
+            astuceProSection
+        }
+    }
+    
+    @ViewBuilder
+    private var photoSection: some View {
+        if let image = viewModel.chargerPhoto(pourLeurre: suggestion.leurre) {
+            Image(uiImage: image)
+                .resizable()
+                .scaledToFit()
+                .frame(maxHeight: 250)
+                .cornerRadius(12)
+                .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+                .padding(.horizontal)
+        }
+    }
+    
+    @ViewBuilder
+    private var modeleSection: some View {
+        if let modele = suggestion.leurre.modele, !modele.isEmpty {
+            HStack(spacing: 8) {
+                Image(systemName: "tag.fill")
+                    .foregroundColor(Color(hex: "0277BD"))
+                Text("Modèle : \(modele)")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            }
+            .padding(.horizontal)
+        }
+    }
+    
+    @ViewBuilder
+    private var positionSection: some View {
+        if let position = suggestion.positionSpread,
+           let distance = suggestion.distanceSpread {
+            HStack {
+                Image(systemName: "location.fill")
+                    .foregroundColor(Color(hex: "FFBC42"))
+                Text(position.displayName)
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                Text("(\(distance)m)")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            .padding(.horizontal)
+        }
+    }
+    
+    private var caracteristiquesSection: some View {
+        HStack(spacing: 16) {
+            CaracBadge(label: "Longueur", valeur: "\(longueurInt)cm")
+            CaracBadge(label: "Profondeur", valeur: profondeurTexte)
+            CaracBadge(label: "Vitesse", valeur: vitesseTexte)
+        }
+        .padding(.horizontal)
+    }
+    
+    private var justificationsSection: some View {
+        Group {
+            JustificationSection(
+                titre: "TECHNIQUE",
+                score: Int(suggestion.scoreTechnique),
+                max: 40,
+                texte: suggestion.justificationTechnique,
+                couleur: Color(hex: "0277BD")
+            )
+            
+            JustificationSection(
+                titre: "COULEUR",
+                score: Int(suggestion.scoreCouleur),
+                max: 30,
+                texte: suggestion.justificationCouleur,
+                couleur: Color(hex: "FFBC42")
+            )
+            
+            JustificationSection(
+                titre: "CONDITIONS",
+                score: Int(suggestion.scoreConditions),
+                max: 30,
+                texte: suggestion.justificationConditions,
+                couleur: .green
+            )
+        }
+    }
+    
+    private var astuceProSection: some View {
+        HStack(alignment: .top, spacing: 12) {
+            Image(systemName: "lightbulb.fill")
+                .foregroundColor(.orange)
+                .font(.title3)
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text("ASTUCE PRO")
+                    .font(.caption)
+                    .fontWeight(.bold)
+                    .foregroundColor(.orange)
+                
+                Text(suggestion.astucePro)
+                    .font(.caption)
+                    .foregroundColor(.primary)
+            }
+        }
+        .padding()
+        .background(Color.orange.opacity(0.1))
+        .cornerRadius(12)
+        .padding(.horizontal)
+        .padding(.bottom)
     }
     
     private func couleurScore(_ score: Double) -> Color {
@@ -441,11 +667,100 @@ struct SuggestionCard: View {
 
 struct SuggestionCardCompact: View {
     let suggestion: SuggestionEngine.SuggestionResult
+    var showPositionBadge: Bool = false  // Nouveau paramètre
+    @StateObject private var viewModel = LeureViewModel()
+    @State private var showingDetail = false
+    
+    private var scoreInt: Int {
+        Int(suggestion.scoreTotal)
+    }
+    
+    private var longueurInt: Int {
+        Int(suggestion.leurre.longueur)
+    }
+    
+    private var nombreEtoiles: Int {
+        min(5, max(1, Int(suggestion.scoreTotal / 20)))
+    }
+    
+    private var positionRecommandee: PositionSpread {
+        if let positions = suggestion.leurre.positionsSpreadFinales.first {
+            return positions
+        }
+        
+        let profil = suggestion.leurre.profilVisuel
+        
+        switch profil {
+        case .naturel: return .shortCorner
+        case .sombre: return .longCorner
+        case .flashy: return .shortRigger
+        case .contraste: return .shotgun
+        }
+    }
     
     var body: some View {
+        Button(action: {
+            showingDetail = true
+        }) {
+            cardContent
+        }
+        .buttonStyle(PlainButtonStyle())
+        .sheet(isPresented: $showingDetail) {
+            NavigationView {
+                LeurreDetailView(leurre: suggestion.leurre, viewModel: viewModel)
+            }
+        }
+    }
+    
+    private var cardContent: some View {
         HStack(spacing: 12) {
-            // Score
-            Text("\(Int(suggestion.scoreTotal))")
+            // Score avec emoji de position
+            scoreBadgeWithPosition
+            
+            // Info
+            VStack(alignment: .leading, spacing: 4) {
+                // ✅ Badge spread SI dans le spread final
+                if let position = suggestion.positionSpread {
+                    spreadBadge(position: position, isInSpread: true)
+                } else if showPositionBadge {
+                    // Badge position recommandée (pas dans le spread)
+                    spreadBadge(position: positionRecommandee, isInSpread: false)
+                }
+                
+                Text(suggestion.leurre.nom)
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.primary)
+                
+                infoRow
+                
+                EtoilesView(nombre: nombreEtoiles)
+            }
+            
+            Spacer()
+            
+            // ✅ Distance si dans le spread
+            if let position = suggestion.positionSpread,
+               let distance = suggestion.distanceSpread {
+                distanceInfo(position: position, distance: distance)
+            }
+            
+            // Chevron pour indiquer que c'est cliquable
+            Image(systemName: "chevron.right")
+                .font(.caption)
+                .foregroundColor(.secondary)
+        }
+        .padding()
+        .background(Color.white)
+        .cornerRadius(12)
+        .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
+    }
+    
+    private var scoreBadgeWithPosition: some View {
+        let position = suggestion.positionSpread ?? (showPositionBadge ? positionRecommandee : nil)
+        
+        return ZStack(alignment: .topTrailing) {
+            Text("\(scoreInt)")
                 .font(.title3)
                 .fontWeight(.bold)
                 .foregroundColor(.white)
@@ -453,55 +768,77 @@ struct SuggestionCardCompact: View {
                 .background(couleurScore(suggestion.scoreTotal))
                 .cornerRadius(10)
             
-            // Info
-            VStack(alignment: .leading, spacing: 4) {
-                Text(suggestion.leurre.nom)
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                
-                HStack(spacing: 4) {
-                    Text(suggestion.leurre.marque)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                    
-                    Text("•")
-                        .foregroundColor(.secondary)
-                    
-                    Text("\(Int(suggestion.leurre.longueur))cm")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                    
-                    // ➕ NOUVEAU : Couleur
-                    Text("•")
-                        .foregroundColor(.secondary)
-                    
-                    HStack(spacing: 3) {
-                        CouleurPastille(leurre: suggestion.leurre, isPrincipal: true, size: 6)
-                        Text(suggestion.leurre.couleurPrincipaleAffichage.nom)
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
-                    }
-                }
-                
-                EtoilesView(nombre: min(5, max(1, Int(suggestion.scoreTotal / 20))))
-            }
-            
-            Spacer()
-            
-            if let position = suggestion.positionSpread {
-                VStack(alignment: .trailing, spacing: 2) {
-                    Image(systemName: "location.fill")
-                        .foregroundColor(Color(hex: "0277BD"))
-                    Text(position.displayName)
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
-                }
+            if let pos = position {
+                Text(pos.emoji)
+                    .font(.system(size: 14))
+                    .offset(x: 4, y: -4)
             }
         }
-        .padding()
-        .background(Color.white)
-        .cornerRadius(12)
-        .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
+    }
+    
+    private func spreadBadge(position: PositionSpread, isInSpread: Bool) -> some View {
+        HStack(spacing: 4) {
+            Image(systemName: isInSpread ? "trophy.fill" : "target")
+                .font(.caption2)
+                .foregroundColor(.white)
+            Text(position.displayName)
+                .font(.caption2)
+                .fontWeight(.bold)
+                .foregroundColor(.white)
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 3)
+        .background(isInSpread ? Color(hex: "FFBC42") : Color(hex: "0277BD"))
+        .cornerRadius(6)
+    }
+    
+    private var infoRow: some View {
+        HStack(spacing: 4) {
+            Text(suggestion.leurre.marque)
+                .font(.caption)
+                .foregroundColor(.secondary)
+            
+            Text("•")
+                .foregroundColor(.secondary)
+            
+            Text("\(longueurInt)cm")
+                .font(.caption)
+                .foregroundColor(.secondary)
+            
+            Text("•")
+                .foregroundColor(.secondary)
+            
+            HStack(spacing: 3) {
+                CouleurPastille(leurre: suggestion.leurre, isPrincipal: true, size: 6)
+                Text(suggestion.leurre.couleurPrincipaleAffichage.nom)
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+            }
+        }
+    }
+    
+    private func distanceInfo(position: PositionSpread, distance: Int) -> some View {
+        let emojiText = getEmoji(for: position)
+        
+        return VStack(alignment: .trailing, spacing: 2) {
+            Text(emojiText)
+                .font(.title3)
+            Text("\(distance)m")
+                .font(.caption)
+                .fontWeight(.semibold)
+                .foregroundColor(Color(hex: "0277BD"))
+        }
+    }
+    
+    private func getEmoji(for position: PositionSpread) -> String {
+        switch position {
+        case .libre: return "📍"
+        case .shortCorner: return "🎯"
+        case .longCorner: return "🎯"
+        case .shortRigger: return "⚡️"
+        case .longRigger: return "⚡️"
+        case .shotgun: return "🎪"
+        }
     }
     
     private func couleurScore(_ score: Double) -> Color {

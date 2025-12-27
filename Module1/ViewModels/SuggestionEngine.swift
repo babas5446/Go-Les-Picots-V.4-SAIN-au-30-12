@@ -387,13 +387,13 @@ class SuggestionEngine: ObservableObject {
             )
             
             DispatchQueue.main.async {
-                self.suggestions = spreadConfig.suggestions
+                self.suggestions = resultatsTriees
                 self.configurationSpread = spreadConfig
                 self.analyseGlobale = analyse
                 self.isProcessing = false
                 self.progressMessage = ""
                 self.shouldShowResults = true
-                print("✅ \(spreadConfig.suggestions.count) suggestions générées")
+                print("✅ \(resultatsTriees.count) suggestions générées (\(spreadConfig.suggestions.count) dans le spread)")
             }
         }
     }

@@ -1,41 +1,15 @@
+"metadata" : {
+    "dateConversion" : "2025-12-16T10:07:39Z",
+    "dateCreation" : "2024-12-04",
+    "description" : "Base de données complète des 63 leurres - Nouvelle-Calédonie",
+    "nombreTotal" : 63,
+    "proprietaire" : "Sébastien",
+    "source" : "Tableau CPS + Techniques de pêche côtière 2023",
+    "version" : "2.0"
+  }
 {
   "leurres" : [
     {
-      "actionNage" : "moderate",
-      "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "agitee",
-          "formee"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "matinee",
-          "apres_midi"
-        ],
-        "phasesLunaires" : [
-          "nouvelleLune",
-          "premierQuartier"
-        ],
-        "turbidite" : [
-          "claire",
-          "legerementTrouble"
-        ]
-      },
-      "couleur" : "argente",
-      "couleurPrincipale" : "roseFuchsia",
-      "couleursSecondaires" : [
-
-      ],
-      "especesCibles" : [
-        "carangue",
-        "thon",
-        "barracuda",
-        "wahoo"
-      ],
-      "finition" : "holographique",
       "id" : 1,
       "isComputed" : false,
       "longueur" : 21,
@@ -44,10 +18,6 @@
       "nom" : "Magnum Stretch 30+",
       "notes" : "Grande bavette plongeante, trolling",
       "poids" : 130,
-      "positionsSpread" : [
-        "shortCorner",
-        "longCorner"
-      ],
       "profondeurMax" : 10,
       "profondeurMin" : 9,
       "quantite" : 1,
@@ -65,27 +35,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "agitee",
-          "formee"
-        ],
-        "maree" : [
-          "descendante"
-        ],
-        "moments" : [
-          "aube",
-          "crepuscule",
-          "nuit"
-        ],
-        "phasesLunaires" : [
-          "nouvelleLune"
-        ],
-        "turbidite" : [
-          "trouble",
-          "tresTrouble"
-        ]
-      },
       "couleur" : "argente",
       "couleurPrincipale" : "noirViolet",
       "couleursSecondaires" : [
@@ -104,11 +53,8 @@
       "marque" : "Nomad Design",
       "modele" : "Slipstream 200 Flying Fish",
       "nom" : "Slipstream 200 Flying Fish",
-      "notes" : "Imitation poisson volant SHOTGUN IDÉAL",
+      "notes" : "Imitation poisson volant",
       "poids" : 95,
-      "positionsSpread" : [
-        "shotgun"
-      ],
       "profondeurMax" : 1,
       "profondeurMin" : 0,
       "quantite" : 1,
@@ -126,25 +72,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "agitee",
-          "formee"
-        ],
-        "maree" : [
-          "descendante"
-        ],
-        "moments" : [
-          "crepuscule",
-          "apres_midi"
-        ],
-        "phasesLunaires" : [
-          "nouvelleLune"
-        ],
-        "turbidite" : [
-          "trouble",
-          "tresTrouble"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "violetFonce",
@@ -165,10 +92,6 @@
       "nom" : "Magnum 180 s",
       "notes" : "Violet foncé stable Long Corner",
       "poids" : 100,
-      "positionsSpread" : [
-        "longCorner",
-        "shortCorner"
-      ],
       "profondeurMax" : 6.5,
       "profondeurMin" : 5,
       "quantite" : 1,
@@ -187,26 +110,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "agitee"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "aube",
-          "matinee",
-          "crepuscule"
-        ],
-        "phasesLunaires" : [
-          "pleineLune",
-          "dernierQuartier"
-        ],
-        "turbidite" : [
-          "trouble",
-          "legerementTrouble"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "chartreuse",
@@ -226,10 +129,6 @@
       "nom" : "Frenzy FSM 18 S",
       "notes" : "Chartreuse TRÈS VISIBLE RIGGER",
       "poids" : 84,
-      "positionsSpread" : [
-        "shortRigger",
-        "longRigger"
-      ],
       "profondeurMax" : 3,
       "profondeurMin" : 2,
       "quantite" : 1,
@@ -288,9 +187,6 @@
       "nom" : "3D Magnum 160 s",
       "notes" : "3D prism trolling vert\/argenté",
       "poids" : 70,
-      "positionsSpread" : [
-        "longCorner"
-      ],
       "profondeurMax" : 6,
       "profondeurMin" : 5,
       "quantite" : 1,
@@ -308,24 +204,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme",
-          "peuAgitee"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "matinee",
-          "midi"
-        ],
-        "phasesLunaires" : [
-          "pleineLune"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "bleu",
@@ -347,9 +225,6 @@
       "nom" : "Countdown Magnum 180",
       "notes" : "Sinking trolling bleu\/blanc",
       "poids" : 90,
-      "positionsSpread" : [
-        "longCorner"
-      ],
       "profondeurMax" : 6,
       "profondeurMin" : 2,
       "quantite" : 1,
@@ -367,27 +242,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme",
-          "peuAgitee"
-        ],
-        "maree" : [
-          "montante",
-          "etale"
-        ],
-        "moments" : [
-          "matinee",
-          "midi",
-          "apres_midi"
-        ],
-        "phasesLunaires" : [
-          "pleineLune"
-        ],
-        "turbidite" : [
-          "claire",
-          "legerementTrouble"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "sardine",
@@ -407,12 +261,8 @@
       "marque" : "Berkley",
       "modele" : "Frenzy Mungo 140",
       "nom" : "Frenzy Mungo 140",
-      "notes" : "RÉFÉRENCE LAGON eau claire 14cm",
+      "notes" : "eau claire 14cm",
       "poids" : 42,
-      "positionsSpread" : [
-        "longCorner",
-        "libre"
-      ],
       "profondeurMax" : 4,
       "profondeurMin" : 3,
       "quantite" : 1,
@@ -430,23 +280,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "agitee"
-        ],
-        "maree" : [
-          "descendante"
-        ],
-        "moments" : [
-          "crepuscule",
-          "apres_midi"
-        ],
-        "phasesLunaires" : [
-          "nouvelleLune"
-        ],
-        "turbidite" : [
-          "trouble"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "bleuNoir",
@@ -467,10 +300,6 @@
       "nom" : "X-Rap Magnum 140",
       "notes" : "Bleu noir\/gris sombre",
       "poids" : 46,
-      "positionsSpread" : [
-        "shortCorner",
-        "longCorner"
-      ],
       "profondeurMax" : 6,
       "profondeurMin" : 5,
       "quantite" : 1,
@@ -488,24 +317,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme",
-          "peuAgitee"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "aube",
-          "matinee"
-        ],
-        "phasesLunaires" : [
-          "nouvelleLune"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "blancRouge",
@@ -524,11 +335,8 @@
       "marque" : "Rapala",
       "modele" : "X-Rap Magnum 140",
       "nom" : "X-Rap Magnum 140",
-      "notes" : "SHORT CORNER RÉFÉRENCE",
+      "notes" : "Red Head",
       "poids" : 46,
-      "positionsSpread" : [
-        "shortCorner"
-      ],
       "profondeurMax" : 6,
       "profondeurMin" : 5,
       "quantite" : 1,
@@ -546,24 +354,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme",
-          "peuAgitee"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "matinee",
-          "midi"
-        ],
-        "phasesLunaires" : [
-          "pleineLune"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "bleu",
@@ -581,11 +371,8 @@
       "marque" : "YoZuri",
       "modele" : "3D Magnum 140",
       "nom" : "3D Magnum 140",
-      "notes" : "3D prism bavette courte lagon",
+      "notes" : "3D prism bavette",
       "poids" : 48,
-      "positionsSpread" : [
-        "libre"
-      ],
       "profondeurMax" : 2,
       "profondeurMin" : 1,
       "quantite" : 1,
@@ -603,24 +390,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme",
-          "peuAgitee"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "matinee",
-          "midi"
-        ],
-        "phasesLunaires" : [
-          "pleineLune"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "vert",
@@ -641,9 +410,6 @@
       "nom" : "Magnum 140",
       "notes" : "Trolling vert\/argenté",
       "poids" : 48,
-      "positionsSpread" : [
-        "longCorner"
-      ],
       "profondeurMax" : 5.5,
       "profondeurMin" : 3.5,
       "quantite" : 1,
@@ -661,23 +427,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "agitee"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "aube",
-          "crepuscule"
-        ],
-        "phasesLunaires" : [
-          "premierQuartier"
-        ],
-        "turbidite" : [
-          "legerementTrouble"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "blancOrange",
@@ -695,12 +444,8 @@
       "marque" : "Rapala",
       "modele" : "X-Rap Magnum 140",
       "nom" : "X-Rap Magnum 140",
-      "notes" : "Blanc\/orange flashy rigger",
+      "notes" : "Blanc\/orange flashy",
       "poids" : 46,
-      "positionsSpread" : [
-        "shortRigger",
-        "longRigger"
-      ],
       "profondeurMax" : 6,
       "profondeurMin" : 5,
       "quantite" : 1,
@@ -718,23 +463,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "agitee"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "aube",
-          "matinee"
-        ],
-        "phasesLunaires" : [
-          "premierQuartier"
-        ],
-        "turbidite" : [
-          "legerementTrouble"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "jauneHolographique",
@@ -755,10 +483,6 @@
       "nom" : "X-Rap Magnum 140",
       "notes" : "Jaune\/vert flashy",
       "poids" : 46,
-      "positionsSpread" : [
-        "shortRigger",
-        "longRigger"
-      ],
       "profondeurMax" : 6,
       "profondeurMin" : 5,
       "quantite" : 1,
@@ -776,24 +500,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "agitee"
-        ],
-        "maree" : [
-          "descendante"
-        ],
-        "moments" : [
-          "apres_midi",
-          "crepuscule"
-        ],
-        "phasesLunaires" : [
-          "nouvelleLune"
-        ],
-        "turbidite" : [
-          "trouble",
-          "tresTrouble"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "bleuFonce",
@@ -814,10 +520,6 @@
       "nom" : "X-Rap Magnum 140",
       "notes" : "EAU TROUBLE EXCELLENT",
       "poids" : 46,
-      "positionsSpread" : [
-        "shortCorner",
-        "longCorner"
-      ],
       "profondeurMax" : 6,
       "profondeurMin" : 5,
       "quantite" : 1,
@@ -835,24 +537,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme",
-          "peuAgitee"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "matinee",
-          "midi"
-        ],
-        "phasesLunaires" : [
-          "pleineLune"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "argente",
@@ -873,9 +557,6 @@
       "nom" : "Minnow 120",
       "notes" : "Argenté\/bleu naturel lagon",
       "poids" : 35,
-      "positionsSpread" : [
-        "longCorner"
-      ],
       "profondeurMax" : 5,
       "profondeurMin" : 4,
       "quantite" : 1,
@@ -894,23 +575,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "matinee",
-          "midi"
-        ],
-        "phasesLunaires" : [
-          "pleineLune"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "argente",
@@ -929,9 +593,6 @@
       "nom" : "Minnow 120",
       "notes" : "Argenté tête bleue lagon",
       "poids" : 35,
-      "positionsSpread" : [
-        "libre"
-      ],
       "profondeurMax" : 5,
       "profondeurMin" : 4,
       "quantite" : 1,
@@ -949,23 +610,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "aube",
-          "crepuscule"
-        ],
-        "phasesLunaires" : [
-          "pleineLune"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "argente",
@@ -985,9 +629,6 @@
       "nom" : "Minnow 120",
       "notes" : "Surface argenté\/dos bleu",
       "poids" : 30,
-      "positionsSpread" : [
-        "libre"
-      ],
       "profondeurMax" : 1,
       "profondeurMin" : 0,
       "quantite" : 1,
@@ -1005,23 +646,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "matinee",
-          "apres_midi"
-        ],
-        "phasesLunaires" : [
-          "pleineLune"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "marron",
@@ -1040,9 +664,6 @@
       "nom" : "Minnow 130",
       "notes" : "Marron\/orange imitation",
       "poids" : 38,
-      "positionsSpread" : [
-        "libre"
-      ],
       "profondeurMax" : 2,
       "profondeurMin" : 0.5,
       "quantite" : 1,
@@ -1060,23 +681,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "matinee",
-          "apres_midi"
-        ],
-        "phasesLunaires" : [
-          "pleineLune"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "vertOlive",
@@ -1095,9 +699,6 @@
       "nom" : "Minnow 110",
       "notes" : "Petit leurre récif",
       "poids" : 28,
-      "positionsSpread" : [
-        "libre"
-      ],
       "profondeurMax" : 1,
       "profondeurMin" : 0,
       "quantite" : 1,
@@ -1115,23 +716,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "agitee"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "matinee",
-          "apres_midi"
-        ],
-        "phasesLunaires" : [
-          "premierQuartier"
-        ],
-        "turbidite" : [
-          "legerementTrouble"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "rouge",
@@ -1153,10 +737,6 @@
       "nom" : "Deep Thunder 15",
       "notes" : "Deep diver rouge\/jaune",
       "poids" : 60,
-      "positionsSpread" : [
-        "shortCorner",
-        "longCorner"
-      ],
       "profondeurMax" : 9,
       "profondeurMin" : 6,
       "quantite" : 1,
@@ -1175,24 +755,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme",
-          "peuAgitee"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "matinee",
-          "apres_midi"
-        ],
-        "phasesLunaires" : [
-          "pleineLune"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "argente",
@@ -1212,9 +774,6 @@
       "nom" : "Takumi 95",
       "notes" : "Sinking 40g jigging\/lancer",
       "poids" : 40,
-      "positionsSpread" : [
-        "libre"
-      ],
       "profondeurMax" : 30,
       "profondeurMin" : 5,
       "quantite" : 1,
@@ -1232,24 +791,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme",
-          "peuAgitee"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "matinee",
-          "apres_midi"
-        ],
-        "phasesLunaires" : [
-          "pleineLune"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "bleu",
@@ -1271,9 +812,6 @@
       "nom" : "Loaded S 140",
       "notes" : "Slow jig 40g bleu\/argenté",
       "poids" : 43,
-      "positionsSpread" : [
-        "libre"
-      ],
       "profondeurMax" : 50,
       "profondeurMin" : 10,
       "quantite" : 1,
@@ -1292,24 +830,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "aube",
-          "crepuscule"
-        ],
-        "phasesLunaires" : [
-          "nouvelleLune"
-        ],
-        "turbidite" : [
-          "claire",
-          "legerementTrouble"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "violet",
@@ -1329,9 +849,6 @@
       "nom" : "Lawbreaker 125",
       "notes" : "WTD violet\/noir surface",
       "poids" : 28,
-      "positionsSpread" : [
-        "libre"
-      ],
       "profondeurMax" : 0.5,
       "profondeurMin" : 0,
       "quantite" : 1,
@@ -1350,24 +867,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme",
-          "peuAgitee"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "matinee",
-          "midi"
-        ],
-        "phasesLunaires" : [
-          "pleineLune"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "vertArgente",
@@ -1387,9 +886,6 @@
       "nom" : "DTX Minnow 125",
       "notes" : "Autotune vert\/argenté",
       "poids" : 40,
-      "positionsSpread" : [
-        "longCorner"
-      ],
       "profondeurMax" : 6,
       "profondeurMin" : 5,
       "quantite" : 1,
@@ -1407,23 +903,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "matinee",
-          "midi"
-        ],
-        "phasesLunaires" : [
-          "pleineLune"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "argente",
@@ -1444,9 +923,6 @@
       "nom" : "DTX Minnow 125",
       "notes" : "Autotune argenté pur",
       "poids" : 40,
-      "positionsSpread" : [
-        "longCorner"
-      ],
       "profondeurMax" : 6,
       "profondeurMin" : 5,
       "quantite" : 1,
@@ -1464,24 +940,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "lancer",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme",
-          "peuAgitee"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "aube",
-          "crepuscule"
-        ],
-        "phasesLunaires" : [
-          "pleineLune"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "blanc",
@@ -1501,9 +959,6 @@
       "nom" : "Popper 10cm",
       "notes" : "19g blanc\/rouge surface",
       "poids" : 19,
-      "positionsSpread" : [
-        "libre"
-      ],
       "profondeurMax" : 0.20000000000000001,
       "profondeurMin" : 0,
       "quantite" : 1,
@@ -1521,23 +976,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "matinee",
-          "apres_midi"
-        ],
-        "phasesLunaires" : [
-          "pleineLune"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "blanc",
@@ -1557,9 +995,6 @@
       "nom" : "Minnow 10cm",
       "notes" : "Grande bavette blanc\/rouge",
       "poids" : 25,
-      "positionsSpread" : [
-        "libre"
-      ],
       "profondeurMax" : 3,
       "profondeurMin" : 1,
       "quantite" : 1,
@@ -1578,23 +1013,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "matinee",
-          "apres_midi"
-        ],
-        "phasesLunaires" : [
-          "pleineLune"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "orange",
@@ -1614,9 +1032,6 @@
       "nom" : "Minnow 9cm",
       "notes" : "Imitation orange récif",
       "poids" : 20,
-      "positionsSpread" : [
-        "libre"
-      ],
       "profondeurMax" : 5,
       "profondeurMin" : 4,
       "quantite" : 1,
@@ -1634,24 +1049,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "agitee"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "aube",
-          "crepuscule"
-        ],
-        "phasesLunaires" : [
-          "premierQuartier"
-        ],
-        "turbidite" : [
-          "legerementTrouble",
-          "trouble"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "argente",
@@ -1671,10 +1068,6 @@
       "nom" : "Sorcerer 125",
       "notes" : "Argenté\/chartreuse rigger",
       "poids" : 35,
-      "positionsSpread" : [
-        "shortRigger",
-        "longRigger"
-      ],
       "profondeurMax" : 5,
       "profondeurMin" : 4,
       "quantite" : 1,
@@ -1692,25 +1085,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme",
-          "peuAgitee"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "aube",
-          "crepuscule"
-        ],
-        "phasesLunaires" : [
-          "nouvelleLune",
-          "premierQuartier"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "rose",
@@ -1730,10 +1104,6 @@
       "nom" : "Sorcerer 125",
       "notes" : "IDÉAL AUBE LAGON rose\/blanc",
       "poids" : 35,
-      "positionsSpread" : [
-        "shortRigger",
-        "longRigger"
-      ],
       "profondeurMax" : 5,
       "profondeurMin" : 4,
       "quantite" : 1,
@@ -1751,26 +1121,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "agitee"
-        ],
-        "maree" : [
-          "montante",
-          "descendante"
-        ],
-        "moments" : [
-          "aube",
-          "matinee",
-          "crepuscule"
-        ],
-        "phasesLunaires" : [
-          "premierQuartier"
-        ],
-        "turbidite" : [
-          "trouble",
-          "tresTrouble"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "chartreuse",
@@ -1790,10 +1140,6 @@
       "nom" : "Sorcerer 125",
       "notes" : "Chartreuse\/jaune TRÈS VISIBLE",
       "poids" : 35,
-      "positionsSpread" : [
-        "shortRigger",
-        "longRigger"
-      ],
       "profondeurMax" : 5,
       "profondeurMin" : 4,
       "quantite" : 1,
@@ -1811,23 +1157,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "agitee"
-        ],
-        "maree" : [
-          "descendante"
-        ],
-        "moments" : [
-          "crepuscule",
-          "apres_midi"
-        ],
-        "phasesLunaires" : [
-          "nouvelleLune"
-        ],
-        "turbidite" : [
-          "trouble"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "violetFonce",
@@ -1848,10 +1177,6 @@
       "nom" : "Sorcerer 125",
       "notes" : "Violet foncé\/argenté sombre",
       "poids" : 35,
-      "positionsSpread" : [
-        "longCorner",
-        "shortCorner"
-      ],
       "profondeurMax" : 5,
       "profondeurMin" : 4,
       "quantite" : 1,
@@ -1869,24 +1194,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "agitee",
-          "formee"
-        ],
-        "maree" : [
-          "descendante"
-        ],
-        "moments" : [
-          "crepuscule",
-          "apres_midi"
-        ],
-        "phasesLunaires" : [
-          "nouvelleLune"
-        ],
-        "turbidite" : [
-          "trouble"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "violetFonce",
@@ -1906,10 +1213,6 @@
       "nom" : "Sorcerer 150",
       "notes" : "Version 15cm plus profonde",
       "poids" : 50,
-      "positionsSpread" : [
-        "shortCorner",
-        "longCorner"
-      ],
       "profondeurMax" : 8,
       "profondeurMin" : 7,
       "quantite" : 1,
@@ -1927,25 +1230,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme",
-          "peuAgitee"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "matinee",
-          "midi",
-          "apres_midi"
-        ],
-        "phasesLunaires" : [
-          "pleineLune"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "vert",
@@ -1965,9 +1249,6 @@
       "nom" : "Sorcerer 125",
       "notes" : "Vert\/argenté naturel",
       "poids" : 35,
-      "positionsSpread" : [
-        "longCorner"
-      ],
       "profondeurMax" : 5,
       "profondeurMin" : 4,
       "quantite" : 1,
@@ -1985,25 +1266,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "agitee"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "aube",
-          "crepuscule"
-        ],
-        "phasesLunaires" : [
-          "nouvelleLune",
-          "premierQuartier"
-        ],
-        "turbidite" : [
-          "trouble",
-          "legerementTrouble"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "roseFluo",
@@ -2023,10 +1285,6 @@
       "nom" : "Sorcerer 150",
       "notes" : "Rose fluo\/chartreuse ULTRA",
       "poids" : 50,
-      "positionsSpread" : [
-        "shortRigger",
-        "longRigger"
-      ],
       "profondeurMax" : 5,
       "profondeurMin" : 4,
       "quantite" : 1,
@@ -2044,25 +1302,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme",
-          "peuAgitee"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "aube",
-          "crepuscule"
-        ],
-        "phasesLunaires" : [
-          "premierQuartier"
-        ],
-        "turbidite" : [
-          "legerementTrouble",
-          "trouble"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "chartreuse",
@@ -2083,9 +1322,6 @@
       "nom" : "Skim Stick 185",
       "notes" : "Stickbait chartreuse\/jaune",
       "poids" : 45,
-      "positionsSpread" : [
-        "libre"
-      ],
       "profondeurMax" : 0.5,
       "profondeurMin" : 0,
       "quantite" : 1,
@@ -2104,23 +1340,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "lancer",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "aube",
-          "crepuscule"
-        ],
-        "phasesLunaires" : [
-          "pleineLune"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "blanc",
@@ -2141,9 +1360,6 @@
       "nom" : "Roosta Popper 105",
       "notes" : "Halco Roosta blanc\/rouge",
       "poids" : 25,
-      "positionsSpread" : [
-        "libre"
-      ],
       "profondeurMax" : 0.20000000000000001,
       "profondeurMin" : 0,
       "quantite" : 1,
@@ -2161,23 +1377,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "lancer",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "matinee",
-          "apres_midi"
-        ],
-        "phasesLunaires" : [
-          "pleineLune"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "argente",
@@ -2197,9 +1396,6 @@
       "nom" : "Popper Topwater 120",
       "notes" : "Argenté dos vert-bleu",
       "poids" : 30,
-      "positionsSpread" : [
-        "libre"
-      ],
       "profondeurMax" : 0.20000000000000001,
       "profondeurMin" : 0,
       "quantite" : 1,
@@ -2217,24 +1413,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme",
-          "peuAgitee"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "matinee",
-          "apres_midi"
-        ],
-        "phasesLunaires" : [
-          "pleineLune"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "vert",
@@ -2253,9 +1431,6 @@
       "nom" : "Trembler 110",
       "notes" : "WTD vert\/jaune-orange",
       "poids" : 28,
-      "positionsSpread" : [
-        "libre"
-      ],
       "profondeurMax" : 5,
       "profondeurMin" : 4,
       "quantite" : 1,
@@ -2274,23 +1449,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "lancer",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "aube",
-          "matinee"
-        ],
-        "phasesLunaires" : [
-          "pleineLune"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "argente",
@@ -2310,9 +1468,6 @@
       "nom" : "HD Minnow 90",
       "notes" : "Baitfish argenté\/rose",
       "poids" : 20,
-      "positionsSpread" : [
-        "libre"
-      ],
       "profondeurMax" : 2,
       "profondeurMin" : 0.5,
       "quantite" : 1,
@@ -2331,23 +1486,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "peuAgitee"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "matinee",
-          "apres_midi"
-        ],
-        "phasesLunaires" : [
-          "pleineLune"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "blanc",
@@ -2367,9 +1505,6 @@
       "nom" : "SeaSuke 120",
       "notes" : "Blanc\/rouge contrasté",
       "poids" : 32,
-      "positionsSpread" : [
-        "longCorner"
-      ],
       "profondeurMax" : 5,
       "profondeurMin" : 4,
       "quantite" : 1,
@@ -2387,23 +1522,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "agitee"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "aube",
-          "crepuscule"
-        ],
-        "phasesLunaires" : [
-          "premierQuartier"
-        ],
-        "turbidite" : [
-          "trouble"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "jauneFluo",
@@ -2424,10 +1542,6 @@
       "nom" : "Crystal Minnow DD 110",
       "notes" : "Deep diver jaune fluo",
       "poids" : 28,
-      "positionsSpread" : [
-        "shortRigger",
-        "longRigger"
-      ],
       "profondeurMax" : 4,
       "profondeurMin" : 2,
       "quantite" : 1,
@@ -2446,23 +1560,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "matinee",
-          "apres_midi"
-        ],
-        "phasesLunaires" : [
-          "pleineLune"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "blanc",
@@ -2470,8 +1567,7 @@
         "rouge"
       ],
       "especesCibles" : [
-        "loche",
-        "picot"
+        "loche"
       ],
       "finition" : "holographique",
       "id" : 43,
@@ -2482,9 +1578,6 @@
       "nom" : "Minnow 8cm",
       "notes" : "Imitation marlboro récif",
       "poids" : 18,
-      "positionsSpread" : [
-        "libre"
-      ],
       "profondeurMax" : 5,
       "profondeurMin" : 4,
       "quantite" : 1,
@@ -2502,23 +1595,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "matinee",
-          "midi"
-        ],
-        "phasesLunaires" : [
-          "pleineLune"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "argente",
@@ -2537,9 +1613,6 @@
       "nom" : "Minnow 9cm",
       "notes" : "Argenté pur simple",
       "poids" : 20,
-      "positionsSpread" : [
-        "libre"
-      ],
       "profondeurMax" : 5,
       "profondeurMin" : 4,
       "quantite" : 1,
@@ -2557,25 +1630,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "peuAgitee",
-          "agitee"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "matinee",
-          "apres_midi"
-        ],
-        "phasesLunaires" : [
-          "pleineLune"
-        ],
-        "turbidite" : [
-          "claire",
-          "legerementTrouble"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "bleu",
@@ -2597,11 +1651,6 @@
       "nom" : "Leurre à jupe 200",
       "notes" : "Jupe bleu arc-en-ciel",
       "poids" : 80,
-      "positionsSpread" : [
-        "shortCorner",
-        "shortRigger",
-        "longRigger"
-      ],
       "profondeurMax" : 3,
       "profondeurMin" : 0,
       "quantite" : 1,
@@ -2611,7 +1660,7 @@
         "traine"
       ],
       "type" : "leurreAJupe",
-      "typeTete" : "jupe",
+      "typeTete" : "concave",
       "vitesseMaximale" : 10,
       "vitesseMinimale" : 5,
       "vitesseOptimale" : 7
@@ -2619,24 +1668,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme",
-          "peuAgitee"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "matinee",
-          "midi"
-        ],
-        "phasesLunaires" : [
-          "pleineLune"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
       },
       "couleur" : "argente",
       "couleurPrincipale" : "argente",
@@ -2657,9 +1688,6 @@
       "nom" : "Leurre à jupe 130",
       "notes" : "Tête orange argenté\/bleu",
       "poids" : 40,
-      "positionsSpread" : [
-        "longCorner"
-      ],
       "profondeurMax" : 2,
       "profondeurMin" : 0,
       "quantite" : 1,
@@ -2669,32 +1697,14 @@
         "traine"
       ],
       "type" : "leurreAJupe",
-      "typeTete" : "jupe",
+      "typeTete" : "concave",
       "vitesseMaximale" : 8,
       "vitesseMinimale" : 4,
       "vitesseOptimale" : 6
     },
     {
       "actionNage" : "moderate",
-      "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme",
-          "peuAgitee"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "aube",
-          "crepuscule"
-        ],
-        "phasesLunaires" : [
-          "pleineLune"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
+      "categoriePeche" : "traine"
       },
       "couleur" : "argente",
       "couleurPrincipale" : "rose",
@@ -2714,9 +1724,6 @@
       "nom" : "3D Squirt 190",
       "notes" : "3D prism gros squid rose\/bleu",
       "poids" : 60,
-      "positionsSpread" : [
-        "libre"
-      ],
       "profondeurMax" : 0.20000000000000001,
       "profondeurMin" : 0,
       "quantite" : 1,
@@ -2733,25 +1740,7 @@
     },
     {
       "actionNage" : "moderate",
-      "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme",
-          "peuAgitee"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "aube",
-          "crepuscule"
-        ],
-        "phasesLunaires" : [
-          "premierQuartier"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
+      "categoriePeche" : "traine"
       },
       "couleur" : "argente",
       "couleurPrincipale" : "orangeJaune",
@@ -2773,9 +1762,6 @@
       "nom" : "3D Squirt 190",
       "notes" : "3D prism orange-jaune\/argenté",
       "poids" : 60,
-      "positionsSpread" : [
-        "libre"
-      ],
       "profondeurMax" : 0.20000000000000001,
       "profondeurMin" : 0,
       "quantite" : 1,
@@ -2792,24 +1778,7 @@
     },
     {
       "actionNage" : "moderate",
-      "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "aube",
-          "matinee"
-        ],
-        "phasesLunaires" : [
-          "pleineLune"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
+      "categoriePeche" : "traine"
       },
       "couleur" : "argente",
       "couleurPrincipale" : "rouge",
@@ -2830,9 +1799,6 @@
       "nom" : "3D Squirt 190",
       "notes" : "3D prism rouge\/argenté",
       "poids" : 60,
-      "positionsSpread" : [
-        "libre"
-      ],
       "profondeurMax" : 0.20000000000000001,
       "profondeurMin" : 0,
       "quantite" : 1,
@@ -2849,28 +1815,10 @@
     },
     {
       "actionNage" : "moderate",
-      "categoriePeche" : "lancer",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme",
-          "peuAgitee"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "aube",
-          "crepuscule"
-        ],
-        "phasesLunaires" : [
-          "premierQuartier"
-        ],
-        "turbidite" : [
-          "legerementTrouble"
-        ]
+      "categoriePeche" : "lancer"
       },
       "couleur" : "argente",
-      "couleurPrincipale" : "chartreuse",
+      "couleurPrincipale" : "rouge",
       "couleursSecondaires" : [
 
       ],
@@ -2888,9 +1836,6 @@
       "nom" : "Popper 140",
       "notes" : "Chartreuse\/dos bleu visible",
       "poids" : 40,
-      "positionsSpread" : [
-        "libre"
-      ],
       "profondeurMax" : 0.20000000000000001,
       "profondeurMin" : 0,
       "quantite" : 1,
@@ -2907,25 +1852,7 @@
     },
     {
       "actionNage" : "moderate",
-      "categoriePeche" : "lancer",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "aube",
-          "crepuscule"
-        ],
-        "phasesLunaires" : [
-          "nouvelleLune",
-          "premierQuartier"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
+      "categoriePeche" : "lancer"
       },
       "couleur" : "argente",
       "couleurPrincipale" : "rose",
@@ -2946,9 +1873,6 @@
       "nom" : "Popper 140",
       "notes" : "Rose\/argenté holographique",
       "poids" : 40,
-      "positionsSpread" : [
-        "libre"
-      ],
       "profondeurMax" : 0.20000000000000001,
       "profondeurMin" : 0,
       "quantite" : 1,
@@ -2965,26 +1889,7 @@
     },
     {
       "actionNage" : "moderate",
-      "categoriePeche" : "lancer",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme",
-          "peuAgitee"
-        ],
-        "maree" : [
-          "descendante"
-        ],
-        "moments" : [
-          "crepuscule",
-          "apres_midi"
-        ],
-        "phasesLunaires" : [
-          "nouvelleLune"
-        ],
-        "turbidite" : [
-          "claire",
-          "legerementTrouble"
-        ]
+      "categoriePeche" : "lancer"
       },
       "couleur" : "argente",
       "couleurPrincipale" : "vertNoir",
@@ -3007,9 +1912,6 @@
       "nom" : "Riptide 125 SNK",
       "notes" : "Sinking vert noir holographique",
       "poids" : 45,
-      "positionsSpread" : [
-        "libre"
-      ],
       "profondeurMax" : 10,
       "profondeurMin" : 2,
       "quantite" : 1,
@@ -3026,25 +1928,7 @@
     },
     {
       "actionNage" : "moderate",
-      "categoriePeche" : "lancer",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme",
-          "peuAgitee"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "matinee",
-          "apres_midi"
-        ],
-        "phasesLunaires" : [
-          "pleineLune"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
+      "categoriePeche" : "lancer"
       },
       "couleur" : "argente",
       "couleurPrincipale" : "argente",
@@ -3066,9 +1950,6 @@
       "nom" : "Takumi 95",
       "notes" : "Sinking 40g argenté\/bleu",
       "poids" : 40,
-      "positionsSpread" : [
-        "libre"
-      ],
       "profondeurMax" : 30,
       "profondeurMin" : 1.5,
       "quantite" : 1,
@@ -3086,25 +1967,7 @@
     },
     {
       "actionNage" : "moderate",
-      "categoriePeche" : "lancer",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme",
-          "peuAgitee"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "matinee",
-          "apres_midi"
-        ],
-        "phasesLunaires" : [
-          "pleineLune"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
+      "categoriePeche" : "lancer"
       },
       "couleur" : "argente",
       "couleurPrincipale" : "bleuArgente",
@@ -3125,9 +1988,6 @@
       "nom" : "Riptide 105 FSNK",
       "notes" : "Fast sinking argenté\/dos bleu",
       "poids" : 38,
-      "positionsSpread" : [
-        "libre"
-      ],
       "profondeurMax" : 15,
       "profondeurMin" : 2,
       "quantite" : 1,
@@ -3144,26 +2004,7 @@
     },
     {
       "actionNage" : "moderate",
-      "categoriePeche" : "lancer",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme",
-          "peuAgitee"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "aube",
-          "crepuscule"
-        ],
-        "phasesLunaires" : [
-          "premierQuartier"
-        ],
-        "turbidite" : [
-          "claire",
-          "legerementTrouble"
-        ]
+      "categoriePeche" : "lancer"
       },
       "couleur" : "argente",
       "couleurPrincipale" : "roseHolographique",
@@ -3184,9 +2025,6 @@
       "nom" : "Flitz 75",
       "notes" : "Rose holographique\/jaune or",
       "poids" : 75,
-      "positionsSpread" : [
-        "libre"
-      ],
       "profondeurMax" : 20,
       "profondeurMin" : 2,
       "quantite" : 1,
@@ -3204,24 +2042,7 @@
     },
     {
       "actionNage" : "moderate",
-      "categoriePeche" : "lancer",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "aube",
-          "crepuscule"
-        ],
-        "phasesLunaires" : [
-          "premierQuartier"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
+      "categoriePeche" : "lancer"
       },
       "couleur" : "argente",
       "couleurPrincipale" : "rouge",
@@ -3241,9 +2062,6 @@
       "nom" : "Riptide 125 SNK",
       "notes" : "Sinking rouge tâches bleu\/jaune",
       "poids" : 45,
-      "positionsSpread" : [
-        "libre"
-      ],
       "profondeurMax" : 10,
       "profondeurMin" : 2,
       "quantite" : 1,
@@ -3260,25 +2078,7 @@
     },
     {
       "actionNage" : "moderate",
-      "categoriePeche" : "jig",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme",
-          "peuAgitee"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "matinee",
-          "apres_midi"
-        ],
-        "phasesLunaires" : [
-          "pleineLune"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
+      "categoriePeche" : "lancer"
       },
       "couleur" : "argente",
       "couleurPrincipale" : "blow",
@@ -3298,9 +2098,6 @@
       "nom" : "Buffalo 60g",
       "notes" : "Jig 60g blow rayures rouges",
       "poids" : 60,
-      "positionsSpread" : [
-        "libre"
-      ],
       "profondeurMax" : 100,
       "profondeurMin" : 10,
       "quantite" : 1,
@@ -3317,25 +2114,7 @@
     },
     {
       "actionNage" : "moderate",
-      "categoriePeche" : "jig",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme",
-          "peuAgitee"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "matinee",
-          "apres_midi"
-        ],
-        "phasesLunaires" : [
-          "pleineLune"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
+      "categoriePeche" : "jig"
       },
       "couleur" : "argente",
       "couleurPrincipale" : "blow",
@@ -3357,9 +2136,6 @@
       "nom" : "sqidTrex",
       "notes" : "Blow\/marron jigging",
       "poids" : 30,
-      "positionsSpread" : [
-        "libre"
-      ],
       "profondeurMax" : 100,
       "profondeurMin" : 10,
       "quantite" : 1,
@@ -3377,25 +2153,7 @@
     },
     {
       "actionNage" : "moderate",
-      "categoriePeche" : "jig",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme",
-          "peuAgitee"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "matinee",
-          "apres_midi"
-        ],
-        "phasesLunaires" : [
-          "pleineLune"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
+      "categoriePeche" : "jig"
       },
       "couleur" : "argente",
       "couleurPrincipale" : "rose",
@@ -3417,9 +2175,6 @@
       "nom" : "Buffalo 80g",
       "notes" : "Jig 80g rose\/argenté flashy",
       "poids" : 80,
-      "positionsSpread" : [
-        "libre"
-      ],
       "profondeurMax" : 120,
       "profondeurMin" : 15,
       "quantite" : 1,
@@ -3436,26 +2191,7 @@
     },
     {
       "actionNage" : "moderate",
-      "categoriePeche" : "jig",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme",
-          "peuAgitee"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "matinee",
-          "midi",
-          "apres_midi"
-        ],
-        "phasesLunaires" : [
-          "pleineLune"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
+      "categoriePeche" : "jig"
       },
       "couleur" : "argente",
       "couleurPrincipale" : "argente",
@@ -3476,9 +2212,6 @@
       "nom" : "Buffalo 60g",
       "notes" : "Jig 60g argenté\/dos bleu",
       "poids" : 60,
-      "positionsSpread" : [
-        "libre"
-      ],
       "profondeurMax" : 100,
       "profondeurMin" : 10,
       "quantite" : 1,
@@ -3495,26 +2228,7 @@
     },
     {
       "actionNage" : "moderate",
-      "categoriePeche" : "jig",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme",
-          "peuAgitee"
-        ],
-        "maree" : [
-          "montante",
-          "etale"
-        ],
-        "moments" : [
-          "matinee",
-          "apres_midi"
-        ],
-        "phasesLunaires" : [
-          "pleineLune"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
+      "categoriePeche" : "jig"
       },
       "couleur" : "argente",
       "couleurPrincipale" : "blow",
@@ -3535,9 +2249,6 @@
       "nom" : "Buffalo 120g",
       "notes" : "Heavy jig 120g loches profondes",
       "poids" : 120,
-      "positionsSpread" : [
-        "libre"
-      ],
       "profondeurMax" : 200,
       "profondeurMin" : 50,
       "quantite" : 1,
@@ -3554,25 +2265,7 @@
     },
     {
       "actionNage" : "moderate",
-      "categoriePeche" : "jig",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme",
-          "peuAgitee"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "matinee",
-          "apres_midi"
-        ],
-        "phasesLunaires" : [
-          "pleineLune"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
+      "categoriePeche" : "jig"
       },
       "couleur" : "argente",
       "couleurPrincipale" : "or",
@@ -3593,9 +2286,6 @@
       "nom" : "The Streaker 160g",
       "notes" : "Heavy jig 160g très profond",
       "poids" : 160,
-      "positionsSpread" : [
-        "libre"
-      ],
       "profondeurMax" : 250,
       "profondeurMin" : 80,
       "quantite" : 1,
@@ -3612,25 +2302,7 @@
     },
     {
       "actionNage" : "moderate",
-      "categoriePeche" : "jig",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme",
-          "peuAgitee"
-        ],
-        "maree" : [
-          "montante"
-        ],
-        "moments" : [
-          "aube",
-          "matinee"
-        ],
-        "phasesLunaires" : [
-          "pleineLune"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
+      "categoriePeche" : "jig"
       },
       "couleur" : "argente",
       "couleurPrincipale" : "roseFluo",
@@ -3652,9 +2324,6 @@
       "nom" : "Squidtrex 110",
       "notes" : "Imitation calmar lipless crankbait",
       "poids" : 35,
-      "positionsSpread" : [
-        "libre"
-      ],
       "profondeurMax" : 10,
       "profondeurMin" : 1,
       "quantite" : 1,
@@ -3669,16 +2338,21 @@
       "vitesseMaximale" : 8,
       "vitesseMinimale" : 4,
       "vitesseOptimale" : 6
-    }
-  ],
-  "metadata" : {
-    "dateConversion" : "2025-12-16T10:07:39Z",
-    "dateCreation" : "2024-12-04",
-    "description" : "Base de données complète des 63 leurres - Nouvelle-Calédonie",
-    "nombreTotal" : 63,
-    "proprietaire" : "Sébastien",
-    "source" : "Tableau CPS + Techniques de pêche côtière 2023",
-    "version" : "2.0"
-  }
-}
+    },
+    {
+      "actionNage" : "moderate",
+      "categoriePeche" : "traine",
+      "couleur" : "argente",
+      "couleurPrincipale" : "roseFuchsia",
+      "couleursSecondaires" : [
 
+      ],
+      "especesCibles" : [
+        "carangue",
+        "thon",
+        "barracuda",
+        "wahoo"
+      ],
+      "finition" : "holographique",
+     }
+}

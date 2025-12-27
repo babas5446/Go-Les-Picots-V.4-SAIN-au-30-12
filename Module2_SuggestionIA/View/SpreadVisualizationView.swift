@@ -634,21 +634,6 @@ struct DetailBadge: View {
 
 // MARK: - ✅ FONCTION COMPLÈTE : Toutes les couleurs de l'enum
 
-// MARK: - Extension PositionSpread
-
-extension PositionSpread {
-    var emoji: String {
-        switch self {
-        case .libre: return "⚪️"
-        case .shortCorner: return "🎯"
-        case .longCorner: return "🔵"
-        case .shortRigger: return "➡️"
-        case .longRigger: return "⬅️"
-        case .shotgun: return "🔴"
-        }
-    }
-}
-
 // MARK: - ✅ FONCTION COMPLÈTE : Toutes les couleurs de l'enum
 
 /// Convertit les couleurs de leurre (enum Couleur) en couleurs d'affichage SwiftUI

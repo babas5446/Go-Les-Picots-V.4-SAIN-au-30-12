@@ -28,6 +28,7 @@
 		6100BCB92EFE426D0084CFB5 /* CLARIFICATION_FINITION_VS_PROFIL.md in Resources */ = {isa = PBXBuildFile; fileRef = 6100BCB82EFE426D0084CFB5 /* CLARIFICATION_FINITION_VS_PROFIL.md */; };
 		6100BCBB2EFE4ADF0084CFB5 /* DIFFERENTIATION_COULEURS_CUSTOM.md in Resources */ = {isa = PBXBuildFile; fileRef = 6100BCBA2EFE4ADF0084CFB5 /* DIFFERENTIATION_COULEURS_CUSTOM.md */; };
 		61263A542EE95DC400BBF0A8 /* LeurreFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61263A532EE95DC400BBF0A8 /* LeurreFormView.swift */; };
+		61703FE12EFF954100311E88 /* MODIFICATIONS_AFFICHAGE_RESULTATS_27DEC2024.md in Resources */ = {isa = PBXBuildFile; fileRef = 61703FE02EFF954100311E88 /* MODIFICATIONS_AFFICHAGE_RESULTATS_27DEC2024.md */; };
 		617DD0092EF15E99002C82F1 /* GUIDE_IMPORT_RAPIDE.md in Resources */ = {isa = PBXBuildFile; fileRef = 617DD0082EF15E99002C82F1 /* GUIDE_IMPORT_RAPIDE.md */; };
 		617DD0182EF1F74B002C82F1 /* LeurreWebScraperService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617DD0172EF1F74B002C82F1 /* LeurreWebScraperService.swift */; };
 		617DD01A2EF1F7F0002C82F1 /* DOCUMENTATION_IMPORT_URL.md in Resources */ = {isa = PBXBuildFile; fileRef = 617DD0192EF1F7F0002C82F1 /* DOCUMENTATION_IMPORT_URL.md */; };
@@ -123,6 +124,7 @@
 		6100BCB82EFE426D0084CFB5 /* CLARIFICATION_FINITION_VS_PROFIL.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLARIFICATION_FINITION_VS_PROFIL.md; sourceTree = "<group>"; };
 		6100BCBA2EFE4ADF0084CFB5 /* DIFFERENTIATION_COULEURS_CUSTOM.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = DIFFERENTIATION_COULEURS_CUSTOM.md; sourceTree = "<group>"; };
 		61263A532EE95DC400BBF0A8 /* LeurreFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeurreFormView.swift; sourceTree = "<group>"; };
+		61703FE02EFF954100311E88 /* MODIFICATIONS_AFFICHAGE_RESULTATS_27DEC2024.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = MODIFICATIONS_AFFICHAGE_RESULTATS_27DEC2024.md; sourceTree = "<group>"; };
 		617DD0082EF15E99002C82F1 /* GUIDE_IMPORT_RAPIDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = GUIDE_IMPORT_RAPIDE.md; sourceTree = "<group>"; };
 		617DD0172EF1F74B002C82F1 /* LeurreWebScraperService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeurreWebScraperService.swift; sourceTree = "<group>"; };
 		617DD0192EF1F7F0002C82F1 /* DOCUMENTATION_IMPORT_URL.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = DOCUMENTATION_IMPORT_URL.md; sourceTree = "<group>"; };
@@ -395,6 +397,7 @@
 				6100BC7F2EFD5B030084CFB5 /* ANALYSE_ADEQUATION_FICHE_JSON_MOTEUR.md */,
 				6100BC812EFD5B350084CFB5 /* FIX_LEURRES_LANCER_DANS_SPREAD.md */,
 				6100BCBA2EFE4ADF0084CFB5 /* DIFFERENTIATION_COULEURS_CUSTOM.md */,
+				61703FE02EFF954100311E88 /* MODIFICATIONS_AFFICHAGE_RESULTATS_27DEC2024.md */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -545,6 +548,7 @@
 				617DD01A2EF1F7F0002C82F1 /* DOCUMENTATION_IMPORT_URL.md in Resources */,
 				61C5FC292EFA88D80030C95D /* RECAPITULATIF_MODIFICATIONS_23DEC2024.md in Resources */,
 				617DD01C2EF1F81C002C82F1 /* IMPLEMENTATION_IMPORT_URL_PHASE1.md in Resources */,
+				61703FE12EFF954100311E88 /* MODIFICATIONS_AFFICHAGE_RESULTATS_27DEC2024.md in Resources */,
 				6100BC842EFD61580084CFB5 /* MIGRATION_PROPRIETES_FINALES_25DEC2024.md in Resources */,
 				6100BC902EFDE5CA0084CFB5 /* CORRECTION_PROFIL_VISUEL_CONTEXTUEL_26DEC2024.md in Resources */,
 				617DD0E22EF4A675002C82F1 /* GUIDE_AJOUT_IMAGE.md in Resources */,

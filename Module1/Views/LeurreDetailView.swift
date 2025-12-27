@@ -15,6 +15,7 @@ struct LeurreDetailView: View {
     @Environment(\.dismiss) private var dismiss
     
     @State private var showingEditer = false
+    @State private var showingDupliquer = false
     @State private var showingSupprimer = false
     
     var body: some View {
@@ -77,6 +78,10 @@ struct LeurreDetailView: View {
                     Button(action: { showingEditer = true }) {
                         Label("Modifier", systemImage: "pencil")
                     }
+                    Button(action: { showingDupliquer = true }) {
+                        Label("Dupliquer", systemImage: "doc.on.doc")
+                    }
+                    Divider()
                     Button(role: .destructive, action: { showingSupprimer = true }) {
                         Label("Supprimer", systemImage: "trash")
                     }
@@ -90,6 +95,9 @@ struct LeurreDetailView: View {
         // ═══════════════════════════════════════════════════════════
         .sheet(isPresented: $showingEditer) {
             LeurreFormView(viewModel: viewModel, mode: .edition(leurre))
+        }
+        .sheet(isPresented: $showingDupliquer) {
+            LeurreFormView(viewModel: viewModel, mode: .duplication(leurre))
         }
         .alert("Supprimer ce leurre ?", isPresented: $showingSupprimer) {
             Button("Annuler", role: .cancel) { }

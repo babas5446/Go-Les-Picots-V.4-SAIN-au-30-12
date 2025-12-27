@@ -1194,6 +1194,17 @@ enum PositionSpread: String, Codable, CaseIterable, Hashable {
         }
     }
     
+    var emoji: String {
+        switch self {
+        case .libre: return "📍"           // Position libre/variable
+        case .shortCorner: return "🟢"     // Coin court - vert (proche, dans les bulles)
+        case .longCorner: return "🔵"      // Coin long - bleu (moyen distance)
+        case .shortRigger: return "🟡"     // Rigger court - jaune (latéral proche)
+        case .longRigger: return "🟠"      // Rigger long - orange (latéral loin)
+        case .shotgun: return "🔴"         // Shotgun - rouge (très loin, alarme)
+        }
+    }
+    
     var distance: String {
         switch self {
         case .libre: return "Variable"
