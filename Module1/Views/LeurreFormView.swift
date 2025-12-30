@@ -93,6 +93,12 @@ struct LeurreFormView: View {
     @State private var hasCouleurSecondaire: Bool = false
     @State private var finitionSelectionnee: Finition? = nil
     
+    // Type de nage
+    @State private var typeDeNage: TypeDeNage? = nil
+    @State private var showWobblingChoice = false
+    @State private var showJiggingChoice = false
+    @State private var showTypeDeNagePicker = false  // ✅ AJOUTER CETTE LIGNE
+    
     // Traîne (conditionnel)
     @State private var profondeurMin: String = ""
     @State private var profondeurMax: String = ""
@@ -101,6 +107,9 @@ struct LeurreFormView: View {
     
     // Notes
     @State private var notes: String = ""
+    @State private var detectedTypes: [TypeDeNage] = []           // ✅ AJOUTER
+    @State private var showTypeDetectionSuggestion = false        // ✅ AJOUTER
+    @State private var hasIgnoredSuggestion = false               // ✅ AJOUTER
     
     // Photo
     @State private var selectedImage: UIImage? = nil
@@ -154,10 +163,12 @@ struct LeurreFormView: View {
             _couleurSecondaireCustom = State(initialValue: leurre.couleurSecondaireCustom)  // 🆕
             _hasCouleurSecondaire = State(initialValue: leurre.couleurSecondaire != nil || leurre.couleurSecondaireCustom != nil)
             _finitionSelectionnee = State(initialValue: leurre.finition)  // ✅ Initialiser la finition
+            _typeDeNage = State(initialValue: leurre.typeDeNage)
             _profondeurMin = State(initialValue: leurre.profondeurNageMin.map { String(format: "%.1f", $0) } ?? "")
             _profondeurMax = State(initialValue: leurre.profondeurNageMax.map { String(format: "%.1f", $0) } ?? "")
             _vitesseMin = State(initialValue: leurre.vitesseTraineMin.map { String(format: "%.0f", $0) } ?? "")
             _vitesseMax = State(initialValue: leurre.vitesseTraineMax.map { String(format: "%.0f", $0) } ?? "")
+            
             _notes = State(initialValue: leurre.notes ?? "")
             
             // Charger la photo existante (sauf en mode duplication où on copie la photo)
@@ -201,9 +212,44 @@ struct LeurreFormView: View {
                 // Section Finition
                 sectionFinition
                 
-                // Section Traîne (conditionnel)
-                if typePeche.necessiteInfosTraine {
-                    sectionTraine
+                // Section Type de nage
+                Section(header: Text("Type de nage (optionnel)")) {
+                    // ✅ Affichage custom avec bouton
+                    HStack {
+                        Text("Type de nage")
+                            .foregroundColor(.primary)
+                        
+                        Spacer()
+                        
+                        Button {
+                            showTypeDeNagePicker = true
+                        } label: {
+                            HStack(spacing: 4) {
+                                Text(typeDeNage?.rawValue ?? "Aucun")
+                                    .foregroundColor(typeDeNage == nil ? .secondary : .primary)
+                                Image(systemName: "chevron.up.chevron.down")
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                    }
+                    
+                    if let type = typeDeNage {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(type.categorie)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            
+                            Text(type.description)
+                                .font(.subheadline)
+                                .foregroundColor(.primary)
+                            
+                            Text("💡 " + type.conditionsIdeales)
+                                .font(.caption)
+                                .foregroundColor(.blue)
+                        }
+                        .padding(.vertical, 4)
+                    }
                 }
                 
                 // Section Notes
@@ -276,6 +322,32 @@ struct LeurreFormView: View {
                         showVariantSelection = false
                     }
                 )
+            }
+            // ✅ AJOUTER CES 2 SHEETS ICI
+            .sheet(isPresented: $showWobblingChoice) {
+                WobblingChoiceSheet(selectedType: $typeDeNage)
+            }
+            .sheet(isPresented: $showTypeDeNagePicker) {
+                TypeDeNagePickerSheet(
+                    selectedType: $typeDeNage,
+                    onWobblingTapped: {
+                        showTypeDeNagePicker = false
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            showWobblingChoice = true
+                        }
+                    },
+                    // ✅ AJOUTER CE PARAMÈTRE
+                    onJiggingTapped: {
+                        showTypeDeNagePicker = false
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            showJiggingChoice = true
+                        }
+                    }
+                )
+            }
+            // ✅ AJOUTER CETTE NOUVELLE SHEET
+            .sheet(isPresented: $showJiggingChoice) {
+                JiggingChoiceSheet(selectedType: $typeDeNage)
             }
         }
     }
@@ -619,6 +691,8 @@ struct LeurreFormView: View {
         }
     }
     
+    // MARK: - Section Traîne
+    
     private var sectionTraine: some View {
         Section {
             VStack(alignment: .leading, spacing: 8) {
@@ -675,6 +749,16 @@ struct LeurreFormView: View {
         Section {
             TextEditor(text: $notes)
                 .frame(minHeight: 80)
+                .onChange(of: notes) { _, newValue in
+                    // Détecter les types de nage dans les notes
+                    detectTypeDeNage(in: newValue)
+                }
+            
+            // 💡 BADGE DE SUGGESTION
+            if showTypeDetectionSuggestion, let suggestedType = detectedTypes.first {
+                typeDetectionBadge(for: suggestedType)
+            }
+            
         } header: {
             Text("Notes personnelles")
         } footer: {
@@ -799,11 +883,13 @@ struct LeurreFormView: View {
                 couleurSecondaire: couleurSec,
                 couleurSecondaireCustom: hasCouleurSecondaire ? couleurSecondaireCustom : nil,  // 🆕
                 finition: finitionSelectionnee,  // ✅ Inclure la finition
+                typeDeNage: typeDeNage,
                 profondeurNageMin: profMinValue,
                 profondeurNageMax: profMaxValue,
                 vitesseTraineMin: vitMinValue,
                 vitesseTraineMax: vitMaxValue,
-                notes: notes.isEmpty ? nil : notes
+                notes: notes.isEmpty ? nil : notes,
+                photoPath: nil  // Sera assigné après si photo présente
             )
             
             // Sauvegarder la photo si présente
@@ -831,6 +917,7 @@ struct LeurreFormView: View {
             leurreModifie.couleurSecondaire = couleurSec
             leurreModifie.couleurSecondaireCustom = hasCouleurSecondaire ? couleurSecondaireCustom : nil  // 🆕
             leurreModifie.finition = finitionSelectionnee  // ✅ Inclure la finition
+            leurreModifie.typeDeNage = typeDeNage
             leurreModifie.profondeurNageMin = profMinValue
             leurreModifie.profondeurNageMax = profMaxValue
             leurreModifie.vitesseTraineMin = vitMinValue
@@ -1029,6 +1116,111 @@ struct LeurreFormView: View {
         }
         return principale.contrasteNaturel
     }
+    // MARK: - Détection Type de Nage
+        
+        /// Détecte automatiquement les types de nage mentionnés dans les notes
+        private func detectTypeDeNage(in text: String) {
+            // Réinitialiser si le texte est vide
+            guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+                withAnimation {
+                    showTypeDetectionSuggestion = false
+                    detectedTypes = []
+                    hasIgnoredSuggestion = false
+                }
+                return
+            }
+            
+            // Détecter les types
+            let detected = TypeDeNageDetector.detect(in: text)
+            
+            // Filtrer intelligemment les déclencheurs
+            let filteredDetected: [TypeDeNage]
+            if detected.contains(.fastJigging) || detected.contains(.slowJigging) {
+                // Si on a une variante spécifique de jigging, ne pas suggérer le générique
+                filteredDetected = detected.filter { $0 != .jigging }
+            } else if detected.contains(.wobblingLarge) || detected.contains(.wobblingSerré) {
+                // Si on a une variante spécifique de wobbling, ne pas suggérer le générique
+                filteredDetected = detected.filter { $0 != .wobbling }
+            } else {
+                // Sinon, garder tout (y compris wobbling et jigging)
+                filteredDetected = detected
+            }
+            
+            // Ne suggérer que si :
+            // 1. Un type est détecté
+            // 2. Le type n'est pas déjà sélectionné
+            // 3. L'utilisateur n'a pas déjà ignoré la suggestion pour ce texte
+            if let firstDetected = filteredDetected.first,
+               typeDeNage != firstDetected,
+               !hasIgnoredSuggestion {
+                detectedTypes = filteredDetected
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    showTypeDetectionSuggestion = true
+                }
+            } else {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    showTypeDetectionSuggestion = false
+                }
+            }
+        }
+        
+        /// Badge de suggestion de type de nage détecté
+        private func typeDetectionBadge(for type: TypeDeNage) -> some View {
+            HStack(spacing: 12) {
+                // Icône
+                Image(systemName: "lightbulb.fill")
+                    .foregroundColor(Color(hex: "FFBC42"))
+                    .font(.title3)
+                
+                // Texte
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Type de nage détecté")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    
+                    Text(type.rawValue)
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.primary)
+                }
+                
+                Spacer()
+                
+                // Bouton Ajouter
+                Button {
+                    typeDeNage = type
+                    withAnimation {
+                        showTypeDetectionSuggestion = false
+                        hasIgnoredSuggestion = false
+                    }
+                } label: {
+                    Text("Ajouter")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(Color(hex: "0277BD"))
+                        .cornerRadius(8)
+                }
+                
+                // Bouton Ignorer
+                Button {
+                    withAnimation {
+                        showTypeDetectionSuggestion = false
+                        hasIgnoredSuggestion = true
+                    }
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(.gray)
+                        .font(.title3)
+                }
+            }
+            .padding()
+            .background(Color(hex: "FFF9E6"))
+            .cornerRadius(12)
+            .transition(.scale.combined(with: .opacity))
+        }
 }
 
 // MARK: - Preview
@@ -1093,4 +1285,5 @@ struct SelectionVarianteView: View {
         }
     }
 }
+
 

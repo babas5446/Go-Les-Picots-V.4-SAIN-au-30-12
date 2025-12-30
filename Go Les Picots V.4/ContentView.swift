@@ -15,7 +15,7 @@ struct ContentView: View {
     // ViewModels partagés pour l'app
     
     @StateObject private var leureViewModel = LeureViewModel()
-    @StateObject private var SuggestionEngine: SuggestionEngine
+    @StateObject private var suggestionEngine: SuggestionEngine
     @StateObject private var navigationCoordinator = NavigationCoordinator()
     
     // État pour le diagnostic
@@ -24,7 +24,7 @@ struct ContentView: View {
     init() {
         let lvm = LeureViewModel()
         _leureViewModel = StateObject(wrappedValue: lvm)
-        _SuggestionEngine = StateObject(wrappedValue: Go_Les_Picots_V_4.SuggestionEngine(leureViewModel: lvm))
+        _suggestionEngine = StateObject(wrappedValue: SuggestionEngine(leureViewModel: lvm))
     }
     
     var body: some View {
@@ -36,7 +36,7 @@ struct ContentView: View {
                 // GRILLE 2x2 DES MODULES
                 ModuleGridView(
                     leureViewModel: leureViewModel,
-                    SuggestionEngine: SuggestionEngine,
+                    suggestionEngine: suggestionEngine,
                     navigationCoordinator: navigationCoordinator
                 )
                 .padding(.top, 30)
@@ -120,7 +120,7 @@ struct ModuleItem: Identifiable {
 // MARK: - Grille des 4 modules
 struct ModuleGridView: View {
     let leureViewModel: LeureViewModel
-    let SuggestionEngine: SuggestionEngine
+    let suggestionEngine: SuggestionEngine
     let navigationCoordinator: NavigationCoordinator
     
     let modules : [ModuleItem] = [
@@ -155,7 +155,7 @@ struct ModuleGridView: View {
                 ModuleButton(
                     module: module,
                     leureViewModel: leureViewModel,
-                    SuggestionEngine: SuggestionEngine,
+                    suggestionEngine: suggestionEngine,
                     navigationCoordinator: navigationCoordinator
                 )
             }
@@ -168,7 +168,7 @@ struct ModuleGridView: View {
 struct ModuleButton: View {
     let module: ModuleItem
     let leureViewModel: LeureViewModel
-    let SuggestionEngine: SuggestionEngine
+    let suggestionEngine: SuggestionEngine
     let navigationCoordinator: NavigationCoordinator
     
     @State private var showingModule = false
@@ -222,7 +222,7 @@ struct ModuleButton: View {
             } else if module.title == "Suggestion IA" {
                 NavigationStack {
                     SuggestionInputView(
-                        suggestionEngine: SuggestionEngine,
+                        suggestionEngine: suggestionEngine,
                         navigationCoordinator: navigationCoordinator
                     )
                 }

@@ -40,6 +40,9 @@ struct Leurre: Identifiable, Codable, Hashable {
     var couleurSecondaireCustom: CouleurCustom?  // Optionnel : si défini, override couleurSecondaire pour l'affichage
     var finition: Finition?                  // Facultatif
     
+    // Type de nage
+        var typeDeNage: TypeDeNage?
+    
     // Conditionnel : SI typePeche == .traine
     var profondeurNageMin: Double?           // mètres
     var profondeurNageMax: Double?           // mètres
@@ -98,6 +101,7 @@ struct Leurre: Identifiable, Codable, Hashable {
         case vitesseTraineMax = "vitesseMaximale"     // ✅ JSON utilise "vitesseMaximale"
         case notes
         case photoPath
+        
         case contraste
         
         // 🌍 ZONES GÉOGRAPHIQUES (lagon, large, passes, DCP...)
@@ -115,6 +119,7 @@ struct Leurre: Identifiable, Codable, Hashable {
         case typeTete
         case actionNage
         case vitesseOptimale
+        case typeDeNage
     }
     
     // MARK: - Custom Decodable
@@ -165,6 +170,8 @@ struct Leurre: Identifiable, Codable, Hashable {
         
         finition = try container.decodeIfPresent(Finition.self, forKey: .finition)
         
+        typeDeNage = try container.decodeIfPresent(TypeDeNage.self, forKey: .typeDeNage)
+        
         profondeurNageMin = try container.decodeIfPresent(Double.self, forKey: .profondeurNageMin)
         profondeurNageMax = try container.decodeIfPresent(Double.self, forKey: .profondeurNageMax)
         vitesseTraineMin = try container.decodeIfPresent(Double.self, forKey: .vitesseTraineMin)
@@ -207,7 +214,7 @@ struct Leurre: Identifiable, Codable, Hashable {
         try container.encodeIfPresent(couleurSecondaire, forKey: .couleurSecondaire)
         try container.encodeIfPresent(couleurSecondaireCustom, forKey: .couleurSecondaireCustom)
         try container.encodeIfPresent(finition, forKey: .finition)
-        
+        try container.encodeIfPresent(typeDeNage, forKey: .typeDeNage)
         try container.encodeIfPresent(profondeurNageMin, forKey: .profondeurNageMin)
         try container.encodeIfPresent(profondeurNageMax, forKey: .profondeurNageMax)
         try container.encodeIfPresent(vitesseTraineMin, forKey: .vitesseTraineMin)
@@ -245,6 +252,7 @@ struct Leurre: Identifiable, Codable, Hashable {
         couleurSecondaire: Couleur? = nil,
         couleurSecondaireCustom: CouleurCustom? = nil,
         finition: Finition? = nil,
+        typeDeNage: TypeDeNage? = nil,
         profondeurNageMin: Double? = nil,
         profondeurNageMax: Double? = nil,
         vitesseTraineMin: Double? = nil,
@@ -267,12 +275,14 @@ struct Leurre: Identifiable, Codable, Hashable {
         self.couleurSecondaire = couleurSecondaire
         self.couleurSecondaireCustom = couleurSecondaireCustom
         self.finition = finition
+        self.typeDeNage = typeDeNage
         self.profondeurNageMin = profondeurNageMin
         self.profondeurNageMax = profondeurNageMax
         self.vitesseTraineMin = vitesseTraineMin
         self.vitesseTraineMax = vitesseTraineMax
         self.notes = notes
         self.photoPath = photoPath
+        
         self.quantite = quantite
         self.dateAjout = Date()
         

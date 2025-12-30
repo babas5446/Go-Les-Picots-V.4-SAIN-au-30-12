@@ -16,13 +16,10 @@
       "marque" : "Manns",
       "modele" : "Magnum Stretch 30+",
       "nom" : "Magnum Stretch 30+",
-      "notes" : "Grande bavette plongeante, trolling",
       "poids" : 130,
       "profondeurMax" : 10,
       "profondeurMin" : 9,
-      "quantite" : 1,
       "reference" : "ID 1",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine"
       ],
@@ -33,9 +30,7 @@
       "vitesseOptimale" : 8
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "couleur" : "argente",
       "couleurPrincipale" : "noirViolet",
       "couleursSecondaires" : [
 
@@ -46,20 +41,16 @@
         "mahiMahi",
         "wahoo"
       ],
-      "finition" : "holographique",
       "id" : 2,
       "isComputed" : false,
       "longueur" : 20,
       "marque" : "Nomad Design",
       "modele" : "Slipstream 200 Flying Fish",
       "nom" : "Slipstream 200 Flying Fish",
-      "notes" : "Imitation poisson volant",
       "poids" : 95,
       "profondeurMax" : 1,
       "profondeurMin" : 0,
-      "quantite" : 1,
       "reference" : "ID 2",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine"
       ],
@@ -70,10 +61,7 @@
       "vitesseOptimale" : 6
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "violetFonce",
       "couleursSecondaires" : [
 
@@ -83,20 +71,16 @@
         "barracuda",
         "wahoo"
       ],
-      "finition" : "holographique",
       "id" : 3,
       "isComputed" : false,
       "longueur" : 18,
       "marque" : "YoZuri",
       "modele" : "Magnum 180 s",
       "nom" : "Magnum 180 s",
-      "notes" : "Violet foncé stable Long Corner",
       "poids" : 100,
       "profondeurMax" : 6.5,
       "profondeurMin" : 5,
-      "quantite" : 1,
       "reference" : "ID 3",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine",
         "lancer"
@@ -108,10 +92,7 @@
       "vitesseOptimale" : 8
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "chartreuse",
       "couleursSecondaires" : [
 
@@ -120,20 +101,16 @@
         "carangue",
         "thon"
       ],
-      "finition" : "holographique",
       "id" : 4,
       "isComputed" : false,
       "longueur" : 18,
       "marque" : "Berkley",
       "modele" : "Frenzy FSM 18 S",
       "nom" : "Frenzy FSM 18 S",
-      "notes" : "Chartreuse TRÈS VISIBLE RIGGER",
       "poids" : 84,
       "profondeurMax" : 3,
       "profondeurMin" : 2,
-      "quantite" : 1,
       "reference" : "ID 4",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine",
         "lancer"
@@ -145,30 +122,7 @@
       "vitesseOptimale" : 7
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "conditionsOptimales" : {
-        "etatMer" : [
-          "calme",
-          "peuAgitee"
-        ],
-        "maree" : [
-          "montante",
-          "etale"
-        ],
-        "moments" : [
-          "matinee",
-          "midi",
-          "apres_midi"
-        ],
-        "phasesLunaires" : [
-          "pleineLune"
-        ],
-        "turbidite" : [
-          "claire"
-        ]
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "vert",
       "couleursSecondaires" : [
 
@@ -178,20 +132,16 @@
         "barracuda",
         "wahoo"
       ],
-      "finition" : "holographique",
       "id" : 5,
       "isComputed" : false,
       "longueur" : 16,
       "marque" : "YoZuri",
       "modele" : "3D Magnum 160 s",
       "nom" : "3D Magnum 160 s",
-      "notes" : "3D prism trolling vert\/argenté",
       "poids" : 70,
       "profondeurMax" : 6,
       "profondeurMin" : 5,
-      "quantite" : 1,
       "reference" : "ID 5",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine"
       ],
@@ -202,10 +152,7 @@
       "vitesseOptimale" : 8
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "bleu",
       "couleursSecondaires" : [
 
@@ -216,20 +163,16 @@
         "bonite",
         "wahoo"
       ],
-      "finition" : "holographique",
       "id" : 6,
       "isComputed" : false,
       "longueur" : 18,
       "marque" : "Rapala",
       "modele" : "Countdown Magnum 180",
       "nom" : "Countdown Magnum 180",
-      "notes" : "Sinking trolling bleu\/blanc",
       "poids" : 90,
       "profondeurMax" : 6,
       "profondeurMin" : 2,
-      "quantite" : 1,
       "reference" : "ID 6",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine"
       ],
@@ -240,10 +183,7 @@
       "vitesseOptimale" : 8
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "sardine",
       "couleursSecondaires" : [
 
@@ -254,20 +194,16 @@
         "barracuda",
         "thazard"
       ],
-      "finition" : "holographique",
       "id" : 7,
       "isComputed" : false,
       "longueur" : 14,
       "marque" : "Berkley",
       "modele" : "Frenzy Mungo 140",
       "nom" : "Frenzy Mungo 140",
-      "notes" : "eau claire 14cm",
       "poids" : 42,
       "profondeurMax" : 4,
       "profondeurMin" : 3,
-      "quantite" : 1,
       "reference" : "ID 7",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine"
       ],
@@ -278,10 +214,7 @@
       "vitesseOptimale" : 6
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "bleuNoir",
       "couleursSecondaires" : [
 
@@ -291,20 +224,16 @@
         "carangue",
         "thon"
       ],
-      "finition" : "holographique",
       "id" : 8,
       "isComputed" : false,
       "longueur" : 14,
       "marque" : "Rapala",
       "modele" : "X-Rap Magnum 140",
       "nom" : "X-Rap Magnum 140",
-      "notes" : "Bleu noir\/gris sombre",
       "poids" : 46,
       "profondeurMax" : 6,
       "profondeurMin" : 5,
-      "quantite" : 1,
       "reference" : "ID 8",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine"
       ],
@@ -315,10 +244,7 @@
       "vitesseOptimale" : 8
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "blancRouge",
       "couleursSecondaires" : [
 
@@ -328,20 +254,16 @@
         "thon",
         "wahoo"
       ],
-      "finition" : "holographique",
       "id" : 9,
       "isComputed" : false,
       "longueur" : 14,
       "marque" : "Rapala",
       "modele" : "X-Rap Magnum 140",
       "nom" : "X-Rap Magnum 140",
-      "notes" : "Red Head",
       "poids" : 46,
       "profondeurMax" : 6,
       "profondeurMin" : 5,
-      "quantite" : 1,
       "reference" : "ID 9",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine"
       ],
@@ -352,10 +274,7 @@
       "vitesseOptimale" : 8
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "bleu",
       "couleursSecondaires" : [
 
@@ -364,20 +283,16 @@
         "carangueGT",
         "thazard"
       ],
-      "finition" : "holographique",
       "id" : 10,
       "isComputed" : false,
       "longueur" : 14,
       "marque" : "YoZuri",
       "modele" : "3D Magnum 140",
       "nom" : "3D Magnum 140",
-      "notes" : "3D prism bavette",
       "poids" : 48,
       "profondeurMax" : 2,
       "profondeurMin" : 1,
-      "quantite" : 1,
       "reference" : "ID 10",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine"
       ],
@@ -388,10 +303,7 @@
       "vitesseOptimale" : 7
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "vert",
       "couleursSecondaires" : [
 
@@ -401,20 +313,16 @@
         "barracuda",
         "wahoo"
       ],
-      "finition" : "holographique",
       "id" : 11,
       "isComputed" : false,
       "longueur" : 14,
       "marque" : "YoZuri",
       "modele" : "Magnum 140",
       "nom" : "Magnum 140",
-      "notes" : "Trolling vert\/argenté",
       "poids" : 48,
       "profondeurMax" : 5.5,
       "profondeurMin" : 3.5,
-      "quantite" : 1,
       "reference" : "ID 11",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine"
       ],
@@ -425,10 +333,7 @@
       "vitesseOptimale" : 8
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "blancOrange",
       "couleursSecondaires" : [
 
@@ -437,20 +342,16 @@
         "carangue",
         "thon"
       ],
-      "finition" : "holographique",
       "id" : 12,
       "isComputed" : false,
       "longueur" : 14,
       "marque" : "Rapala",
       "modele" : "X-Rap Magnum 140",
       "nom" : "X-Rap Magnum 140",
-      "notes" : "Blanc\/orange flashy",
       "poids" : 46,
       "profondeurMax" : 6,
       "profondeurMin" : 5,
-      "quantite" : 1,
       "reference" : "ID 12",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine"
       ],
@@ -461,10 +362,7 @@
       "vitesseOptimale" : 8
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "jauneHolographique",
       "couleursSecondaires" : [
 
@@ -474,20 +372,16 @@
         "carangue",
         "thon"
       ],
-      "finition" : "holographique",
       "id" : 13,
       "isComputed" : false,
       "longueur" : 14,
       "marque" : "Rapala",
       "modele" : "X-Rap Magnum 140",
       "nom" : "X-Rap Magnum 140",
-      "notes" : "Jaune\/vert flashy",
       "poids" : 46,
       "profondeurMax" : 6,
       "profondeurMin" : 5,
-      "quantite" : 1,
       "reference" : "ID 13",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine"
       ],
@@ -498,10 +392,7 @@
       "vitesseOptimale" : 8
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "bleuFonce",
       "couleursSecondaires" : [
 
@@ -511,20 +402,16 @@
         "thon",
         "wahoo"
       ],
-      "finition" : "holographique",
       "id" : 14,
       "isComputed" : false,
       "longueur" : 14,
       "marque" : "Rapala",
       "modele" : "X-Rap Magnum 140",
       "nom" : "X-Rap Magnum 140",
-      "notes" : "EAU TROUBLE EXCELLENT",
       "poids" : 46,
       "profondeurMax" : 6,
       "profondeurMin" : 5,
-      "quantite" : 1,
       "reference" : "ID 14",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine"
       ],
@@ -535,10 +422,7 @@
       "vitesseOptimale" : 8
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "argente",
       "couleursSecondaires" : [
 
@@ -548,20 +432,16 @@
         "thazard",
         "bonite"
       ],
-      "finition" : "holographique",
       "id" : 15,
       "isComputed" : false,
       "longueur" : 12,
       "marque" : "Noeby",
       "modele" : "Minnow 120",
       "nom" : "Minnow 120",
-      "notes" : "Argenté\/bleu naturel lagon",
       "poids" : 35,
       "profondeurMax" : 5,
       "profondeurMin" : 4,
-      "quantite" : 1,
       "reference" : "ID 15",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine",
         "lancer"
@@ -573,10 +453,7 @@
       "vitesseOptimale" : 7
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "argente",
       "couleursSecondaires" : [
 
@@ -584,20 +461,16 @@
       "especesCibles" : [
         "carangue"
       ],
-      "finition" : "holographique",
       "id" : 16,
       "isComputed" : false,
       "longueur" : 12,
       "marque" : "Noeby",
       "modele" : "Minnow 120",
       "nom" : "Minnow 120",
-      "notes" : "Argenté tête bleue lagon",
       "poids" : 35,
       "profondeurMax" : 5,
       "profondeurMin" : 4,
-      "quantite" : 1,
       "reference" : "ID 16",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine"
       ],
@@ -608,10 +481,7 @@
       "vitesseOptimale" : 7
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "argente",
       "couleursSecondaires" : [
 
@@ -620,20 +490,16 @@
         "carangueGT",
         "barracuda"
       ],
-      "finition" : "holographique",
       "id" : 17,
       "isComputed" : false,
       "longueur" : 12,
       "marque" : "Noeby",
       "modele" : "Minnow 120",
       "nom" : "Minnow 120",
-      "notes" : "Surface argenté\/dos bleu",
       "poids" : 30,
       "profondeurMax" : 1,
       "profondeurMin" : 0,
-      "quantite" : 1,
       "reference" : "ID 17",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine"
       ],
@@ -644,10 +510,7 @@
       "vitesseOptimale" : 5
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "marron",
       "couleursSecondaires" : [
 
@@ -655,20 +518,16 @@
       "especesCibles" : [
         "carangue"
       ],
-      "finition" : "holographique",
       "id" : 18,
       "isComputed" : false,
       "longueur" : 13,
       "marque" : "Tike Pro",
       "modele" : "Minnow 130",
       "nom" : "Minnow 130",
-      "notes" : "Marron\/orange imitation",
       "poids" : 38,
       "profondeurMax" : 2,
       "profondeurMin" : 0.5,
-      "quantite" : 1,
       "reference" : "ID 18",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine"
       ],
@@ -679,10 +538,7 @@
       "vitesseOptimale" : 6
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "vertOlive",
       "couleursSecondaires" : [
 
@@ -690,20 +546,16 @@
       "especesCibles" : [
         "loche"
       ],
-      "finition" : "holographique",
       "id" : 19,
       "isComputed" : false,
       "longueur" : 11,
       "marque" : "Sebile",
       "modele" : "Minnow 110",
       "nom" : "Minnow 110",
-      "notes" : "Petit leurre récif",
       "poids" : 28,
       "profondeurMax" : 1,
       "profondeurMin" : 0,
-      "quantite" : 1,
       "reference" : "ID 19",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine"
       ],
@@ -714,10 +566,7 @@
       "vitesseOptimale" : 4
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "rouge",
       "couleursSecondaires" : [
 
@@ -728,20 +577,16 @@
         "thon",
         "bonite"
       ],
-      "finition" : "holographique",
       "id" : 20,
       "isComputed" : false,
       "longueur" : 15,
       "marque" : "Storm",
       "modele" : "Deep Thunder 15",
       "nom" : "Deep Thunder 15",
-      "notes" : "Deep diver rouge\/jaune",
       "poids" : 60,
       "profondeurMax" : 9,
       "profondeurMin" : 6,
-      "quantite" : 1,
       "reference" : "ID 20",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine",
         "lancer"
@@ -753,10 +598,7 @@
       "vitesseOptimale" : 8
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "argente",
       "couleursSecondaires" : [
 
@@ -765,20 +607,16 @@
         "carangue",
         "thon"
       ],
-      "finition" : "holographique",
       "id" : 21,
       "isComputed" : false,
       "longueur" : 9.5,
       "marque" : "SFT",
       "modele" : "Takumi 95",
       "nom" : "Takumi 95",
-      "notes" : "Sinking 40g jigging\/lancer",
       "poids" : 40,
       "profondeurMax" : 30,
       "profondeurMin" : 5,
-      "quantite" : 1,
       "reference" : "ID 21",
-      "taille" : 10,
       "techniquesPossibles" : [
         "lancer"
       ],
@@ -789,10 +627,7 @@
       "vitesseOptimale" : 6
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "bleu",
       "couleursSecondaires" : [
 
@@ -803,20 +638,16 @@
         "bonite",
         "thon"
       ],
-      "finition" : "holographique",
       "id" : 22,
       "isComputed" : false,
       "longueur" : 14,
       "marque" : "Maria",
       "modele" : "Loaded S 140",
       "nom" : "Loaded S 140",
-      "notes" : "Slow jig 40g bleu\/argenté",
       "poids" : 43,
       "profondeurMax" : 50,
       "profondeurMin" : 10,
-      "quantite" : 1,
       "reference" : "ID 22",
-      "taille" : 10,
       "techniquesPossibles" : [
         "lancer",
         "traine"
@@ -828,10 +659,7 @@
       "vitesseOptimale" : 7
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "violet",
       "couleursSecondaires" : [
 
@@ -840,20 +668,16 @@
         "carangueGT",
         "thazard"
       ],
-      "finition" : "holographique",
       "id" : 23,
       "isComputed" : false,
       "longueur" : 12.5,
       "marque" : "Yakamito",
       "modele" : "Lawbreaker 125",
       "nom" : "Lawbreaker 125",
-      "notes" : "WTD violet\/noir surface",
       "poids" : 28,
       "profondeurMax" : 0.5,
       "profondeurMin" : 0,
-      "quantite" : 1,
       "reference" : "ID 23",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine",
         "lancer"
@@ -865,10 +689,7 @@
       "vitesseOptimale" : 4
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "vertArgente",
       "couleursSecondaires" : [
 
@@ -877,20 +698,16 @@
         "carangue",
         "thon"
       ],
-      "finition" : "holographique",
       "id" : 24,
       "isComputed" : false,
       "longueur" : 12.5,
       "marque" : "Nomad Design",
       "modele" : "DTX Minnow 125",
       "nom" : "DTX Minnow 125",
-      "notes" : "Autotune vert\/argenté",
       "poids" : 40,
       "profondeurMax" : 6,
       "profondeurMin" : 5,
-      "quantite" : 1,
       "reference" : "ID 24",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine"
       ],
@@ -901,10 +718,7 @@
       "vitesseOptimale" : 8
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "argente",
       "couleursSecondaires" : [
 
@@ -914,20 +728,16 @@
         "bonite",
         "thon"
       ],
-      "finition" : "holographique",
       "id" : 25,
       "isComputed" : false,
       "longueur" : 12.5,
       "marque" : "Nomad Design",
       "modele" : "DTX Minnow 125",
       "nom" : "DTX Minnow 125",
-      "notes" : "Autotune argenté pur",
       "poids" : 40,
       "profondeurMax" : 6,
       "profondeurMin" : 5,
-      "quantite" : 1,
       "reference" : "ID 25",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine"
       ],
@@ -938,10 +748,7 @@
       "vitesseOptimale" : 8
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "lancer",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "blanc",
       "couleursSecondaires" : [
 
@@ -950,20 +757,16 @@
         "carangueGT",
         "thazard"
       ],
-      "finition" : "holographique",
       "id" : 26,
       "isComputed" : false,
       "longueur" : 10,
       "marque" : "Noeby",
       "modele" : "Popper 10cm",
       "nom" : "Popper 10cm",
-      "notes" : "19g blanc\/rouge surface",
       "poids" : 19,
       "profondeurMax" : 0.20000000000000001,
       "profondeurMin" : 0,
-      "quantite" : 1,
       "reference" : "ID 26",
-      "taille" : 10,
       "techniquesPossibles" : [
         "lancer"
       ],
@@ -974,10 +777,7 @@
       "vitesseOptimale" : 4
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "blanc",
       "couleursSecondaires" : [
         "rouge"
@@ -986,20 +786,16 @@
         "carangue",
         "thon"
       ],
-      "finition" : "holographique",
       "id" : 27,
       "isComputed" : false,
       "longueur" : 10,
       "marque" : "Generic",
       "modele" : "Minnow 10cm",
       "nom" : "Minnow 10cm",
-      "notes" : "Grande bavette blanc\/rouge",
       "poids" : 25,
       "profondeurMax" : 3,
       "profondeurMin" : 1,
-      "quantite" : 1,
       "reference" : "ID 27",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine",
         "lancer"
@@ -1011,10 +807,7 @@
       "vitesseOptimale" : 6
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "orange",
       "couleursSecondaires" : [
 
@@ -1023,20 +816,16 @@
         "loche",
         "picot"
       ],
-      "finition" : "holographique",
       "id" : 28,
       "isComputed" : false,
       "longueur" : 9,
       "marque" : "Generic",
       "modele" : "Minnow 9cm",
       "nom" : "Minnow 9cm",
-      "notes" : "Imitation orange récif",
       "poids" : 20,
       "profondeurMax" : 5,
       "profondeurMin" : 4,
-      "quantite" : 1,
       "reference" : "ID 28",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine"
       ],
@@ -1047,10 +836,7 @@
       "vitesseOptimale" : 4
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "argente",
       "couleursSecondaires" : [
 
@@ -1059,20 +845,16 @@
         "carangue",
         "thon"
       ],
-      "finition" : "holographique",
       "id" : 29,
       "isComputed" : false,
       "longueur" : 12.5,
       "marque" : "Halco",
       "modele" : "Sorcerer 125",
       "nom" : "Sorcerer 125",
-      "notes" : "Argenté\/chartreuse rigger",
       "poids" : 35,
       "profondeurMax" : 5,
       "profondeurMin" : 4,
-      "quantite" : 1,
       "reference" : "ID 29",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine"
       ],
@@ -1083,10 +865,7 @@
       "vitesseOptimale" : 7
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "rose",
       "couleursSecondaires" : [
 
@@ -1095,20 +874,16 @@
         "carangue",
         "barracuda"
       ],
-      "finition" : "holographique",
       "id" : 30,
       "isComputed" : false,
       "longueur" : 12.5,
       "marque" : "Halco",
       "modele" : "Sorcerer 125",
       "nom" : "Sorcerer 125",
-      "notes" : "IDÉAL AUBE LAGON rose\/blanc",
       "poids" : 35,
       "profondeurMax" : 5,
       "profondeurMin" : 4,
-      "quantite" : 1,
       "reference" : "ID 30",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine"
       ],
@@ -1119,10 +894,7 @@
       "vitesseOptimale" : 7
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "chartreuse",
       "couleursSecondaires" : [
 
@@ -1131,20 +903,16 @@
         "carangue",
         "thon"
       ],
-      "finition" : "holographique",
       "id" : 31,
       "isComputed" : false,
       "longueur" : 12.5,
       "marque" : "Halco",
       "modele" : "Sorcerer 125",
       "nom" : "Sorcerer 125",
-      "notes" : "Chartreuse\/jaune TRÈS VISIBLE",
       "poids" : 35,
       "profondeurMax" : 5,
       "profondeurMin" : 4,
-      "quantite" : 1,
       "reference" : "ID 31",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine"
       ],
@@ -1155,10 +923,7 @@
       "vitesseOptimale" : 7
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "violetFonce",
       "couleursSecondaires" : [
 
@@ -1168,20 +933,16 @@
         "bonite",
         "carangue"
       ],
-      "finition" : "holographique",
       "id" : 32,
       "isComputed" : false,
       "longueur" : 12.5,
       "marque" : "Halco",
       "modele" : "Sorcerer 125",
       "nom" : "Sorcerer 125",
-      "notes" : "Violet foncé\/argenté sombre",
       "poids" : 35,
       "profondeurMax" : 5,
       "profondeurMin" : 4,
-      "quantite" : 1,
       "reference" : "ID 32",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine"
       ],
@@ -1192,10 +953,7 @@
       "vitesseOptimale" : 7
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "violetFonce",
       "couleursSecondaires" : [
 
@@ -1204,20 +962,16 @@
         "carangue",
         "thon"
       ],
-      "finition" : "holographique",
       "id" : 33,
       "isComputed" : false,
       "longueur" : 15,
       "marque" : "Halco",
       "modele" : "Sorcerer 150",
       "nom" : "Sorcerer 150",
-      "notes" : "Version 15cm plus profonde",
       "poids" : 50,
       "profondeurMax" : 8,
       "profondeurMin" : 7,
-      "quantite" : 1,
       "reference" : "ID 33",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine"
       ],
@@ -1228,10 +982,7 @@
       "vitesseOptimale" : 8
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "vert",
       "couleursSecondaires" : [
 
@@ -1240,20 +991,16 @@
         "carangue",
         "thon"
       ],
-      "finition" : "holographique",
       "id" : 34,
       "isComputed" : false,
       "longueur" : 12.5,
       "marque" : "Halco",
       "modele" : "Sorcerer 125",
       "nom" : "Sorcerer 125",
-      "notes" : "Vert\/argenté naturel",
       "poids" : 35,
       "profondeurMax" : 5,
       "profondeurMin" : 4,
-      "quantite" : 1,
       "reference" : "ID 34",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine"
       ],
@@ -1264,10 +1011,7 @@
       "vitesseOptimale" : 7
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "roseFluo",
       "couleursSecondaires" : [
 
@@ -1276,20 +1020,16 @@
         "carangueGT",
         "thazard"
       ],
-      "finition" : "holographique",
       "id" : 35,
       "isComputed" : false,
       "longueur" : 15,
       "marque" : "Halco",
       "modele" : "Sorcerer 150",
       "nom" : "Sorcerer 150",
-      "notes" : "Rose fluo\/chartreuse ULTRA",
       "poids" : 50,
       "profondeurMax" : 5,
       "profondeurMin" : 4,
-      "quantite" : 1,
       "reference" : "ID 35",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine"
       ],
@@ -1300,10 +1040,7 @@
       "vitesseOptimale" : 8
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "chartreuse",
       "couleursSecondaires" : [
 
@@ -1313,20 +1050,16 @@
         "thazard",
         "wahoo"
       ],
-      "finition" : "holographique",
       "id" : 36,
       "isComputed" : false,
       "longueur" : 18.5,
       "marque" : "Halco",
       "modele" : "Skim Stick 185",
       "nom" : "Skim Stick 185",
-      "notes" : "Stickbait chartreuse\/jaune",
       "poids" : 45,
       "profondeurMax" : 0.5,
       "profondeurMin" : 0,
-      "quantite" : 1,
       "reference" : "ID 36",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine",
         "lancer"
@@ -1340,7 +1073,6 @@
     {
       "actionNage" : "moderate",
       "categoriePeche" : "lancer",
-      },
       "couleur" : "argente",
       "couleurPrincipale" : "blanc",
       "couleursSecondaires" : [
@@ -1351,20 +1083,16 @@
         "thon",
         "thazard"
       ],
-      "finition" : "holographique",
       "id" : 37,
       "isComputed" : false,
       "longueur" : 10.5,
       "marque" : "Halco",
       "modele" : "Roosta Popper 105",
       "nom" : "Roosta Popper 105",
-      "notes" : "Halco Roosta blanc\/rouge",
       "poids" : 25,
       "profondeurMax" : 0.20000000000000001,
       "profondeurMin" : 0,
-      "quantite" : 1,
       "reference" : "ID 37",
-      "taille" : 10,
       "techniquesPossibles" : [
         "lancer"
       ],
@@ -1375,10 +1103,7 @@
       "vitesseOptimale" : 4
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "lancer",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "argente",
       "couleursSecondaires" : [
 
@@ -1387,20 +1112,16 @@
         "carangueGT",
         "barracuda"
       ],
-      "finition" : "holographique",
       "id" : 38,
       "isComputed" : false,
       "longueur" : 12,
       "marque" : "Noeby",
       "modele" : "Popper Topwater 120",
       "nom" : "Popper Topwater 120",
-      "notes" : "Argenté dos vert-bleu",
       "poids" : 30,
       "profondeurMax" : 0.20000000000000001,
       "profondeurMin" : 0,
-      "quantite" : 1,
       "reference" : "ID 38",
-      "taille" : 10,
       "techniquesPossibles" : [
         "lancer"
       ],
@@ -1411,10 +1132,7 @@
       "vitesseOptimale" : 4
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "vert",
       "couleursSecondaires" : [
 
@@ -1422,20 +1140,16 @@
       "especesCibles" : [
         "predateurs_recif"
       ],
-      "finition" : "holographique",
       "id" : 39,
       "isComputed" : false,
       "longueur" : 11,
       "marque" : "Halco",
       "modele" : "Trembler 110",
       "nom" : "Trembler 110",
-      "notes" : "WTD vert\/jaune-orange",
       "poids" : 28,
       "profondeurMax" : 5,
       "profondeurMin" : 4,
-      "quantite" : 1,
       "reference" : "ID 39",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine",
         "lancer"
@@ -1447,10 +1161,7 @@
       "vitesseOptimale" : 6
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "lancer",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "argente",
       "couleursSecondaires" : [
 
@@ -1459,20 +1170,16 @@
         "carangue",
         "thon"
       ],
-      "finition" : "holographique",
       "id" : 40,
       "isComputed" : false,
       "longueur" : 9,
       "marque" : "Molix",
       "modele" : "HD Minnow 90",
       "nom" : "HD Minnow 90",
-      "notes" : "Baitfish argenté\/rose",
       "poids" : 20,
       "profondeurMax" : 2,
       "profondeurMin" : 0.5,
-      "quantite" : 1,
       "reference" : "ID 40",
-      "taille" : 10,
       "techniquesPossibles" : [
         "lancer",
         "traine"
@@ -1484,10 +1191,7 @@
       "vitesseOptimale" : 6
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "blanc",
       "couleursSecondaires" : [
         "rouge"
@@ -1496,20 +1200,16 @@
         "carangue",
         "barracuda"
       ],
-      "finition" : "holographique",
       "id" : 41,
       "isComputed" : false,
       "longueur" : 12,
       "marque" : "Noeby",
       "modele" : "SeaSuke 120",
       "nom" : "SeaSuke 120",
-      "notes" : "Blanc\/rouge contrasté",
       "poids" : 32,
       "profondeurMax" : 5,
       "profondeurMin" : 4,
-      "quantite" : 1,
       "reference" : "ID 41",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine"
       ],
@@ -1520,10 +1220,7 @@
       "vitesseOptimale" : 7
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "jauneFluo",
       "couleursSecondaires" : [
 
@@ -1533,20 +1230,16 @@
         "bonite",
         "thon"
       ],
-      "finition" : "holographique",
       "id" : 42,
       "isComputed" : false,
       "longueur" : 11,
       "marque" : "YoZuri",
       "modele" : "Crystal Minnow DD 110",
       "nom" : "Crystal Minnow DD 110",
-      "notes" : "Deep diver jaune fluo",
       "poids" : 28,
       "profondeurMax" : 4,
       "profondeurMin" : 2,
-      "quantite" : 1,
       "reference" : "ID 42",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine",
         "lancer"
@@ -1558,10 +1251,7 @@
       "vitesseOptimale" : 7
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "blanc",
       "couleursSecondaires" : [
         "rouge"
@@ -1569,20 +1259,16 @@
       "especesCibles" : [
         "loche"
       ],
-      "finition" : "holographique",
       "id" : 43,
       "isComputed" : false,
       "longueur" : 8,
       "marque" : "Generic",
       "modele" : "Minnow 8cm",
       "nom" : "Minnow 8cm",
-      "notes" : "Imitation marlboro récif",
       "poids" : 18,
       "profondeurMax" : 5,
       "profondeurMin" : 4,
-      "quantite" : 1,
       "reference" : "ID 43",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine"
       ],
@@ -1593,10 +1279,7 @@
       "vitesseOptimale" : 4
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "argente",
       "couleursSecondaires" : [
 
@@ -1604,20 +1287,16 @@
       "especesCibles" : [
         "carangue"
       ],
-      "finition" : "holographique",
       "id" : 44,
       "isComputed" : false,
       "longueur" : 9,
       "marque" : "Generic",
       "modele" : "Minnow 9cm",
       "nom" : "Minnow 9cm",
-      "notes" : "Argenté pur simple",
       "poids" : 20,
       "profondeurMax" : 5,
       "profondeurMin" : 4,
-      "quantite" : 1,
       "reference" : "ID 44",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine"
       ],
@@ -1628,10 +1307,7 @@
       "vitesseOptimale" : 6
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "bleu",
       "couleursSecondaires" : [
 
@@ -1642,20 +1318,16 @@
         "thon",
         "wahoo"
       ],
-      "finition" : "holographique",
       "id" : 45,
       "isComputed" : false,
       "longueur" : 20,
       "marque" : "NC Lure",
       "modele" : "Leurre à jupe 200",
       "nom" : "Leurre à jupe 200",
-      "notes" : "Jupe bleu arc-en-ciel",
       "poids" : 80,
       "profondeurMax" : 3,
       "profondeurMin" : 0,
-      "quantite" : 1,
       "reference" : "ID 45",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine"
       ],
@@ -1666,10 +1338,7 @@
       "vitesseOptimale" : 7
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      },
-      "couleur" : "argente",
       "couleurPrincipale" : "argente",
       "couleursSecondaires" : [
         "rose"
@@ -1679,20 +1348,16 @@
         "thon",
         "wahoo"
       ],
-      "finition" : "holographique",
       "id" : 46,
       "isComputed" : false,
       "longueur" : 13,
       "marque" : "GrandBleu",
       "modele" : "Leurre à jupe 130",
       "nom" : "Leurre à jupe 130",
-      "notes" : "Tête orange argenté\/bleu",
       "poids" : 40,
       "profondeurMax" : 2,
       "profondeurMin" : 0,
-      "quantite" : 1,
       "reference" : "ID 46",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine"
       ],
@@ -1703,10 +1368,7 @@
       "vitesseOptimale" : 6
     },
     {
-      "actionNage" : "moderate",
-      "categoriePeche" : "traine"
-      },
-      "couleur" : "argente",
+      "categoriePeche" : "traine",
       "couleurPrincipale" : "rose",
       "couleursSecondaires" : [
         "bleu"
@@ -1715,20 +1377,16 @@
         "carangueGT",
         "thon"
       ],
-      "finition" : "holographique",
       "id" : 47,
       "isComputed" : false,
       "longueur" : 19,
       "marque" : "YoZuri",
       "modele" : "3D Squirt 190",
       "nom" : "3D Squirt 190",
-      "notes" : "3D prism gros squid rose\/bleu",
       "poids" : 60,
       "profondeurMax" : 0.20000000000000001,
       "profondeurMin" : 0,
-      "quantite" : 1,
       "reference" : "ID 47",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine"
       ],
@@ -1739,10 +1397,7 @@
       "vitesseOptimale" : 4
     },
     {
-      "actionNage" : "moderate",
-      "categoriePeche" : "traine"
-      },
-      "couleur" : "argente",
+      "categoriePeche" : "traine",
       "couleurPrincipale" : "orangeJaune",
       "couleursSecondaires" : [
 
@@ -1753,20 +1408,16 @@
         "carangue",
         "thon"
       ],
-      "finition" : "holographique",
       "id" : 48,
       "isComputed" : false,
       "longueur" : 19,
       "marque" : "YoZuri",
       "modele" : "3D Squirt 190",
       "nom" : "3D Squirt 190",
-      "notes" : "3D prism orange-jaune\/argenté",
       "poids" : 60,
       "profondeurMax" : 0.20000000000000001,
       "profondeurMin" : 0,
-      "quantite" : 1,
       "reference" : "ID 48",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine"
       ],
@@ -1777,10 +1428,7 @@
       "vitesseOptimale" : 4
     },
     {
-      "actionNage" : "moderate",
-      "categoriePeche" : "traine"
-      },
-      "couleur" : "argente",
+      "categoriePeche" : "traine",
       "couleurPrincipale" : "rouge",
       "couleursSecondaires" : [
         "cristal"
@@ -1790,7 +1438,6 @@
         "thazard",
         "thon"
       ],
-      "finition" : "holographique",
       "id" : 49,
       "isComputed" : false,
       "longueur" : 19,
@@ -1801,9 +1448,7 @@
       "poids" : 60,
       "profondeurMax" : 0.20000000000000001,
       "profondeurMin" : 0,
-      "quantite" : 1,
       "reference" : "ID 49",
-      "taille" : 10,
       "techniquesPossibles" : [
         "traine"
       ],
@@ -1814,10 +1459,7 @@
       "vitesseOptimale" : 4
     },
     {
-      "actionNage" : "moderate",
-      "categoriePeche" : "lancer"
-      },
-      "couleur" : "argente",
+      "categoriePeche" : "lancer",
       "couleurPrincipale" : "rouge",
       "couleursSecondaires" : [
 
@@ -1827,20 +1469,16 @@
         "thazard",
         "thon"
       ],
-      "finition" : "holographique",
       "id" : 50,
       "isComputed" : false,
       "longueur" : 14,
       "marque" : "Noeby",
       "modele" : "Popper 140",
       "nom" : "Popper 140",
-      "notes" : "Chartreuse\/dos bleu visible",
       "poids" : 40,
       "profondeurMax" : 0.20000000000000001,
       "profondeurMin" : 0,
-      "quantite" : 1,
       "reference" : "ID 50",
-      "taille" : 10,
       "techniquesPossibles" : [
         "lancer"
       ],
@@ -1851,10 +1489,7 @@
       "vitesseOptimale" : 4
     },
     {
-      "actionNage" : "moderate",
-      "categoriePeche" : "lancer"
-      },
-      "couleur" : "argente",
+      "categoriePeche" : "lancer",
       "couleurPrincipale" : "rose",
       "couleursSecondaires" : [
 
@@ -1871,13 +1506,10 @@
       "marque" : "Noeby",
       "modele" : "Popper 140",
       "nom" : "Popper 140",
-      "notes" : "Rose\/argenté holographique",
       "poids" : 40,
       "profondeurMax" : 0.20000000000000001,
       "profondeurMin" : 0,
-      "quantite" : 1,
       "reference" : "ID 51",
-      "taille" : 10,
       "techniquesPossibles" : [
         "lancer"
       ],
@@ -1888,10 +1520,7 @@
       "vitesseOptimale" : 4
     },
     {
-      "actionNage" : "moderate",
-      "categoriePeche" : "lancer"
-      },
-      "couleur" : "argente",
+      "categoriePeche" : "lancer",
       "couleurPrincipale" : "vertNoir",
       "couleursSecondaires" : [
         "sardine"
@@ -1903,20 +1532,16 @@
         "thon",
         "thonJaune"
       ],
-      "finition" : "holographique",
       "id" : 52,
       "isComputed" : false,
       "longueur" : 12.5,
       "marque" : "Nomad Design",
       "modele" : "Riptide 125 SNK",
       "nom" : "Riptide 125 SNK",
-      "notes" : "Sinking vert noir holographique",
       "poids" : 45,
       "profondeurMax" : 10,
       "profondeurMin" : 2,
-      "quantite" : 1,
       "reference" : "ID 52",
-      "taille" : 10,
       "techniquesPossibles" : [
         "lancer"
       ],
@@ -1927,10 +1552,7 @@
       "vitesseOptimale" : 5
     },
     {
-      "actionNage" : "moderate",
-      "categoriePeche" : "lancer"
-      },
-      "couleur" : "argente",
+      "categoriePeche" : "lancer",
       "couleurPrincipale" : "argente",
       "couleursSecondaires" : [
 
@@ -1941,20 +1563,16 @@
         "thon",
         "thonJaune"
       ],
-      "finition" : "holographique",
       "id" : 53,
       "isComputed" : false,
       "longueur" : 9.5,
       "marque" : "SFT",
       "modele" : "Takumi 95",
       "nom" : "Takumi 95",
-      "notes" : "Sinking 40g argenté\/bleu",
       "poids" : 40,
       "profondeurMax" : 30,
       "profondeurMin" : 1.5,
-      "quantite" : 1,
       "reference" : "ID 53",
-      "taille" : 10,
       "techniquesPossibles" : [
         "lancer",
         "traine"
@@ -1966,10 +1584,7 @@
       "vitesseOptimale" : 6
     },
     {
-      "actionNage" : "moderate",
-      "categoriePeche" : "lancer"
-      },
-      "couleur" : "argente",
+      "categoriePeche" : "lancer",
       "couleurPrincipale" : "bleuArgente",
       "couleursSecondaires" : [
         "sardine"
@@ -1979,20 +1594,16 @@
         "thon",
         "thazard"
       ],
-      "finition" : "holographique",
       "id" : 54,
       "isComputed" : false,
       "longueur" : 10.5,
       "marque" : "Nomad Design",
       "modele" : "Riptide 105 FSNK",
       "nom" : "Riptide 105 FSNK",
-      "notes" : "Fast sinking argenté\/dos bleu",
       "poids" : 38,
       "profondeurMax" : 15,
       "profondeurMin" : 2,
-      "quantite" : 1,
       "reference" : "ID 54",
-      "taille" : 10,
       "techniquesPossibles" : [
         "lancer"
       ],
@@ -2003,10 +1614,7 @@
       "vitesseOptimale" : 6
     },
     {
-      "actionNage" : "moderate",
-      "categoriePeche" : "lancer"
-      },
-      "couleur" : "argente",
+      "categoriePeche" : "lancer",
       "couleurPrincipale" : "roseHolographique",
       "couleursSecondaires" : [
 
@@ -2016,20 +1624,16 @@
         "thazard",
         "mahiMahi"
       ],
-      "finition" : "holographique",
       "id" : 55,
       "isComputed" : false,
       "longueur" : 12,
       "marque" : "Flitz",
       "modele" : "Flitz 75",
       "nom" : "Flitz 75",
-      "notes" : "Rose holographique\/jaune or",
       "poids" : 75,
       "profondeurMax" : 20,
       "profondeurMin" : 2,
-      "quantite" : 1,
       "reference" : "ID 55",
-      "taille" : 10,
       "techniquesPossibles" : [
         "lancer",
         "traine"
@@ -2041,10 +1645,7 @@
       "vitesseOptimale" : 6
     },
     {
-      "actionNage" : "moderate",
-      "categoriePeche" : "lancer"
-      },
-      "couleur" : "argente",
+      "categoriePeche" : "lancer",
       "couleurPrincipale" : "rouge",
       "couleursSecondaires" : [
         "aPois"
@@ -2053,20 +1654,16 @@
         "carangue",
         "thon"
       ],
-      "finition" : "holographique",
       "id" : 56,
       "isComputed" : false,
       "longueur" : 12.5,
       "marque" : "Nomad Design",
       "modele" : "Riptide 125 SNK",
       "nom" : "Riptide 125 SNK",
-      "notes" : "Sinking rouge tâches bleu\/jaune",
       "poids" : 45,
       "profondeurMax" : 10,
       "profondeurMin" : 2,
-      "quantite" : 1,
       "reference" : "ID 56",
-      "taille" : 10,
       "techniquesPossibles" : [
         "lancer"
       ],
@@ -2077,10 +1674,7 @@
       "vitesseOptimale" : 5
     },
     {
-      "actionNage" : "moderate",
-      "categoriePeche" : "lancer"
-      },
-      "couleur" : "argente",
+      "categoriePeche" : "lancer",
       "couleurPrincipale" : "blow",
       "couleursSecondaires" : [
 
@@ -2089,20 +1683,16 @@
         "thon",
         "loche"
       ],
-      "finition" : "holographique",
       "id" : 57,
       "isComputed" : false,
       "longueur" : 10,
       "marque" : "Nomad Design",
       "modele" : "Buffalo 60g",
-      "nom" : "Buffalo 60g",
       "notes" : "Jig 60g blow rayures rouges",
       "poids" : 60,
       "profondeurMax" : 100,
       "profondeurMin" : 10,
-      "quantite" : 1,
       "reference" : "ID 57",
-      "taille" : 10,
       "techniquesPossibles" : [
         "jig"
       ],
@@ -2113,10 +1703,7 @@
       "vitesseOptimale" : 7
     },
     {
-      "actionNage" : "moderate",
-      "categoriePeche" : "jig"
-      },
-      "couleur" : "argente",
+      "categoriePeche" : "jig",
       "couleurPrincipale" : "blow",
       "couleursSecondaires" : [
         "marron"
@@ -2127,20 +1714,16 @@
         "thon",
         "loche"
       ],
-      "finition" : "holographique",
       "id" : 58,
       "isComputed" : false,
       "longueur" : 7,
       "marque" : "Nomad Design",
       "modele" : "squidTrex 70",
       "nom" : "sqidTrex",
-      "notes" : "Blow\/marron jigging",
       "poids" : 30,
       "profondeurMax" : 100,
       "profondeurMin" : 10,
-      "quantite" : 1,
       "reference" : "ID 58",
-      "taille" : 10,
       "techniquesPossibles" : [
         "jig",
         "traine"
@@ -2152,10 +1735,7 @@
       "vitesseOptimale" : 7
     },
     {
-      "actionNage" : "moderate",
-      "categoriePeche" : "jig"
-      },
-      "couleur" : "argente",
+      "categoriePeche" : "jig",
       "couleurPrincipale" : "rose",
       "couleursSecondaires" : [
         "bleu"
@@ -2166,20 +1746,16 @@
         "thon",
         "loche"
       ],
-      "finition" : "holographique",
       "id" : 59,
       "isComputed" : false,
       "longueur" : 11,
       "marque" : "Nomad Design",
       "modele" : "Buffalo 80g",
       "nom" : "Buffalo 80g",
-      "notes" : "Jig 80g rose\/argenté flashy",
       "poids" : 80,
       "profondeurMax" : 120,
       "profondeurMin" : 15,
-      "quantite" : 1,
       "reference" : "ID 59",
-      "taille" : 10,
       "techniquesPossibles" : [
         "jig"
       ],
@@ -2190,10 +1766,7 @@
       "vitesseOptimale" : 8
     },
     {
-      "actionNage" : "moderate",
-      "categoriePeche" : "jig"
-      },
-      "couleur" : "argente",
+      "categoriePeche" : "jig",
       "couleurPrincipale" : "argente",
       "couleursSecondaires" : [
 
@@ -2203,20 +1776,16 @@
         "thon",
         "loche"
       ],
-      "finition" : "holographique",
       "id" : 60,
       "isComputed" : false,
       "longueur" : 10,
       "marque" : "Nomad Design",
       "modele" : "Buffalo 60g",
       "nom" : "Buffalo 60g",
-      "notes" : "Jig 60g argenté\/dos bleu",
       "poids" : 60,
       "profondeurMax" : 100,
       "profondeurMin" : 10,
-      "quantite" : 1,
       "reference" : "ID 60",
-      "taille" : 10,
       "techniquesPossibles" : [
         "jig"
       ],
@@ -2227,10 +1796,7 @@
       "vitesseOptimale" : 7
     },
     {
-      "actionNage" : "moderate",
-      "categoriePeche" : "jig"
-      },
-      "couleur" : "argente",
+      "categoriePeche" : "jig",
       "couleurPrincipale" : "blow",
       "couleursSecondaires" : [
 
@@ -2240,20 +1806,16 @@
         "picot",
         "thonProfond"
       ],
-      "finition" : "holographique",
       "id" : 61,
       "isComputed" : false,
       "longueur" : 13,
       "marque" : "Nomad Design",
       "modele" : "Buffalo 120g",
       "nom" : "Buffalo 120g",
-      "notes" : "Heavy jig 120g loches profondes",
       "poids" : 120,
       "profondeurMax" : 200,
       "profondeurMin" : 50,
-      "quantite" : 1,
       "reference" : "ID 61",
-      "taille" : 10,
       "techniquesPossibles" : [
         "jig"
       ],
@@ -2264,10 +1826,7 @@
       "vitesseOptimale" : 8
     },
     {
-      "actionNage" : "moderate",
-      "categoriePeche" : "jig"
-      },
-      "couleur" : "argente",
+      "categoriePeche" : "jig",
       "couleurPrincipale" : "or",
       "couleursSecondaires" : [
         "rouge"
@@ -2277,20 +1836,16 @@
         "carangueGT",
         "loche"
       ],
-      "finition" : "holographique",
       "id" : 62,
       "isComputed" : false,
       "longueur" : 15,
       "marque" : "Nomad Design",
       "modele" : "The Streaker 160g",
       "nom" : "The Streaker 160g",
-      "notes" : "Heavy jig 160g très profond",
       "poids" : 160,
       "profondeurMax" : 250,
       "profondeurMin" : 80,
-      "quantite" : 1,
       "reference" : "ID 62",
-      "taille" : 10,
       "techniquesPossibles" : [
         "jig"
       ],
@@ -2301,10 +1856,7 @@
       "vitesseOptimale" : 9
     },
     {
-      "actionNage" : "moderate",
-      "categoriePeche" : "jig"
-      },
-      "couleur" : "argente",
+      "categoriePeche" : "jig",
       "couleurPrincipale" : "roseFluo",
       "couleursSecondaires" : [
 
@@ -2315,20 +1867,16 @@
         "thon",
         "loche"
       ],
-      "finition" : "holographique",
       "id" : 63,
       "isComputed" : false,
       "longueur" : 11,
       "marque" : "Nomad Design",
       "modele" : "Squidtrex 110",
       "nom" : "Squidtrex 110",
-      "notes" : "Imitation calmar lipless crankbait",
       "poids" : 35,
       "profondeurMax" : 10,
       "profondeurMin" : 1,
-      "quantite" : 1,
       "reference" : "ID 63",
-      "taille" : 10,
       "techniquesPossibles" : [
         "jig",
         "traine"
@@ -2340,9 +1888,7 @@
       "vitesseOptimale" : 6
     },
     {
-      "actionNage" : "moderate",
       "categoriePeche" : "traine",
-      "couleur" : "argente",
       "couleurPrincipale" : "roseFuchsia",
       "couleursSecondaires" : [
 
@@ -2353,6 +1899,5 @@
         "barracuda",
         "wahoo"
       ],
-      "finition" : "holographique",
      }
 }

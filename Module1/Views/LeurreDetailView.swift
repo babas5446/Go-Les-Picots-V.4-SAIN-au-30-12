@@ -27,6 +27,11 @@ struct LeurreDetailView: View {
                 // Informations de base
                 carteInformationsBase
                 
+                // Type de nage
+                            if leurre.typeDeNage != nil {
+                                carteTypeDeNage
+                            }
+                
                 // Performance (seulement si traîne)
                 if leurre.typePeche == .traine {
                     cartePerformance
@@ -266,6 +271,89 @@ struct LeurreDetailView: View {
                             }
                         }
                         .padding(.leading, 100)
+                    }
+                }
+            }
+        }
+        .padding()
+        .background(Color.white)
+        .cornerRadius(12)
+        .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
+    }
+    
+    // MARK: - Carte type de nage
+
+    private var carteTypeDeNage: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            SectionHeader(title: "Type de nage", icon: "water.waves")
+            
+            if let typeDeNage = leurre.typeDeNage {
+                VStack(alignment: .leading, spacing: 14) {
+                    // Nom du type avec icône
+                    HStack(spacing: 8) {
+                        Image(systemName: "water.waves")
+                            .foregroundColor(Color(hex: "0277BD"))
+                            .font(.title3)
+                        
+                        Text(typeDeNage.rawValue)
+                            .font(.headline)
+                            .foregroundColor(.primary)
+                    }
+                    
+                    // Catégorie
+                    HStack(spacing: 4) {
+                        Image(systemName: "tag.fill")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                        
+                        Text(typeDeNage.categorie)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
+                    .padding(.leading, 4)
+                    
+                    Divider()
+                        .padding(.vertical, 4)
+                    
+                    // Description
+                    VStack(alignment: .leading, spacing: 6) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "text.alignleft")
+                                .font(.caption)
+                                .foregroundColor(Color(hex: "0277BD"))
+                            Text("Description")
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                                .textCase(.uppercase)
+                        }
+                        
+                        Text(typeDeNage.description)
+                            .font(.body)
+                            .foregroundColor(.primary)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .padding(.leading, 4)
+                    }
+                    
+                    Divider()
+                        .padding(.vertical, 4)
+                    
+                    // Conditions idéales
+                    VStack(alignment: .leading, spacing: 6) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "lightbulb.fill")
+                                .font(.caption)
+                                .foregroundColor(Color(hex: "FFBC42"))
+                            Text("Conditions idéales")
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                                .textCase(.uppercase)
+                        }
+                        
+                        Text(typeDeNage.conditionsIdeales)
+                            .font(.subheadline)
+                            .foregroundColor(Color(hex: "0277BD"))
+                            .fixedSize(horizontal: false, vertical: true)
+                            .padding(.leading, 4)
                     }
                 }
             }
