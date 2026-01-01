@@ -27,10 +27,10 @@ struct LeurreDetailView: View {
                 // Informations de base
                 carteInformationsBase
                 
-                // Type de nage
-                            if leurre.typeDeNage != nil {
-                                carteTypeDeNage
-                            }
+                // Types de nage (multi-sélection)
+                if let typesDeNage = leurre.typesDeNage, !typesDeNage.isEmpty {
+                    carteTypeDeNage
+                }
                 
                 // Performance (seulement si traîne)
                 if leurre.typePeche == .traine {
@@ -282,80 +282,28 @@ struct LeurreDetailView: View {
         .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
     }
     
-    // MARK: - Carte type de nage
+    // MARK: - Carte type de nage (multi-sélection)
 
     private var carteTypeDeNage: some View {
         VStack(alignment: .leading, spacing: 16) {
-            SectionHeader(title: "Type de nage", icon: "water.waves")
+            SectionHeader(title: "Types de nage", icon: "water.waves")
             
-            if let typeDeNage = leurre.typeDeNage {
-                VStack(alignment: .leading, spacing: 14) {
-                    // Nom du type avec icône
+            // Afficher les badges horizontaux
+            if let typesDeNage = leurre.typesDeNage, !typesDeNage.isEmpty {
+                ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
-                        Image(systemName: "water.waves")
-                            .foregroundColor(Color(hex: "0277BD"))
-                            .font(.title3)
-                        
-                        Text(typeDeNage.rawValue)
-                            .font(.headline)
-                            .foregroundColor(.primary)
-                    }
-                    
-                    // Catégorie
-                    HStack(spacing: 4) {
-                        Image(systemName: "tag.fill")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                        
-                        Text(typeDeNage.categorie)
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                    }
-                    .padding(.leading, 4)
-                    
-                    Divider()
-                        .padding(.vertical, 4)
-                    
-                    // Description
-                    VStack(alignment: .leading, spacing: 6) {
-                        HStack(spacing: 4) {
-                            Image(systemName: "text.alignleft")
-                                .font(.caption)
-                                .foregroundColor(Color(hex: "0277BD"))
-                            Text("Description")
-                                .font(.caption)
-                                .foregroundColor(.gray)
-                                .textCase(.uppercase)
+                        ForEach(typesDeNage, id: \.self) { type in
+                            typeDeNageBadge(for: type)
                         }
-                        
-                        Text(typeDeNage.description)
-                            .font(.body)
-                            .foregroundColor(.primary)
-                            .fixedSize(horizontal: false, vertical: true)
-                            .padding(.leading, 4)
                     }
-                    
-                    Divider()
-                        .padding(.vertical, 4)
-                    
-                    // Conditions idéales
-                    VStack(alignment: .leading, spacing: 6) {
-                        HStack(spacing: 4) {
-                            Image(systemName: "lightbulb.fill")
-                                .font(.caption)
-                                .foregroundColor(Color(hex: "FFBC42"))
-                            Text("Conditions idéales")
-                                .font(.caption)
-                                .foregroundColor(.gray)
-                                .textCase(.uppercase)
-                        }
-                        
-                        Text(typeDeNage.conditionsIdeales)
-                            .font(.subheadline)
-                            .foregroundColor(Color(hex: "0277BD"))
-                            .fixedSize(horizontal: false, vertical: true)
-                            .padding(.leading, 4)
-                    }
+                }
+                
+                Divider()
+                    .padding(.vertical, 8)
+                
+                // Afficher les détails du premier type (principal)
+                if let premierType = typesDeNage.first {
+                    detailsTypeDeNage(premierType)
                 }
             }
         }
@@ -363,6 +311,80 @@ struct LeurreDetailView: View {
         .background(Color.white)
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
+    }
+
+    // Badge pour un type de nage
+    private func typeDeNageBadge(for type: TypeDeNage) -> some View {
+        HStack(spacing: 6) {
+            Image(systemName: "water.waves")
+                .font(.caption)
+            Text(type.rawValue)
+                .font(.subheadline)
+                .fontWeight(.medium)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(Color(hex: "E3F2FD"))
+        .foregroundColor(Color(hex: "0277BD"))
+        .cornerRadius(16)
+    }
+
+    // Détails d'un type de nage
+    private func detailsTypeDeNage(_ type: TypeDeNage) -> some View {
+        VStack(alignment: .leading, spacing: 14) {
+            // Catégorie
+            HStack(spacing: 4) {
+                Image(systemName: "tag.fill")
+                    .font(.caption)
+                    .foregroundColor(.gray)
+                
+                Text(type.categorie)
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            }
+            .padding(.leading, 4)
+            
+            // Description
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(spacing: 4) {
+                    Image(systemName: "text.alignleft")
+                        .font(.caption)
+                        .foregroundColor(Color(hex: "0277BD"))
+                    Text("Description")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                        .textCase(.uppercase)
+                }
+                
+                Text(type.description)
+                    .font(.body)
+                    .foregroundColor(.primary)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.leading, 4)
+            }
+            
+            Divider()
+                .padding(.vertical, 4)
+            
+            // Conditions idéales
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(spacing: 4) {
+                    Image(systemName: "lightbulb.fill")
+                        .font(.caption)
+                        .foregroundColor(Color(hex: "FFBC42"))
+                    Text("Conditions idéales")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                        .textCase(.uppercase)
+                }
+                
+                Text(type.conditionsIdeales)
+                    .font(.subheadline)
+                    .foregroundColor(Color(hex: "0277BD"))
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.leading, 4)
+            }
+        }
     }
     
     // MARK: - Carte performance (traîne uniquement)

@@ -7,6 +7,7 @@
 //  - Filtres et recherche
 //  - Recalcul automatique des champs déduits
 //  - Persistance JSON
+//  - Export/Import avec photos (ZIP)
 //
 //  Created: 2024-12-10
 //
@@ -14,6 +15,7 @@
 import Foundation
 import SwiftUI
 import Combine
+import ZIPFoundation
 
 @MainActor
 class LeureViewModel: ObservableObject {
@@ -25,6 +27,29 @@ class LeureViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
     @Published var showError: Bool = false
+    
+    // MARK: - Enums pour Import/Export
+    
+    /// Mode d'importation de la base de données
+    enum ModeImport {
+        case fusionner  // Ajoute les leurres importés aux existants
+        case remplacer  // Remplace complètement la base actuelle
+    }
+    
+    /// Erreurs possibles lors de l'import
+    enum ImportError: LocalizedError {
+        case fichierVide
+        case formatInvalide
+        
+        var errorDescription: String? {
+            switch self {
+            case .fichierVide:
+                return "Le fichier d'import est vide"
+            case .formatInvalide:
+                return "Format JSON invalide ou incompatible"
+            }
+        }
+    }
     
     // MARK: - Filtres
     
@@ -91,14 +116,11 @@ class LeureViewModel: ObservableObject {
             appliquerFiltres()
             print("✅ \(leurres.count) leurres chargés")
             
-            // Si aucun leurre n'est chargé, afficher un avertissement
             if leurres.isEmpty {
                 print("⚠️ Base de données vide - aucun leurre disponible")
                 errorMessage = "La base de données est vide. Ajoutez des leurres pour commencer."
-                // Ne pas afficher showError = true car c'est un état normal possible
             }
         } catch let error as StorageError {
-            // Gestion spécifique des erreurs de stockage
             switch error {
             case .decodageEchoue(let detail):
                 errorMessage = "❌ Erreur de lecture de la base de données\n\n\(detail)\n\nUne base vide a été créée automatiquement."
@@ -117,7 +139,6 @@ class LeureViewModel: ObservableObject {
             leurres = []
             leurresFiltres = []
             
-            // Essayer de créer une base vide en récupération
             print("🔧 Tentative de récupération automatique...")
             do {
                 try storageService.reinitialiserBase()
@@ -145,8 +166,6 @@ class LeureViewModel: ObservableObject {
     /// Ajoute un nouveau leurre
     func ajouterLeurre(_ leurre: Leurre) {
         var nouveauLeurre = leurre
-        
-        // Calculer les champs déduits
         nouveauLeurre = calculerChampsDeduits(nouveauLeurre)
         
         do {
@@ -205,8 +224,6 @@ class LeureViewModel: ObservableObject {
     /// Modifie un leurre existant
     func modifierLeurre(_ leurre: Leurre) {
         var leurreModifie = leurre
-        
-        // Recalculer les champs déduits
         leurreModifie = calculerChampsDeduits(leurreModifie)
         
         do {
@@ -245,25 +262,20 @@ class LeureViewModel: ObservableObject {
         }
     }
     
-    // MARK: - Calcul des champs déduits (Moteur simplifié)
+    // MARK: - Calcul des champs déduits
     
     /// Calcule les champs déduits à partir des informations saisies
     func calculerChampsDeduits(_ leurre: Leurre) -> Leurre {
         var l = leurre
         
-        // 1. Contraste (déduit des couleurs)
         l.contraste = determinerContraste(
             principale: leurre.couleurPrincipale,
             secondaire: leurre.couleurSecondaire
         )
         
-        // 2. Zones adaptées (déduit du type de pêche + profondeur)
         l.zonesAdaptees = determinerZones(leurre)
-        
-        // 3. Espèces cibles (déduit des zones)
         l.especesCibles = determinerEspeces(zones: l.zonesAdaptees ?? [])
         
-        // 4. Positions spread (déduit du type + contraste) - uniquement pour traîne
         if leurre.typePeche == .traine {
             l.positionsSpread = determinerPositionsSpread(
                 typeLeurre: leurre.typeLeurre,
@@ -272,7 +284,6 @@ class LeureViewModel: ObservableObject {
             )
         }
         
-        // 5. Conditions optimales (déduit de l'ensemble)
         l.conditionsOptimales = determinerConditionsOptimales(
             contraste: l.contraste ?? .naturel,
             typeLeurre: leurre.typeLeurre
@@ -283,29 +294,23 @@ class LeureViewModel: ObservableObject {
         return l
     }
     
-    /// Détermine le contraste en fonction des couleurs
     private func determinerContraste(principale: Couleur, secondaire: Couleur?) -> Contraste {
-        // Si bicolore avec fort contraste
         if let sec = secondaire {
             let contrastePrincipale = principale.contrasteNaturel
             let contrasteSecondaire = sec.contrasteNaturel
             
-            // Combinaisons contrastées
             if (contrastePrincipale == .sombre && contrasteSecondaire == .flashy) ||
                (contrastePrincipale == .flashy && contrasteSecondaire == .sombre) {
                 return .contraste
             }
         }
         
-        // Sinon, utiliser le contraste naturel de la couleur principale
         return principale.contrasteNaturel
     }
     
-    /// Détermine les zones adaptées
     private func determinerZones(_ leurre: Leurre) -> [Zone] {
         var zones: [Zone] = []
         
-        // Basé sur la profondeur de nage pour la traîne
         if let profMax = leurre.profondeurNageMax {
             if profMax <= 5 {
                 zones.append(contentsOf: [.lagon, .recif])
@@ -318,7 +323,6 @@ class LeureViewModel: ObservableObject {
             }
         }
         
-        // Basé sur la taille
         if leurre.longueur <= 15 {
             if !zones.contains(.lagon) { zones.append(.lagon) }
             if !zones.contains(.recif) { zones.append(.recif) }
@@ -327,7 +331,6 @@ class LeureViewModel: ObservableObject {
             if !zones.contains(.passe) { zones.append(.passe) }
         }
         
-        // Par défaut si rien
         if zones.isEmpty {
             zones = [.lagon, .passe]
         }
@@ -335,7 +338,6 @@ class LeureViewModel: ObservableObject {
         return Array(Set(zones)).sorted { $0.rawValue < $1.rawValue }
     }
     
-    /// Détermine les espèces cibles en fonction des zones
     private func determinerEspeces(zones: [Zone]) -> [String] {
         var especes = Set<String>()
         
@@ -346,7 +348,6 @@ class LeureViewModel: ObservableObject {
         return Array(especes).sorted()
     }
     
-    /// Détermine les positions spread
     private func determinerPositionsSpread(typeLeurre: TypeLeurre, contraste: Contraste, longueur: Double) -> [PositionSpread] {
         var positions: [PositionSpread] = []
         
@@ -361,7 +362,6 @@ class LeureViewModel: ObservableObject {
             positions.append(.shotgun)
         }
         
-        // Ajustement selon la taille
         if longueur >= 18 {
             if !positions.contains(.shortCorner) {
                 positions.append(.shortCorner)
@@ -371,7 +371,6 @@ class LeureViewModel: ObservableObject {
         return positions
     }
     
-    /// Détermine les conditions optimales
     private func determinerConditionsOptimales(contraste: Contraste, typeLeurre: TypeLeurre) -> ConditionsOptimales {
         var moments: [MomentJournee] = []
         var etatMer: [EtatMer] = []
@@ -410,7 +409,6 @@ class LeureViewModel: ObservableObject {
     
     // MARK: - Recalcul forcé
     
-    /// Recalcule les champs déduits pour tous les leurres
     func recalculerTousLesChampsDeduits() {
         isLoading = true
         
@@ -435,7 +433,6 @@ class LeureViewModel: ObservableObject {
     func appliquerFiltres() {
         var resultats = leurres
         
-        // Recherche textuelle
         if !filtreRecherche.isEmpty {
             let recherche = filtreRecherche.lowercased()
             resultats = resultats.filter { leurre in
@@ -446,24 +443,20 @@ class LeureViewModel: ObservableObject {
             }
         }
         
-        // Filtre type de pêche
         if let type = filtreTypePeche {
             resultats = resultats.filter { $0.typePeche == type }
         }
         
-        // Filtre type de leurre
         if let type = filtreTypeLeurre {
             resultats = resultats.filter { $0.typeLeurre == type }
         }
         
-        // Filtre zone
         if let zone = filtreZone {
             resultats = resultats.filter { leurre in
                 leurre.zonesAdaptees?.contains(zone) ?? false
             }
         }
         
-        // Filtre contraste
         if let contraste = filtreContraste {
             resultats = resultats.filter { $0.contraste == contraste }
         }
@@ -503,7 +496,6 @@ class LeureViewModel: ObservableObject {
     
     // MARK: - Photos
     
-    /// Sauvegarde une photo pour un leurre
     func sauvegarderPhoto(image: UIImage, pourLeurre leurre: Leurre) {
         do {
             let chemin = try storageService.sauvegarderPhoto(image: image, pourLeurreID: leurre.id)
@@ -517,13 +509,11 @@ class LeureViewModel: ObservableObject {
         }
     }
     
-    /// Charge une photo pour un leurre
     func chargerPhoto(pourLeurre leurre: Leurre) -> UIImage? {
         guard let chemin = leurre.photoPath else { return nil }
         return storageService.chargerPhoto(chemin: chemin)
     }
     
-    /// Télécharge une photo depuis une URL
     func telechargerPhoto(url: String, pourLeurre leurre: Leurre) async {
         do {
             let chemin = try await storageService.telechargerPhotoDepuisURL(url, pourLeurreID: leurre.id)
@@ -562,8 +552,217 @@ class LeureViewModel: ObservableObject {
         leurres.first { $0.id == id }
     }
     
-    /// Génère un ID pour un nouveau leurre
     func genererNouvelID() -> Int {
         storageService.genererNouvelID()
+    }
+    
+    // MARK: - Export/Import
+    
+    /// Exporte tous les leurres en JSON + photos dans un ZIP
+    func exporterBaseDeDonnees() -> URL? {
+        do {
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+            encoder.dateEncodingStrategy = .iso8601
+            
+            let database = LeureDatabase(
+                metadata: LeureDatabase.Metadata(
+                    version: "2.0",
+                    dateCreation: ISO8601DateFormatter().string(from: Date()),
+                    nombreTotal: leurres.count,
+                    description: "Export Go Les Picots - Nouvelle-Calédonie",
+                    proprietaire: "Utilisateur",
+                    source: "Application Go Les Picots V.4"
+                ),
+                leurres: leurres
+            )
+            
+            let jsonData = try encoder.encode(database)
+            
+            let timestamp = ISO8601DateFormatter().string(from: Date())
+                .replacingOccurrences(of: ":", with: "-")
+                .replacingOccurrences(of: ".", with: "-")
+            
+            let exportFolderName = "go_les_picots_export_\(timestamp)"
+            let tempURL = FileManager.default.temporaryDirectory
+                .appendingPathComponent(exportFolderName)
+            
+            try? FileManager.default.removeItem(at: tempURL)
+            try FileManager.default.createDirectory(at: tempURL, withIntermediateDirectories: true)
+            
+            let jsonURL = tempURL.appendingPathComponent("leurres.json")
+            try jsonData.write(to: jsonURL)
+            
+            let photosURL = tempURL.appendingPathComponent("photos")
+            try FileManager.default.createDirectory(at: photosURL, withIntermediateDirectories: true)
+            
+            var photosCopiees = 0
+            for leurre in leurres {
+                if let photoPath = leurre.photoPath,
+                   let photoURL = storageService.urlPhoto(chemin: photoPath),
+                   FileManager.default.fileExists(atPath: photoURL.path) {
+                    
+                    let destinationURL = photosURL.appendingPathComponent(photoURL.lastPathComponent)
+                    try? FileManager.default.copyItem(at: photoURL, to: destinationURL)
+                    photosCopiees += 1
+                }
+            }
+            
+            print("📸 \(photosCopiees) photos copiées")
+            
+            let zipFileName = "go_les_picots_\(timestamp).zip"
+            let zipURL = FileManager.default.temporaryDirectory.appendingPathComponent(zipFileName)
+            
+            try? FileManager.default.removeItem(at: zipURL)
+            
+            try FileManager.default.zipItem(at: tempURL, to: zipURL)
+            
+            let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            let finalURL = documentsURL.appendingPathComponent(zipFileName)
+            
+            try? FileManager.default.removeItem(at: finalURL)
+            try FileManager.default.copyItem(at: zipURL, to: finalURL)
+            
+            try? FileManager.default.removeItem(at: tempURL)
+            
+            print("✅ Export ZIP réussi : \(leurres.count) leurres + \(photosCopiees) photos")
+            print("📁 Chemin : \(finalURL.path)")
+            
+            let fileSize = try FileManager.default.attributesOfItem(atPath: finalURL.path)[.size] as? Int64 ?? 0
+            print("📄 Taille : \(ByteCountFormatter.string(fromByteCount: fileSize, countStyle: .file))")
+            
+            return finalURL
+            
+        } catch {
+            print("❌ Erreur d'export ZIP : \(error)")
+            return nil
+        }
+    }
+    
+    /// Importe depuis un ZIP ou JSON
+    func importerBaseDeDonnees(depuis url: URL, mode: ModeImport) throws {
+        if url.pathExtension.lowercased() == "zip" {
+            try importerDepuisZIP(url: url, mode: mode)
+        } else {
+            try importerDepuisJSON(url: url, mode: mode)
+        }
+    }
+    
+    /// Import depuis un fichier ZIP
+    private func importerDepuisZIP(url: URL, mode: ModeImport) throws {
+        let tempURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent("import_\(UUID().uuidString)")
+        
+        try FileManager.default.createDirectory(at: tempURL, withIntermediateDirectories: true)
+        
+        defer {
+            try? FileManager.default.removeItem(at: tempURL)
+        }
+        
+        try FileManager.default.unzipItem(at: url, to: tempURL)
+        
+        let jsonURL = tempURL.appendingPathComponent("leurres.json")
+        try importerDepuisJSON(url: jsonURL, mode: mode)
+        
+        let photosSourceURL = tempURL.appendingPathComponent("photos")
+        if FileManager.default.fileExists(atPath: photosSourceURL.path) {
+            let photosDestURL = storageService.documentURL.appendingPathComponent("photos")
+            
+            try? FileManager.default.createDirectory(at: photosDestURL, withIntermediateDirectories: true)
+            
+            let photos = try FileManager.default.contentsOfDirectory(at: photosSourceURL, includingPropertiesForKeys: nil)
+            
+            var photosCopiees = 0
+            for photoURL in photos {
+                let destURL = photosDestURL.appendingPathComponent(photoURL.lastPathComponent)
+                
+                if !FileManager.default.fileExists(atPath: destURL.path) {
+                    try? FileManager.default.copyItem(at: photoURL, to: destURL)
+                    photosCopiees += 1
+                }
+            }
+            
+            print("📸 \(photosCopiees) photos importées")
+        }
+    }
+    
+    /// Import depuis un fichier JSON pur
+    private func importerDepuisJSON(url: URL, mode: ModeImport) throws {
+        let jsonData = try Data(contentsOf: url)
+        
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        
+        var leursImportes: [Leurre]
+        
+        do {
+            let database = try decoder.decode(LeureDatabase.self, from: jsonData)
+            leursImportes = database.leurres
+            print("✅ Format avec metadata détecté")
+        } catch {
+            do {
+                leursImportes = try decoder.decode([Leurre].self, from: jsonData)
+                print("✅ Format array direct détecté")
+            } catch {
+                print("❌ Erreur décodage : \(error)")
+                throw ImportError.formatInvalide
+            }
+        }
+        
+        guard !leursImportes.isEmpty else {
+            throw ImportError.fichierVide
+        }
+        
+        print("📥 \(leursImportes.count) leurres trouvés dans le fichier")
+        
+        switch mode {
+        case .fusionner:
+            let idsExistants = Set(leurres.map { $0.id })
+            var nouveauxLeurres = leursImportes
+            
+            for i in 0..<nouveauxLeurres.count {
+                if idsExistants.contains(nouveauxLeurres[i].id) {
+                    let leurreModifie = nouveauxLeurres[i]
+                    let nouvelID = genererNouvelID()
+                    
+                    print("⚠️ Conflit ID \(leurreModifie.id) → Nouvel ID \(nouvelID)")
+                    
+                    nouveauxLeurres[i] = Leurre(
+                        id: nouvelID,
+                        nom: leurreModifie.nom,
+                        marque: leurreModifie.marque,
+                        modele: leurreModifie.modele,
+                        typeLeurre: leurreModifie.typeLeurre,
+                        typePeche: leurreModifie.typePeche,
+                        typesPecheCompatibles: leurreModifie.typesPecheCompatibles,
+                        longueur: leurreModifie.longueur,
+                        poids: leurreModifie.poids,
+                        couleurPrincipale: leurreModifie.couleurPrincipale,
+                        couleurPrincipaleCustom: leurreModifie.couleurPrincipaleCustom,
+                        couleurSecondaire: leurreModifie.couleurSecondaire,
+                        couleurSecondaireCustom: leurreModifie.couleurSecondaireCustom,
+                        finition: leurreModifie.finition,
+                        typesDeNage: leurreModifie.typesDeNage,
+                        profondeurNageMin: leurreModifie.profondeurNageMin,
+                        profondeurNageMax: leurreModifie.profondeurNageMax,
+                        vitesseTraineMin: leurreModifie.vitesseTraineMin,
+                        vitesseTraineMax: leurreModifie.vitesseTraineMax,
+                        notes: leurreModifie.notes,
+                        photoPath: leurreModifie.photoPath,
+                        quantite: leurreModifie.quantite
+                    )
+                }
+            }
+            
+            leurres.append(contentsOf: nouveauxLeurres)
+            print("✅ Import fusionné : +\(nouveauxLeurres.count) leurres (total : \(leurres.count))")
+            
+        case .remplacer:
+            leurres = leursImportes
+            print("✅ Import remplacé : \(leurres.count) leurres")
+        }
+        
+        try storageService.sauvegarderLeurres(leurres)
+        appliquerFiltres()
     }
 }

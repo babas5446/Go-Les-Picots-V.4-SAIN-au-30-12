@@ -20,6 +20,8 @@ struct ContentView: View {
     
     // État pour le diagnostic
     @State private var showingDiagnostic = false
+    @State private var showExportImport = false  // 🆕 AJOUTER CETTE LIGNE
+
     
     init() {
         let lvm = LeureViewModel()
@@ -46,8 +48,22 @@ struct ContentView: View {
             .background(Color(hex: "F5F5F5"))
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: { showingDiagnostic = true }) {
-                        Image(systemName: "wrench.and.screwdriver")
+                    Menu {
+                        Button {
+                            showExportImport = true
+                        } label: {
+                            Label("Export/Import", systemImage: "arrow.up.arrow.down.circle")
+                        }
+                        
+                        Divider()
+                        
+                        Button {
+                            showingDiagnostic = true
+                        } label: {
+                            Label("Diagnostic", systemImage: "wrench.and.screwdriver")
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis.circle")
                             .foregroundColor(Color(hex: "0277BD"))
                     }
                 }
@@ -90,6 +106,9 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showingDiagnostic) {
             DiagnosticView()
+        }
+        .sheet(isPresented: $showExportImport) {  // 🆕 AJOUTER CETTE SHEET
+            ExportImportView(viewModel: leureViewModel)
         }
         .onChange(of: navigationCoordinator.showResults) { oldValue, newValue in
             print("🔄 ContentView - showResults changed: \(oldValue) → \(newValue)")

@@ -12,6 +12,9 @@
 		61045D7A2F05F7B30033CD9F /* SlowPitchTechniqueSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61045D792F05F7A40033CD9F /* SlowPitchTechniqueSheet.swift */; };
 		61045D7C2F05F7EC0033CD9F /* FastPitchTechniqueSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61045D7B2F05F7E90033CD9F /* FastPitchTechniqueSheet.swift */; };
 		61045D7E2F06218A0033CD9F /* TypeDeNageSuggestionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61045D7D2F06216B0033CD9F /* TypeDeNageSuggestionView.swift */; };
+		61045E1A2F0632460033CD9F /* ExportImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61045E192F0632360033CD9F /* ExportImportView.swift */; };
+		61045E1D2F06800B0033CD9F /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 61045E1C2F06800B0033CD9F /* ZIPFoundation */; };
+		61045E1F2F06815C0033CD9F /* LeureDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61045E1E2F0681590033CD9F /* LeureDatabase.swift */; };
 		61263A542EE95DC400BBF0A8 /* LeurreFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61263A532EE95DC400BBF0A8 /* LeurreFormView.swift */; };
 		613F7A082F0238E100DA3053 /* TypeDeNage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 613F7A072F0238CB00DA3053 /* TypeDeNage.swift */; };
 		613F7A0A2F0291FD00DA3053 /* Wobblingchoicesheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 613F7A092F0291D200DA3053 /* Wobblingchoicesheet.swift */; };
@@ -68,6 +71,8 @@
 		61045D792F05F7A40033CD9F /* SlowPitchTechniqueSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlowPitchTechniqueSheet.swift; sourceTree = "<group>"; };
 		61045D7B2F05F7E90033CD9F /* FastPitchTechniqueSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FastPitchTechniqueSheet.swift; sourceTree = "<group>"; };
 		61045D7D2F06216B0033CD9F /* TypeDeNageSuggestionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeDeNageSuggestionView.swift; sourceTree = "<group>"; };
+		61045E192F0632360033CD9F /* ExportImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportImportView.swift; sourceTree = "<group>"; };
+		61045E1E2F0681590033CD9F /* LeureDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeureDatabase.swift; sourceTree = "<group>"; };
 		61263A532EE95DC400BBF0A8 /* LeurreFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeurreFormView.swift; sourceTree = "<group>"; };
 		613F7A072F0238CB00DA3053 /* TypeDeNage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeDeNage.swift; sourceTree = "<group>"; };
 		613F7A092F0291D200DA3053 /* Wobblingchoicesheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Wobblingchoicesheet.swift; sourceTree = "<group>"; };
@@ -147,6 +152,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				61045E1D2F06800B0033CD9F /* ZIPFoundation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -197,6 +203,7 @@
 		6193EA422EE1428C000BE2F6 /* Module1 */ = {
 			isa = PBXGroup;
 			children = (
+				61045E192F0632360033CD9F /* ExportImportView.swift */,
 				613F7A0F2F03D72F00DA3053 /* Typedenagedetector.swift */,
 				61263A502EE95CED00BBF0A8 /* Services */,
 				6193EA442EE142F1000BE2F6 /* Helpers */,
@@ -240,6 +247,7 @@
 			children = (
 				61045D762F04EBDE0033CD9F /* DOC */,
 				617DD14F2EF55FAF002C82F1 /* leurres_database_COMPLET.json */,
+				61045E1E2F0681590033CD9F /* LeureDatabase.swift */,
 				61941ACD2EEA0B170019B66B /* EspecesDatabase.swift */,
 			);
 			path = Resources;
@@ -319,6 +327,7 @@
 			);
 			name = "Go Les Picots V.4";
 			packageProductDependencies = (
+				61045E1C2F06800B0033CD9F /* ZIPFoundation */,
 			);
 			productName = "Go Les Picots V.4";
 			productReference = 6193EA132EE1400D000BE2F6 /* Go Les Picots V.4.app */;
@@ -396,6 +405,9 @@
 			);
 			mainGroup = 6193EA0A2EE1400D000BE2F6;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				61045E1B2F06800B0033CD9F /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 6193EA142EE1400D000BE2F6 /* Products */;
 			projectDirPath = "";
@@ -460,7 +472,9 @@
 				6193EA852EE25312000BE2F6 /* SpreadVisualizationView.swift in Sources */,
 				61045D7A2F05F7B30033CD9F /* SlowPitchTechniqueSheet.swift in Sources */,
 				61263A542EE95DC400BBF0A8 /* LeurreFormView.swift in Sources */,
+				61045E1F2F06815C0033CD9F /* LeureDatabase.swift in Sources */,
 				61045D7C2F05F7EC0033CD9F /* FastPitchTechniqueSheet.swift in Sources */,
+				61045E1A2F0632460033CD9F /* ExportImportView.swift in Sources */,
 				61045D782F0512000033CD9F /* TypeDeNageDescriptionModal.swift in Sources */,
 				6193EA7C2EE252A0000BE2F6 /* ConditionsPeche.swift in Sources */,
 				61C5FBDB2EF909E80030C95D /* CreerCouleurView.swift in Sources */,
@@ -639,6 +653,7 @@
 				DEVELOPMENT_TEAM = DP9UY27ZQX;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.navigation";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Go les Picots utilise la caméra pour photographier vos leurres";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "o les Picots accède à votre galerie pour importer des photos de leurres";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -646,6 +661,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -673,6 +689,7 @@
 				DEVELOPMENT_TEAM = DP9UY27ZQX;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.navigation";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Go les Picots utilise la caméra pour photographier vos leurres";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "o les Picots accède à votre galerie pour importer des photos de leurres";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -680,6 +697,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -821,6 +839,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		61045E1B2F06800B0033CD9F /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/weichsel/ZIPFoundation";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.20;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		61045E1C2F06800B0033CD9F /* ZIPFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 61045E1B2F06800B0033CD9F /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
+			productName = ZIPFoundation;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 6193EA0B2EE1400D000BE2F6 /* Project object */;
 }
