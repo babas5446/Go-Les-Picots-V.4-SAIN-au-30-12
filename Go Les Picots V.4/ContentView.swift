@@ -33,7 +33,7 @@ struct ContentView: View {
         NavigationView {
             VStack(spacing: 0) {
                 // BANDEAU EN HAUT
-                BannerView()
+                HomeBannerView()
                 
                 // GRILLE 2x2 DES MODULES
                 ModuleGridView(
@@ -118,7 +118,7 @@ struct ContentView: View {
 }
 
 // MARK: - Bandeau
-struct BannerView: View {
+struct HomeBannerView: View {
     var body: some View {
         Image("Banner")
             .resizable()

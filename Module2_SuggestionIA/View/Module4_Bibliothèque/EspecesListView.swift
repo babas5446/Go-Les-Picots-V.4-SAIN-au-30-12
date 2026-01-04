@@ -85,37 +85,49 @@ struct EspecesListView: View {
     // MARK: - Body
     
     var body: some View {
-        List {
-            ForEach(especesFiltrees) { espece in
-                NavigationLink {
-                    EspeceDetailView(espece: espece)
-                } label: {
-                    EspeceCardView(espece: espece)
-                }
-            }
+        VStack(spacing: 0) {
+            // Banner Espèces
+            BannerView(
+                iconName: "Bibliotheque2_icon",
+                title: "Bibliothèque d'espèces",
+                subtitle: "Identification, habitat et techniques de pêche",
+                accentColor: Color.blue
+            )
+            .padding(.horizontal)
+            .padding(.top, 8)
+            .padding(.bottom, 12)
             
-            if especesFiltrees.isEmpty {
-                VStack(spacing: 12) {
-                    Image(systemName: "magnifyingglass")
-                        .font(.system(size: 48))
-                        .foregroundColor(.gray)
-                    
-                    Text("Aucune espèce trouvée")
-                        .font(.headline)
-                    
-                    Text("Essayez de modifier vos critères de recherche")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
+            // Liste des espèces
+            List {
+                ForEach(especesFiltrees) { espece in
+                    NavigationLink {
+                        EspeceDetailView(espece: espece)
+                    } label: {
+                        EspeceCardView(espece: espece)
+                    }
                 }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 40)
-                .listRowBackground(Color.clear)
+                
+                if especesFiltrees.isEmpty {
+                    VStack(spacing: 12) {
+                        Image(systemName: "magnifyingglass")
+                            .font(.system(size: 48))
+                            .foregroundColor(.gray)
+                        
+                        Text("Aucune espèce trouvée")
+                            .font(.headline)
+                        
+                        Text("Essayez de modifier vos critères de recherche")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 40)
+                    .listRowBackground(Color.clear)
+                }
             }
+            .searchable(text: $searchText, prompt: "Rechercher une espèce")
         }
-        .searchable(text: $searchText, prompt: "Rechercher une espèce")
-        .navigationTitle("🐟 Espèces")
-        .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: {
@@ -146,7 +158,7 @@ struct EspecesListView: View {
     }
 }
 
-// MARK: - Subviews
+// MARK: - Subviews (EN DEHORS de EspecesListView)
 
 /// Carte espèce avec badges visuels
 struct EspeceCardView: View {
@@ -196,7 +208,7 @@ struct EspeceCardView: View {
     }
 }
 
-// MARK: - Badges
+// MARK: - Badges (EN DEHORS de EspecesListView)
 
 /// Badge risque ciguatera avec code couleur
 struct BadgeCiguatera: View {
@@ -216,7 +228,7 @@ struct BadgeCiguatera: View {
         Image("Ciguatera_icone")
             .resizable()
             .scaledToFit()
-            .frame(width: 20, height: 20) // Ajustez la taille selon vos besoins
+            .frame(width: 20, height: 20)
             .padding(.horizontal, 6)
             .padding(.vertical, 2)
             .background(couleur.opacity(0.15))
@@ -229,7 +241,7 @@ struct BadgeZone: View {
     let zone: Zone
     
     var body: some View {
-        Text(zone.symbole)
+        Text(zone.icon)
             .font(.caption2)
             .padding(.horizontal, 6)
             .padding(.vertical, 2)
@@ -244,7 +256,7 @@ struct BadgeTechnique: View {
     let technique: TypePeche
     
     var body: some View {
-        Text(technique.symbole)
+        Text(technique.icon)
             .font(.caption2)
             .padding(.horizontal, 6)
             .padding(.vertical, 2)
@@ -254,7 +266,7 @@ struct BadgeTechnique: View {
     }
 }
 
-// MARK: - Sheet Filtres
+// MARK: - Sheet Filtres (EN DEHORS de EspecesListView)
 
 /// Sheet modale pour sélectionner les filtres cumulatifs
 struct FiltresEspecesSheet: View {
@@ -391,35 +403,6 @@ struct MultipleSelectionRow: View {
                         .fontWeight(.semibold)
                 }
             }
-        }
-    }
-}
-
-// MARK: - Extensions pour symboles
-
-extension Zone {
-    var symbole: String {
-        switch self {
-        case .lagon: return "Lagon"
-        case .recif: return "Récif"
-        case .passe: return "Passe"
-        case .tombant: return "Tombant"
-        case .large: return "Large"
-        case .dcp: return "DCP"
-        case .profond: return "Profond"
-        }
-    }
-}
-
-extension TypePeche {
-    var symbole: String {
-        switch self {
-        case .traine: return "Traîne"
-        case .jig: return "Jigging"
-        case .montage: return "Montage"
-        case .lancer: return "Lancer"
-        case .palangrotte: return "Palangrotte"
-        case .jigging: return "Jigging"
         }
     }
 }

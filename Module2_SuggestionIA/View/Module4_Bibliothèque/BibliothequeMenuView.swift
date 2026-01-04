@@ -5,23 +5,30 @@
 //  Module 4 : Menu principal Bibliothèque
 //  Point d'entrée avec 3 sections : Espèces / Techniques / Tuto de Pro
 //
-//  //  Created by LANES Sebastien on 02/01/2026.
+//  Created by LANES Sebastien on 02/01/2026.
 //
 
 import SwiftUI
 
 struct BibliothequeMenuView: View {
-    
     var body: some View {
-        NavigationStack {
+        NavigationView {
             ScrollView {
-                VStack(spacing: 20) {
-                    // Header avec description
+                VStack(spacing: 16) {
+                    // En-tête
                     VStack(spacing: 8) {
+                        Image("Bibliotheque")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 60, height: 60)
+                        
+                        Text("Bibliothèque")
+                            .font(.largeTitle)
+                            .fontWeight(.bold)
+                        
                         Text("Votre bibliothèque de pêche")
-                            .font(.title3)
+                            .font(.subheadline)
                             .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
                     }
                     .padding(.top, 20)
                     .padding(.horizontal)
@@ -32,9 +39,10 @@ struct BibliothequeMenuView: View {
                         // Carte 1 : Espèces
                         NavigationLink(destination: EspecesListView()) {
                             MenuCard(
+                                iconName: "Bibliotheque2_icon",
                                 title: "Bibliothèque d'espèces",
                                 description: "Identification, habitat et techniques de pêche",
-                                accentColor: .blue
+                                accentColor: Color.blue
                             )
                         }
                         .buttonStyle(PlainButtonStyle())
@@ -42,9 +50,10 @@ struct BibliothequeMenuView: View {
                         // Carte 2 : Techniques de pêche
                         NavigationLink(destination: TechniquesListView()) {
                             MenuCard(
+                                iconName: "Techniques_icon",
                                 title: "Techniques de pêche",
                                 description: "Traîne, jigging, montages et stratégies",
-                                accentColor: .orange
+                                accentColor: Color.orange
                             )
                         }
                         .buttonStyle(PlainButtonStyle())
@@ -52,9 +61,10 @@ struct BibliothequeMenuView: View {
                         // Carte 3 : Tuto de Pro
                         NavigationLink(destination: TutoProListView()) {
                             MenuCard(
+                                iconName: "TutoDePro_icon",
                                 title: "Tuto de Pro",
                                 description: "Vidéos CPS et conseils d'experts",
-                                accentColor: .green
+                                accentColor: Color.green
                             )
                         }
                         .buttonStyle(PlainButtonStyle())
@@ -64,7 +74,6 @@ struct BibliothequeMenuView: View {
                     Spacer(minLength: 40)
                 }
             }
-            .navigationTitle("📚 Bibliothèque")
             .navigationBarTitleDisplayMode(.large)
         }
     }
@@ -72,39 +81,45 @@ struct BibliothequeMenuView: View {
 
 // MARK: - Composant MenuCard
 
-/// Carte cliquable pour le menu principal
 struct MenuCard: View {
+    let iconName: String
     let title: String
     let description: String
     let accentColor: Color
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            // Titre
-            Text(title)
-                .font(.title2)
-                .fontWeight(.semibold)
-                .foregroundColor(.primary)
+        HStack(spacing: 16) {
+            // Icône personnalisée
+            Image(iconName)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 50, height: 50)
+                .padding(12)
+                .background(accentColor.opacity(0.15))
+                .cornerRadius(12)
             
-            // Description
-            Text(description)
-                .font(.body)
-                .foregroundColor(.secondary)
-                .lineLimit(2)
-                .multilineTextAlignment(.leading)
+            // Contenu texte
+            VStack(alignment: .leading, spacing: 6) {
+                Text(title)
+                    .font(.headline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.primary)
+                
+                Text(description)
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.leading)
+            }
             
             Spacer()
             
-            // Indicateur de navigation
-            HStack {
-                Spacer()
-                Image(systemName: "chevron.right")
-                    .font(.title3)
-                    .foregroundColor(accentColor)
-            }
+            // Chevron de navigation
+            Image(systemName: "chevron.right")
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundColor(accentColor)
         }
-        .padding(20)
-        .frame(maxWidth: .infinity, minHeight: 140)
+        .padding(16)
         .background(
             RoundedRectangle(cornerRadius: 12)
                 .fill(Color(.systemBackground))
@@ -116,50 +131,6 @@ struct MenuCard: View {
         )
     }
 }
-
-// MARK: - Vues placeholder temporaires
-
-/// Placeholder temporaire pour TechniquesListView
-struct TechniquesListView: View {
-    var body: some View {
-        VStack(spacing: 20) {
-            Image(systemName: "fish.fill")
-                .font(.system(size: 60))
-                .foregroundColor(.orange.opacity(0.5))
-            
-            Text("Section Techniques de pêche")
-                .font(.title2)
-                .fontWeight(.semibold)
-            
-            Text("À développer dans Sprint 3")
-                .font(.body)
-                .foregroundColor(.secondary)
-        }
-        .navigationTitle("🎣 Techniques")
-    }
-}
-
-/// Placeholder temporaire pour TutoProListView
-struct TutoProListView: View {
-    var body: some View {
-        VStack(spacing: 20) {
-            Image(systemName: "play.circle.fill")
-                .font(.system(size: 60))
-                .foregroundColor(.green.opacity(0.5))
-            
-            Text("Section Tuto de Pro")
-                .font(.title2)
-                .fontWeight(.semibold)
-            
-            Text("À développer dans Sprint 4")
-                .font(.body)
-                .foregroundColor(.secondary)
-        }
-        .navigationTitle("💡 Tuto de Pro")
-    }
-}
-
-// MARK: - Preview
 
 #Preview {
     BibliothequeMenuView()
