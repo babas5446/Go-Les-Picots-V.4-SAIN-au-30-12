@@ -1159,14 +1159,14 @@ enum Zone: String, Codable, CaseIterable, Hashable {
                 "Thazard rayé",
                 "Vivaneau queue noire",
                 "Loche croissant",
-                "Bec-de-cane"
+                "Bec de cane"
             ]
         case .recif:
             return [
                 "Carangue GT",
                 "Loche pintade",
                 "Loche aréolée",
-                "Bec de canne",
+                "Bec de cane",
                 "Vivaneau chien rouge",
                 "Empereur",
                 "Mérou",
@@ -1186,7 +1186,7 @@ enum Zone: String, Codable, CaseIterable, Hashable {
         case .tombant:
             return [
                 "Loche pintade (100-280m)",
-                "Bec de canne",
+                "Bec de cane",
                 "Vivaneau rubis (200-300m)",
                 "Vivaneau la flamme (200-300m)",
                 "Vivaneau blanc (150-250m)",

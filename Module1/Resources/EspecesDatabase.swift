@@ -602,8 +602,8 @@ class EspecesDatabase {
             comportement: "Grand prédateur pélagique solitaire, chasse en surface",
             momentsFavorables: [.matinee, .apresMidi],
             
-            photoNom: nil,
-            illustrationNom: nil,
+            photoNom: "MarlinBleu_photo",
+            illustrationNom: "MarlinBleu_illustration",
             signesDistinctifs: "ROSTRE ALLONGÉ en épée = signe distinctif absolu des Istiophoridés. Corps massif et puissant bleu-noir métallique sur le dos, flancs argentés brillants, ventre blanc. Marlin BLEU : nageoire dorsale bleue haute à l'avant, barres verticales argentées sur flancs. Marlin NOIR : dorsale noire, corps uniformément noir-bleu sans barres. Nageoires pectorales rigides NON rétractables (différent du voilier). Caudale en croissant très puissante. Ligne latérale peu visible. Corps fusiforme massif très hydrodynamique. Absence d'écailles visibles. Taille IMPOSANTE : plus grand poisson à rostre du Pacifique.",
             
             tailleMinLegale: nil,
@@ -761,8 +761,8 @@ class EspecesDatabase {
             comportement: "Prédateur pélagique chasseur rapide en groupes actifs",
             momentsFavorables: [.aube, .matinee, .crepuscule],
             
-            photoNom: nil,
-            illustrationNom: nil,
+            photoNom: "Thazard_photo",
+            illustrationNom: "Thazard_illustration",
             signesDistinctifs: "SCOMBRIDÉ côtier élégant ! Haut du corps GRIS BLEUTÉ magnifique, ventre ARGENTÉ brillant. PINNULES DORSALES ET ANALES caractéristiques famille = petites nageoires triangulaires séparées après dorsale/anale principales (signature scombridés). NOMBREUSES BARRES ÉTROITES VERTICALES SOMBRES forme IRRÉGULIÈRE sur flancs = motif diagnostic ! Ces barres parfois fugaces selon angle lumière. EXTRÉMITÉ SECONDE DORSALE ET ANALE BLANCHE distinctive. Corps fusiforme hydrodynamique parfait. Caudale en croissant lunaire très puissante. Tête pointue effilée. Bouche grande avec DENTS ACÉRÉES visibles (canines). Ligne latérale ondulée descendant abruptement sous seconde dorsale. Taille max 180 cm. Aspect général : TORPILLE ARGENTÉE RAYÉE élégante.",
             
             tailleMinLegale: nil,
@@ -1308,56 +1308,619 @@ class EspecesDatabase {
         ),
         
         // ─────────────────────────────────────────────────────────────────────
-        // LOCHES (traîne possible mais jig/montage préféré)
+        // LOCHE SAUMONÉE / SAUMONÉE HIRONDELLE (Variola louti) (traîne possible mais jig/montage préféré)
         // ─────────────────────────────────────────────────────────────────────
         
         EspeceInfo(
-            identifiant: "loche",
-            nomCommun: "Loche",
-            nomScientifique: "Epinephelus spp.",
+            
+            // ═══════════════════════════════════════════
+            // IDENTIFICATION DE BASE
+            // ═══════════════════════════════════════════
+            
+            identifiant: "locheSaumonee",
+            nomCommun: "Loche saumonée",
+            nomScientifique: "Variola louti",
             famille: "Serranidae",
-            zones: [.recif, .tombant, .dcp],
-            profondeurMin: 10,
-            profondeurMax: 200,
-            typesPecheCompatibles: [.jig, .montage, .traine],
+            
+            // ═══════════════════════════════════════════
+            // LOCALISATION & HABITAT
+            // ═══════════════════════════════════════════
+            
+            zones: [.recif, .tombant, .hauturier],  // Large amplitude profondeur (récif + profond)
+            profondeurMin: 10.0,   // Peut être observée récifs peu profonds
+            profondeurMax: 300.0,  // Fréquente aussi grandes profondeurs
+            
+            // ═══════════════════════════════════════════
+            // TECHNIQUES DE PÊCHE COMPATIBLES
+            // ═══════════════════════════════════════════
+            
+            typesPecheCompatibles: [
+                .palangrotte,  // Pêche profonde principale
+                .traine        // Possible traîne profonde (downrigger) zones récifales
+            ],
+            
+            // ═══════════════════════════════════════════
+            // TRAÎNE : POSSIBLE MAIS SECONDAIRE
+            // ═══════════════════════════════════════════
+            
             traineInfo: TraineInfo(
                 vitesseMin: 3.0,
-                vitesseMax: 5.0,
-                vitesseOptimale: 4.0,
-                profondeurNageOptimale: "fond-20m",
-                tailleLeurreMin: 10.0,
-                tailleLeurreMax: 16.0,
-                typesLeurresRecommandes: ["bavette plongeante", "jig lourd"],
-                couleursRecommandees: ["naturel", "brun", "orange"],
-                positionsSpreadRecommandees: [.longCorner],
-                notes: "Traîne lente près du fond. Jig/montage plus efficace."
+                vitesseMax: 6.0,
+                vitesseOptimale: 4.5,
+                profondeurNageOptimale: "15-80m (downrigger requis)",
+                tailleLeurreMin: 12.0,
+                tailleLeurreMax: 20.0,
+                typesLeurresRecommandes: [
+                    "Poissons nageurs plongeants profonds (15-30m)",
+                    "Octopus jigs profonds",
+                    "Leurres downrigger spécifiques"
+                ],
+                couleursRecommandees: [
+                    "Rose/orange (imite coloration naturelle)",
+                    "Violet/lavande",
+                    "Argenté/bleu",
+                    "Naturel poisson"
+                ],
+                positionsSpreadRecommandees: nil,
+                notes: """
+                ⚠️ Traîne SECONDAIRE pour Variola louti. Espèce principalement capturée en pêche \
+                profonde démersale (palangrotte 50-300m). Traîne possible zones récifales externes \
+                avec DOWNRIGGER obligatoire (profondeur 15-80m). Technique marginale vs pêche profonde \
+                classique. Privilégier palangrotte profonde pour efficacité optimale.
+                """
             ),
-            comportement: "Embuscade près du fond et des structures",
-            momentsFavorables: [.matinee, .apresMidi],
-            photoNom: nil,
-                illustrationNom: nil,
-                signesDistinctifs: nil,  // À compléter plus tard
-                tailleMinLegale: 60.0,
-                tailleMaxObservee: 200.0,
-                poidsMaxObserve: 200.0,
-                descriptionPhysique: nil,  // À compléter plus tard
-                habitatDescription: nil,
-                comportementDetail: nil,
-                techniquesDetail: nil,
-                leuresSpecifiques: nil,
-                appatsNaturels: nil,
-                meilleursHoraires: nil,
-                conditionsOptimales: nil,
-                qualiteCulinaire: nil,
-                risqueCiguatera: .aucun,  // ⚠️ Adapter selon l'espèce
-                ciguateraDetail: nil,
-                reglementationNC: nil,
-                quotas: nil,
-                zonesInterdites: nil,
-                statutConservation: nil,
-                leSaviezVous: nil,
-                nePasPecher: false,  // false par défaut
-                raisonProtection: nil
+            
+            // ═══════════════════════════════════════════
+            // COMPORTEMENT GÉNÉRAL
+            // ═══════════════════════════════════════════
+            
+            comportement: """
+            Espèce à LARGE AMPLITUDE BATHYMÉTRIQUE (10-300m) mais principalement DÉMERSALE PROFONDE. \
+            Fréquente tombants récifaux, monts sous-marins, épaulements rocheux. Prédateur carnivore \
+            chassant poissons et crustacés. Solitaire ou petits groupes près structures profondes. \
+            Activité crépusculaire/nocturne principalement. Comportement remontée similaire autres loches : \
+            gueule ouverte, vrille ligne (émerillon indispensable). Espèce recherchée pêche profonde.
+            """,
+            
+            momentsFavorables: [.aube, .crepuscule, .nuit],
+            
+            // ═══════════════════════════════════════════
+            // 🆕 IDENTIFICATION VISUELLE
+            // ═══════════════════════════════════════════
+            
+            photoNom: "LocheSaumonee_photo",
+            illustrationNom: "LocheSaumonee_illustration",
+            
+            signesDistinctifs: """
+            **IDENTIFICATION FACILE - CAUDALE UNIQUE :**
+            
+            Livrée ROUGE-ORANGE à BRUN ROUGEÂTRE spectaculaire. NOMBREUX PETITS POINTS ou TRAITS \
+            BLEUS, VIOLETS, LAVANDE ou ROSES sur tête, corps et nageoires (motif magnifique). \
+            
+            ⭐ **SIGNE DISTINCTIF ABSOLU : CAUDALE EN CROISSANT caractéristique** avec MARGE \
+            POSTÉRIEURE JAUNE prononcée. Cette forme caudale + couleur = IMPOSSIBLE confondre avec \
+            autres espèces.
+            
+            Ressemble Variola albimarginata (Croissant queue blanche) mais V. louti possède MARGE \
+            JAUNE nageoires (vs liseré blanc fin V. albimarginata).
+            
+            Corps élancé, élégant. Nageoires dorsale/anale également bordées jaune. Coloration \
+            évoque saumon (origine nom "saumonée"). Aspect général = l'une des plus belles loches !
+            """,
+            
+            // ═══════════════════════════════════════════
+            // 🆕 BIOLOGIE
+            // ═══════════════════════════════════════════
+            
+            tailleMinLegale: nil,  // Pas de réglementation spécifique NC
+            tailleMaxObservee: 80.0,  // cm (Longueur Fourche selon CPS)
+            poidsMaxObserve: nil,     // Données non disponibles sources
+            
+            descriptionPhysique: """
+            Loche de taille moyenne à corps élancé et élégant. Taille commune 50-70 cm. Coloration \
+            spectaculaire rouge-orange à brun rougeâtre avec points/traits bleus-violets-lavandes \
+            créant motif complexe magnifique. Caudale profondément fourchue EN CROISSANT avec lobes \
+            pointus (caractéristique genre Variola vs Epinephelus caudale arrondie). Marge postérieure \
+            nageoires (dorsale, anale, caudale) JAUNE VIF diagnostic. Tête pointue, profil élégant. \
+            Bouche large adaptée capture poissons. Hermaphrodite protogyne (femelle → mâle) comme \
+            autres Serranidae. Nage gracieuse et rapide (vs loches Epinephelus plus lourdes).
+            """,
+            
+            // ═══════════════════════════════════════════
+            // 🆕 HABITAT DÉTAILLÉ
+            // ═══════════════════════════════════════════
+            
+            habitatDescription: """
+            **AMPLITUDE BATHYMÉTRIQUE LARGE - ESPÈCE POLYVALENTE :**
+            
+            **Distribution profondeur : 10-300 m** (exceptionnellement large pour Serranidae)
+            
+            **Habitats principaux par profondeur :**
+            
+            • **10-40 m (RÉCIFS EXTERNES) :** Observée occasionnellement tombants récifaux peu profonds, \
+            grottes, surplombs. Rare <20 m.
+            
+            • **40-150 m (ZONE INTERMÉDIAIRE) :** Fréquente zones transition récif/profond. Épaulements \
+            rocheux, tombants abrupts.
+            
+            • **150-300 m (DÉMERSAL PROFOND - OPTIMAL) :** Zone préférentielle. Monts sous-marins, \
+            tombants profonds, structures rocheuses complexes. Abondance maximale 150-250 m.
+            
+            **Types substrats :**
+            • Structures rocheuses abruptes (tombants >45°)
+            • Anfractuosités, grottes profondes
+            • Épaulements récifaux externes
+            • Monts sous-marins (sommets/flancs)
+            • Évite fonds meubles sans relief
+            
+            **Particularité :** Contrairement Epinephelus microdon (strictement >100m), Variola louti = \
+            plus plastique (récifs peu profonds → grandes profondeurs). MAIS captures commerciales = \
+            principalement pêche profonde 100-300 m où abondance maximale.
+            
+            **Distribution géographique NC :** Tous tombants externes récif-barrière + monts sous-marins.
+            """,
+            
+            comportementDetail: """
+            **PRÉDATEUR PÉLAGICO-DÉMERSAL ACTIF :**
+            
+            **Régime alimentaire (carnivore piscivore) :**
+            • **POISSONS (priorité 1) :** Proies principales. Petits poissons récifaux/démersaux.
+            • **Crustacés :** Crabes, langoustes, crevettes profondes (secondaire)
+            • **Céphalopodes :** Calmars, poulpes (occasionnel)
+            
+            **Mode chasse :** Plus actif qu'Epinephelus. Patrouille structures rocheuses, chasse \
+            activement poissons en pleine eau. Nage rapide permet poursuite proies. Attaque fulgurante.
+            
+            **Activité :** Crépusculaire/nocturne principalement (pic 17h-20h + 5h-8h). Diurne aussi \
+            (opportuniste) mais moins actif journée.
+            
+            **Comportement social :** Solitaire généralement. Parfois petits groupes (2-4 individus) \
+            zones riches proies. Territorialité modérée.
+            
+            **Comportement lors capture :**
+            • Remontée GUEULE OUVERTE (barotraumatisme profondeur)
+            • VRILLE LA LIGNE fortement (rotation corps)
+            • Combat VIGOUREUX et RAPIDE (espèce dynamique)
+            • Vessie natatoire extériorisée si >100 m profondeur
+            • Relâche impossible profondeur >80m (mortalité certaine)
+            
+            **Reproduction :** Hermaphrodite protogyne (femelle → mâle avec âge/taille). Ponte eaux \
+            profondes présumée saison chaude (nov-mars estimé). Maturité sexuelle non documentée \
+            (estimée 3-5 ans, 40-50 cm).
+            
+            **Croissance :** Modérée à rapide (plus rapide qu'Epinephelus profonds). Longévité estimée \
+            15-20 ans.
+            """,
+            
+            // ═══════════════════════════════════════════
+            // 🆕 PÊCHE PRATIQUE
+            // ═══════════════════════════════════════════
+            
+            techniquesDetail: """
+            **🎣 TECHNIQUE PRINCIPALE : PÊCHE PROFONDE DÉMERSALE (80-300m)**
+            
+            **MATÉRIEL (identique Epinephelus microdon) :**
+            • Moulinet électrique recommandé ou manuel robuste
+            • Ligne tressé PE 6-10 (300-500 m) ou nylon 50-80 lb
+            • Bas de ligne fluorocarbone 80-120 lb (1.5-2.5 m)
+            • Hameçons autoferrants Mustad 5/0-9/0 (avançons courts 20-30 cm)
+            • Lest lourd 1-2 kg (courants profondeur)
+            • Émerillon ROBUSTE (vrille ligne Variola)
+            
+            **APPÂTS PÊCHE PROFONDE :**
+            • Bonite salée morceaux 5-10 cm (OPTIMAL)
+            • Thon salé morceaux
+            • Calmars entiers 10-15 cm (excellent Variola piscivore)
+            • Petits poissons entiers (maquereaux, sardines)
+            • Broumé sac attirance (morceaux poissons)
+            
+            **TECHNIQUE (voir détails fiche Epinephelus microdon) :**
+            1. Positionnement tombant/mont (sondeur + GPS)
+            2. Descente ligne (toucher fond puis remonter 1-2 m)
+            3. Maintien contact léger fond
+            4. Animation minimale (touches verticales occasionnelles)
+            5. Ferrage franc si touche
+            6. Remontée régulière (pompage continu, émerillon essentiel)
+            
+            **PROFONDEURS OPTIMALES VARIOLA LOUTI :**
+            • 80-150 m : Spécimens moyens (50-65 cm)
+            • 150-250 m : Zone productive maximale (gros spécimens 60-75 cm)
+            • 250-300 m : Très gros individus rares (>75 cm)
+            
+            **MOMENTS OPTIMAUX :**
+            • Aube (5h-8h) - Pic activité
+            • Crépuscule (17h-20h) - Pic activité
+            • Nuit - Très actif (parfois meilleur moment)
+            
+            ---
+            
+            **🎣 TECHNIQUE SECONDAIRE : TRAÎNE PROFONDE (DOWNRIGGER)**
+            
+            ⚠️ **MARGINALE** mais possible zones récifales externes 15-80 m.
+            
+            **MATÉRIEL TRAÎNE PROFONDE :**
+            • Canne traîne lourde (20-50 lb)
+            • Moulinet traîne capacité 300-400 m
+            • DOWNRIGGER (obligatoire descendre leurres 20-80 m)
+            • Ligne mère tressé PE 4-6
+            • Bas de ligne fluorocarbone 60-80 lb
+            
+            **LEURRES TRAÎNE :**
+            • Poissons nageurs plongeants profonds (diving depth 10-20m + downrigger)
+            • Octopus jigs profonds (6-8 pouces)
+            • Leurres souples montés lests 50-100g
+            • **Couleurs :** Rose/orange, violet/lavande, argenté/bleu
+            
+            **VITESSE TRAÎNE :** 3-6 nœuds (optimal 4-5 nœuds)
+            
+            **ZONES TRAÎNE :**
+            • Tombants récifaux externes (longer bordure 15-50 m)
+            • Épaulements rocheux (relief accidenté)
+            • Downrigger positionné 20-80 m profondeur
+            
+            **LIMITES TRAÎNE :**
+            ❌ Technique MOINS efficace que pêche profonde statique
+            ❌ Requiert downrigger (coûteux, technique)
+            ❌ Espèce principalement >100 m (hors portée downrigger standard)
+            ❌ Effort/résultat défavorable vs palangrotte profonde
+            
+            ✅ **RECOMMANDATION : PRIVILÉGIER PÊCHE PROFONDE PALANGROTTE** (technique principale \
+            pêcheurs NC pour Variola louti).
+            """,
+            
+            leuresSpecifiques: [
+                // TRAÎNE PROFONDE (technique marginale)
+                "Poissons nageurs plongeants profonds 15-20cm",
+                "Octopus jigs 6-8 pouces (couleurs rose/violet)",
+                "Leurres souples montés lourds 50-100g",
+                "Couleurs : Rose/orange, violet/lavande, argenté/bleu"
+                // Note : Pêche profonde = appâts naturels (voir appatsNaturels)
+            ],
+            
+            appatsNaturels: [
+                // PÊCHE PROFONDE (technique principale)
+                "Bonite salée morceaux 5-10 cm - OPTIMAL",
+                "Thon salé morceaux 5-10 cm",
+                "Calmars entiers 10-15 cm (excellent piscivore)",
+                "Calmars morceaux",
+                "Petits poissons entiers (maquereaux 10-15 cm)",
+                "Sardines entières (broumé attirance)",
+                "Poulpes morceaux 5-8 cm",
+                "Tout poisson gras salé/durci"
+            ],
+            
+            meilleursHoraires: """
+            **SAISON :** Toute l'année (espèce profonde = faibles variations saisonnières)
+            
+            **MOMENTS JOURNÉE :**
+            • **Aube** (5h-8h) - ⭐ Pic activité alimentaire maximal
+            • **Crépuscule** (17h-20h) - ⭐ Pic activité alimentaire maximal
+            • **Nuit** (20h-5h) - Très actif, parfois meilleur moment (surtout pleine lune)
+            • **Journée** - Actif modéré (opportuniste, chasse si proie passe)
+            
+            **MARÉE :**
+            • Coefficients moyens (30-70) PRÉFÉRÉS
+            • Courants modérés = pêche profonde facilitée
+            • Éviter très grands coefficients (courants violents profondeur)
+            
+            **LUNE :**
+            • Pleine lune : Activité nocturne maximale (lumière favorise chasse)
+            • Nouvelle lune : Activité réduite nuit (obscurité totale profondeur)
+            
+            **MÉTÉO :** Mer calme INDISPENSABLE (précision positionnement + stabilité)
+            """,
+            
+            conditionsOptimales: """
+            **MÉTÉO & MER :**
+            • Mer calme à peu agitée (<1.5 m houle)
+            • Vent <15 nœuds (stabilité bateau)
+            • Ciel dégagé facilite navigation tombants
+            
+            **COURANTS :**
+            • Modérés (maintien ligne verticale possible)
+            • Courant nul (étal marée) parfois idéal
+            • Courants forts = pêche difficile/impossible
+            
+            **ÉQUIPEMENT :**
+            • Sondeur performant (lecture 100-300 m)
+            • GPS (repositionnement spots)
+            • Émerillon robuste (CRITIQUE pour Variola)
+            • Ancre + orin profondeur adaptée
+            
+            **PROFONDEUR OPTIMALE VARIOLA LOUTI :**
+            • Zone la plus productive : **150-250 m**
+            • Spécimens moyens : 80-150 m
+            • Gros spécimens : 200-280 m
+            
+            **TYPE FOND :**
+            • Tombants abrupts (pente >45°)
+            • Monts sous-marins (sommets + flancs)
+            • Structures rocheuses complexes
+            • Anfractuosités, grottes, surplombs
+            """,
+            
+            // ═══════════════════════════════════════════
+            // 🆕 VALORISATION CULINAIRE & SÉCURITÉ
+            // ═══════════════════════════════════════════
+            
+            qualiteCulinaire: """
+            ⭐⭐⭐⭐⭐ **CHAIR EXCEPTIONNELLE - AUCUN RISQUE CIGUATERA**
+            
+            **AVANTAGE MAJEUR (identique autres démersaux profonds) :**
+            ✅ **JAMAIS CIGUATOXIQUE** - Habitat profond = aucun contact algues toxiques récif
+            ✅ Valeur commerciale TRÈS ÉLEVÉE (sécurité + qualité chair)
+            ✅ Exportation sans restriction sanitaire
+            ✅ Consommation SANS LIMITE taille/âge
+            
+            **QUALITÉS GUSTATIVES SUPÉRIEURES :**
+            • Chair BLANCHE NACRÉE, texture FERME et FINE
+            • Saveur DÉLICATE, RAFFINÉE, légèrement sucrée
+            • Pas goût "poisson" prononcé (finesse remarquable)
+            • Tenue cuisson PARFAITE (chair ne se défait pas)
+            • Peu d'arêtes, filetage facile
+            • **Considérée parmi MEILLEURES loches culinairement**
+            
+            **PRÉPARATIONS RECOMMANDÉES :**
+            • **Poisson cru** : Sashimi, carpaccio (chair ferme idéale) ⭐⭐⭐⭐⭐
+            • **Grillé** : Darnes/pavés grillés (excellente tenue, peau croustillante)
+            • **Poêlé** : Filets minute, cuisson rapide
+            • **Au four** : Entier ou filets, aromates, papillote
+            • **Vapeur** : Préserve finesse exceptionnelle chair
+            • **Ceviche** : Marinade citron/coco (Pacifique)
+            • **Sushi** : Chair ferme parfaite nigiri/maki
+            
+            **CONSERVATION :**
+            • Chair dense : 3-4 jours au frais
+            • Congélation excellente (texture préservée)
+            • Qualité supérieure maintenue
+            
+            **PRIX MARCHÉ NC :**
+            • **TRÈS ÉLEVÉ** (espèce recherchée + aucun risque + qualité supérieure)
+            • Parmi loches les plus chères marché
+            • Demande forte gastronomie haut de gamme
+            • Export Japon/Asie (sashimi premium)
+            """,
+            
+            risqueCiguatera: .aucun,
+            
+            ciguateraDetail: """
+            ✅ **AUCUN RISQUE CIGUATERA - ESPÈCE DÉMERSALE PROFONDE**
+            
+            **RAISONS ABSENCE TOTALE RISQUE :**
+            
+            Variola louti = principalement DÉMERSALE PROFONDE (100-300 m optimal). À ces profondeurs :
+            
+            1. **AUCUN Gambierdiscus** (algue productrice toxine) = absence totale exposition
+            2. **Chaîne alimentaire séparée** récif superficiel = proies non contaminées
+            3. **Habitat profondeur** = isolation complète zones à risque
+            
+            **Bien que Variola louti PUISSE être observée récifs peu profonds (10-40m) occasionnellement, \
+            son régime alimentaire principal = PROIES PROFONDES non ciguatoxiques.**
+            
+            **CONFIRMATION SOURCES :**
+            • CPS Guide : Variola louti listée espèces démersales profondes
+            • Preston 1999 : Genre Variola (Saumonées) = cible pêche profonde
+            • Consignes moteur : Loches démersales profondes NE sont JAMAIS ciguatoxiques
+            
+            **CONSÉQUENCES PRATIQUES :**
+            ✅ Consommation SANS RESTRICTION taille/âge
+            ✅ Gros spécimens 80 cm = AUCUN DANGER
+            ✅ Toutes parties comestibles (filets, joues, arêtes bouillon)
+            ✅ Exportation autorisée (pas restrictions)
+            
+            **VALEUR AJOUTÉE :**
+            Cette sécurité sanitaire ABSOLUE + qualité chair exceptionnelle = Variola louti parmi \
+            **ESPÈCES LES PLUS RECHERCHÉES pêche profonde Pacifique**. Prix marché reflète cette \
+            combinaison rare (sécurité + qualité + rareté).
+            
+            🎯 **LOCHE SAUMONÉE = TRÉSOR CULINAIRE GARANTI SÛRVAROLA LOUTI**
+            """,
+            
+            // ═══════════════════════════════════════════
+            // 🆕 RÉGLEMENTATION & CONSERVATION
+            // ═══════════════════════════════════════════
+            
+            reglementationNC: """
+            ⚠️ **PAS DE RÉGLEMENTATION SPÉCIFIQUE ESPÈCE (2025)**
+            
+            **STATUT ACTUEL :**
+            • Aucune taille minimale capture
+            • Aucune période fermeture
+            • Aucun quota spécifique Variola louti
+            • Réglementation générale pêche profonde applicable
+            
+            **RECOMMANDATIONS GESTION (non réglementaires) :**
+            
+            📏 **Taille minimale suggérée : 50 cm LF**
+            • Protection juvéniles (maturité estimée 40-50 cm, 3-5 ans)
+            • Favorise renouvellement stock
+            
+            ⚠️ **Limitation prélèvement très gros (>75 cm) :**
+            • Gros individus = mâles reproducteurs (hermaphrodisme protogyne)
+            • Importance génétique population
+            
+            **PROBLÉMATIQUE SIMILAIRE AUTRES DÉMERSAUX :**
+            • Croissance lente, maturité tardive = vulnérabilité surpêche
+            • Stocks monts isolés = fragiles
+            • Effort concentré zones accessibles = appauvrissement local
+            • Observations changements composition espèces monts exploités
+            
+            **GESTION SOUHAITABLE :**
+            1. Taille minimale 50 cm LF
+            2. Quotas pêche professionnelle (limitation effort)
+            3. Rotation zones pêche (préserver stocks monts)
+            4. Monitoring scientifique régulier
+            5. Protection monts reproducteurs (fermeture saisonnière)
+            """,
+            
+            quotas: """
+            ⚠️ **AUCUN QUOTA ACTUELLEMENT (2025)**
+            
+            **PROPOSITION GESTION RATIONNELLE :**
+            
+            **Pêche récréative :**
+            • 2-3 loches/pêcheur/jour MAX (toutes espèces Serranidae profondes)
+            • Taille minimale 50 cm LF
+            • Relâcher gros >75 cm recommandé (reproducteurs)
+            
+            **Pêche professionnelle :**
+            • Quotas par zone/mont (éviter épuisement)
+            • Rotation obligatoire zones pêche
+            • Déclarations captures (monitoring)
+            • Limitation effort (nb sorties/engins)
+            
+            **JUSTIFICATION :**
+            • Croissance modérée mais maturité tardive
+            • Hermaphrodisme protogyne (capture gros = perte mâles)
+            • Stocks monts isolés vulnérables
+            • Valeur commerciale élevée = pression forte
+            """,
+            
+            zonesInterdites: """
+            ⚠️ **Vérifier Aires Marines Protégées incluant zones profondes**
+            
+            Certaines AMP NC protègent tombants/monts profonds. Vérifier réglementation avant sortie.
+            
+            **Recommandation :** Renseignements Affaires Maritimes, Provinces avant pêche profonde.
+            """,
+            
+            statutConservation: """
+            **STATUT CONSERVATION :**
+            
+            **UICN (Mondial) :** Non évalué spécifiquement Variola louti
+            
+            **NOUVELLE-CALÉDONIE :** Statut incertain (pêche profonde peu documentée)
+            
+            **VULNÉRABILITÉ INTRINSÈQUE - MODÉRÉE À ÉLEVÉE :**
+            ⚠️ Croissance modérée (plus rapide qu'Epinephelus mais reste lente)
+            ❌ Maturité sexuelle tardive (estimée 3-5 ans)
+            ❌ Hermaphrodisme protogyne (capture gros = perte mâles)
+            ⚠️ Habitat spécialisé structures profondes
+            ⚠️ Stocks potentiellement isolés monts
+            ✅ Amplitude bathymétrique large (10-300m) = plus plasticité qu'espèces strictement profondes
+            
+            **PRESSIONS :**
+            • **Valeur commerciale TRÈS élevée** = pression pêche forte
+            • **Espèce recherchée** gastronomie haut gamme
+            • **Export Asie** (sashimi premium) = demande internationale
+            • **Concentration effort** monts accessibles/productifs
+            
+            **MENACES :**
+            • Surpêche localisée monts connus
+            • Barotraumatisme (relâche impossible >80m)
+            • Pêche ciblée (reconnaissance caudale croissant)
+            • Stocks monts = vulnérables exploitation intensive
+            
+            **ACTIONS CONSERVATION PRIORITAIRES :**
+            1. Inventaire scientifique stocks principaux
+            2. Biologie (croissance, reproduction, déplacements)
+            3. Taille minimale capture 50 cm
+            4. Quotas stricts (pêche pro + récréative)
+            5. Protection habitats reproducteurs
+            6. Rotation zones pêche
+            7. Monitoring captures déclarations
+            8. Sensibilisation valeur espèce (gestion responsable)
+            
+            **PRINCIPE PRÉCAUTION :** Valeur commerciale élevée + caractéristiques biologiques \
+            (croissance lente, maturité tardive, hermaphrodisme) = gestion conservatrice indispensable \
+            préserver ressource long terme.
+            """,
+            
+            // ═══════════════════════════════════════════
+            // 🆕 PÉDAGOGIE & SENSIBILISATION
+            // ═══════════════════════════════════════════
+            
+            leSaviezVous: """
+            🌊 **CAUDALE EN CROISSANT - SIGNATURE GENRE VARIOLA :**
+            La forme caudale profondément fourchue EN CROISSANT avec lobes pointus = caractéristique \
+            UNIQUE genre Variola (vs Epinephelus caudale arrondie). Cette morphologie = adaptation \
+            nage RAPIDE et ENDURANTE. Loches Variola = nageurs plus actifs, dynamiques, chassent \
+            activement proies en pleine eau (vs Epinephelus embuscade statique). Caudale croissant + \
+            corps élancé = hydrodynamisme optimal vitesse/endurance.
+            
+            🎨 **COLORATION SPECTACULAIRE - PARMI PLUS BELLES LOCHES :**
+            Variola louti = unanimement considérée l'une des PLUS BELLES loches ! Livrée rouge-orange \
+            avec innombrables points bleus-violets-lavandes créant motif complexe magnifique. Marge \
+            jaune vif nageoires contraste splendide. Nom "saumonée" évoque coloration rappelant chair \
+            saumon. En plongée profonde, sous éclairage artificiel, couleurs = éblouissantes. Pêcheurs \
+            reconnaissent immédiatement silhouette + coloration unique en remontant capture.
+            
+            🏆 **TRÉSOR CULINAIRE GASTRONOMIE PACIFIQUE :**
+            Variola louti = considérée **SUMMUM qualité chair** parmi loches Pacifique. Chair blanche \
+            nacrée, texture ferme-fine, saveur délicate-raffinée = combinaison rare. Marchés haut gamme \
+            Japon/Hong Kong paient prix premium pour sashimi Variola louti. Chefs étoilés apprécient \
+            finesse permettant sublimer sans masquer. Aucun risque ciguatera + qualité exceptionnelle = \
+            espèce très recherchée gastronomie.
+            
+            ⚖️ **HERMAPHRODISME PROTOGYNE - VULNÉRABILITÉ GESTION :**
+            Comme autres Serranidae, Variola louti = hermaphrodite PROTOGYNE (femelle d'abord → mâle \
+            avec âge/taille). Gros spécimens >70 cm = principalement MÂLES. Pêche sélective gros = \
+            retire mâles reproducteurs, déséquilibre sex-ratio, compromet reproduction. Problématique \
+            similaire mérous Méditerranée (Epinephelus marginatus) où surpêche gros = effondrement \
+            populations. Protection gros individus = essentielle pérennité espèce.
+            
+            🎣 **COMBAT VIGOUREUX - REMONTÉE SPECTACULAIRE :**
+            Variola louti = combat plus DYNAMIQUE qu'Epinephelus (corps élancé, nage rapide). Rushes \
+            puissants, rotations vrillant ligne (émerillon indispensable !). Remontée profondeur >100m = \
+            barotraumatisme spectaculaire : vessie natatoire extériorisée par bouche ouverte. Malheureusement \
+            relâche impossible (mortalité certaine lésions internes). Variola ferrée profondeur = consommation \
+            obligatoire. D'où importance gestion responsable AVANT capture (quotas, tailles, zones).
+            
+            🌍 **DISTRIBUTION INDO-PACIFIQUE LARGE :**
+            Variola louti = largement distribuée Indo-Pacifique tropical (Mer Rouge → Polynésie). Espèce \
+            commune mais PAS abondante (densités faibles). Présente tous archipels Pacifique, mais stocks \
+            localisés monts/tombants = vulnérables surpêche. Importance pêche professionnelle variable : \
+            marginale Polynésie (préférence vivaneaux), majeure Philippines/Indonésie (valeur commerciale).
+            
+            💎 **PRIX MARCHÉ REFLÈTE COMBINAISON RARE :**
+            Variola louti parmi loches LES PLUS CHÈRES marchés Pacifique. Pourquoi ? Combinaison RARE :
+            1. Aucun risque ciguatera (sécurité absolue)
+            2. Qualité chair exceptionnelle (gastronomie haute)
+            3. Beauté esthétique (valorisation visuelle)
+            4. Rareté relative (densités faibles)
+            5. Difficulté capture (pêche profonde spécialisée)
+            Prix élevé = reconnaissance valeur intrinsèque espèce. Justifie gestion rigoureuse préserver \
+            ressource précieuse.
+            """,
+            
+            nePasPecher: false,  // Pêche autorisée mais gestion responsable essentielle
+            
+            raisonProtection: """
+            ⚠️ **ESPÈCE PRÉCIEUSE - GESTION RESPONSABLE IMPÉRATIVE**
+            
+            Bien que pêche autorisée, Variola louti nécessite GESTION RIGOUREUSE :
+            
+            **POURQUOI VULNÉRABLE :**
+            • Croissance modérée, maturité tardive (3-5 ans)
+            • Hermaphrodisme protogyne (gros = mâles reproducteurs)
+            • Valeur commerciale TRÈS ÉLEVÉE = pression pêche forte
+            • Stocks monts potentiellement isolés
+            • Demande internationale (export Asie sashimi)
+            • Barotraumatisme = relâche impossible
+            
+            **PÊCHE RESPONSABLE - ENGAGEMENTS VOLONTAIRES :**
+            
+            ✅ **Respecter taille minimale 50 cm** (maturité sexuelle)
+            ✅ **Limiter captures** (2-3 loches/sortie MAX)
+            ✅ **Limiter prélèvement très gros >75 cm** (mâles reproducteurs)
+            ✅ **Rotation zones pêche** (pas retours répétés même mont)
+            ✅ **Valoriser TOTALEMENT captures** (chair exceptionnelle mérite respect)
+            ✅ **Partager spots modération** (éviter concentration effort)
+            ✅ **Déclarer captures si possible** (aider monitoring)
+            
+            **SI GESTION COLLECTIVE RESPONSABLE :**
+            → Stocks préservés long terme
+            → Pêche pérenne garantie
+            → Trésor culinaire disponible générations futures
+            → Valeur économique maintenue (tourisme pêche, export)
+            
+            **SANS GESTION :**
+            → Risque appauvrissement monts accessibles
+            → Perte espèce exceptionnelle qualité
+            → Fin pêche durable ressource précieuse
+            
+            🎯 **Variola louti = GEMME Pacifique → PROTÉGER = HONORER**
+            """
         ),
         
         // ─────────────────────────────────────────────────────────────────────
@@ -1411,6 +1974,495 @@ class EspecesDatabase {
                 leSaviezVous: nil,
                 nePasPecher: false,  // false par défaut
                 raisonProtection: nil
+        ),
+        // ─────────────────────────────────────────────────────────────────────
+        // BEC DE CANE
+        // Source : IRD - Borsa, Kulbicki et al. (2009) "Biologie et écologie du bec de cane en Nouvelle-Calédonie"
+        // Espèce emblématique du lagon NC - Première importance commerciale
+        // ─────────────────────────────────────────────────────────────────────
+        EspeceInfo(
+            
+            // ═══════════════════════════════════════════
+            // IDENTIFICATION DE BASE
+            // ═══════════════════════════════════════════
+            
+            identifiant: "becDeCane",
+            nomCommun: "Bec-de-cane",
+            nomScientifique: "Lethrinus nebulosus",
+            famille: "Lethrinidae",
+            
+            // ═══════════════════════════════════════════
+            // LOCALISATION & HABITAT
+            // ═══════════════════════════════════════════
+            
+            zones: [.lagon, .recif],
+            profondeurMin: 0.0,      // Juvéniles en herbiers très peu profonds
+            profondeurMax: 40.0,     // Adultes max observés 30-40m
+            
+            // ═══════════════════════════════════════════
+            // TECHNIQUES DE PÊCHE COMPATIBLES
+            // ═══════════════════════════════════════════
+            
+            typesPecheCompatibles: [
+                .palangrotte,  // Technique principale (palangre de fond >7m)
+                .lancer        // Ligne à main + leurres (près récifs)
+            ],
+            
+            // ═══════════════════════════════════════════
+            // TRAÎNE : NON APPLICABLE
+            // ═══════════════════════════════════════════
+            
+            traineInfo: nil,  // ⚠️ ESPÈCE BENTHIQUE - PAS DE TRAÎNE HAUTURIÈRE
+            
+            // ═══════════════════════════════════════════
+            // COMPORTEMENT GÉNÉRAL
+            // ═══════════════════════════════════════════
+            
+            comportement: """
+            Espèce benthique strictement carnivore chassant par aspiration du sédiment. \
+            Activité diurne (Grande Terre/Province Nord), possiblement nocturne à Ouvéa. \
+            Migration ontogénique : juvéniles en herbiers côtiers (0-5m), adultes en milieu \
+            de lagon et près récif-barrière (10-40m). Regroupements sur herbiers sous le vent \
+            des îlots en période de reproduction (septembre-octobre).
+            """,
+            
+            momentsFavorables: [.matinee, .apresMidi, .crepuscule],
+            // ═══════════════════════════════════════════
+            // 🆕 IDENTIFICATION VISUELLE (SPRINT 2)
+            // ═══════════════════════════════════════════
+            
+            photoNom: "BecDeCane_photo",
+            illustrationNom: "BecDeCane_illustration",
+            
+            signesDistinctifs: """
+            Corps gris argenté avec écailles pourvues de DEUX POINTS caractéristiques \
+            (un noir + un bleu pâle/blanc) donnant aspect "ÉTOILÉ" très distinctif. \
+            Traits BLEUS rayonnant à partir des yeux sur les joues. Profil légèrement \
+            busqué. Corps comprimé latéralement typique des Lethrinidae. \
+            IMPOSSIBLE À CONFONDRE avec aspect étoilé des écailles.
+            """,
+            
+            // ═══════════════════════════════════════════
+            // 🆕 BIOLOGIE
+            // ═══════════════════════════════════════════
+            
+            tailleMinLegale: nil,  // ⚠️ Pas de réglementation actuelle NC
+            tailleMaxObservee: 69.5,  // cm (Longueur Fourche)
+            poidsMaxObserve: 5.5,     // kg (femelle)
+            
+            descriptionPhysique: """
+            Taille moyenne : 45 cm / 2.5 kg. Dimorphisme sexuel : femelles 5 cm plus \
+            grandes que mâles à même âge. Sex-ratio biaisé : 58% femelles (70% chez >60 cm) \
+            dû à hermaphrodisme protandre (mâle d'abord, puis femelle avec âge). Corps haut, \
+            comprimé. Mâchoires puissantes adaptées au broyage de coquilles et carapaces. \
+            Nageoire caudale fourchue. Écailles cycloïdes de taille moyenne.
+            """,
+            
+            // ═══════════════════════════════════════════
+            // 🆕 HABITAT DÉTAILLÉ
+            // ═══════════════════════════════════════════
+            
+            habitatDescription: """
+            **HABITAT PRÉFÉRENTIEL :** Grandes étendues sédimentaires avec préférence MARQUÉE \
+            pour fonds sableux immédiatement en arrière du RÉCIF-BARRIÈRE.
+            
+            **JUVÉNILES (0-2 ans, <20 cm) :** Herbiers et algueraies côtiers comportant peu \
+            de corail (0-5 m). Ces zones = NOURRICERIES ESSENTIELLES. Présents mars-avril.
+            
+            **MIGRATION ONTOGÉNIQUE :** Avec croissance, déplacement vers zones plus profondes \
+            et au large. Corrélation positive taille/profondeur. Taille max observée 30-40m.
+            
+            **ADULTES :** Milieu de lagon et bordure récif-barrière sur fonds sableux (10-40m). \
+            Évitent fonds meubles sans abris, mangroves, estuaires.
+            
+            **DISTRIBUTION GÉOGRAPHIQUE NC :** Tous lagons (SW, Nord, Ouvéa). Densités maximales \
+            à Ouvéa. Zones urbaines (Nouméa) = stocks appauvris.
+            """,
+            
+            comportementDetail: """
+            **MODE DE CHASSE :** Aspiration du sédiment pour extraire proies benthiques enfouies. \
+            Mâchoires puissantes broient coquilles (mollusques) et carapaces (crustacés).
+            
+            **RÉGIME ALIMENTAIRE (% volume stomacal) :**
+            • Mollusques 40-50% (Bivalves >> Gastéropodes)
+            • Crustacés 20-30% (Crabes > Crevettes > Squilles)  
+            • Échinodermes 10-20% (Oursins sable/roche)
+            • Poissons 5-15% (grands individus uniquement)
+            • Vers polychètes (secondaire)
+            
+            **VARIATIONS RÉGIME :** Grands individus (>50 cm) = plus de poissons/crustacés/échinodermes, \
+            moins de mollusques. Lagon SW = alimentation riche en proies mobiles. Ouvéa = spécialisation \
+            bivalves.
+            
+            **ACTIVITÉ :** Diurne (Grande Terre), possiblement nocturne (Ouvéa - à confirmer). \
+            Activité alimentaire chute sept-oct (reproduction). Estomacs pleins mars-août.
+            
+            **REPRODUCTION :** Hermaphrodite protandre (mâle → femelle). Juillet-octobre (pic sept). \
+            Maturité 4-5 ans : mâles 35-40 cm, femelles 40-45 cm. Regroupements herbiers îlots <5m. \
+            Phase larvaire ~37 jours.
+            
+            **CROISSANCE :** Rapide et linéaire jusqu'à maturité (4-5 ans), puis ralentissement \
+            (énergie investie reproduction). Croissance NC > autres régions Indo-Pacifique.
+            """,
+            
+            // ═══════════════════════════════════════════
+            // 🆕 PÊCHE PRATIQUE
+            // ═══════════════════════════════════════════
+            
+            techniquesDetail: """
+            ** PALANGRE DE FOND (Technique #1 - RENDEMENT OPTIMAL) :**
+            
+            • **Zones :** Milieu de lagon, bordure récif-barrière
+            • **Profondeur :** >7 m MINIMUM (éviter accrochages récifs)
+            • **Profondeur optimale :** 15-30 m
+            • **Appâts :** Crustacés (crabes, crevettes), mollusques (poulpes, calmars), petits poissons
+            • **Montage :** Palangre fond classique, hameçons 2/0 à 4/0
+            • **Bas de ligne :** Fluorocarbone 25-30 lb (50-60 cm)
+            • **Pose :** Distance suffisante des récifs pour limiter pertes matériel
+            • **Rendement :** Poids moyen 2.46 kg (lagon milieu) - 70% plus lourd qu'à la ligne
+            • **Meilleur rendement :** Lagon SW > Province Nord
+            • **Moment :** Mars-août (éviter sept-oct = reproduction)
+            
+            ** LIGNE À MAIN (Technique #2 - PRÉCISION STRUCTURES) :**
+            
+            • **Zones :** Près des récifs, patates coraliennes, bordures herbiers
+            • **Profondeur :** Utilisable dès <7 m (avantage sur palangre)
+            • **Appâts :** Identiques palangre (crustacés priorité)
+            • **Montage :** Ligne simple, plomb olive coulissant 20-40g
+            • **Avantages :** Accessible, précis pour cibler structures, profondeurs variées
+            • **Poids moyen :** ~1.45 kg (milieu lagon)
+            • **Rendement maximal :** Ouvéa (densités élevées)
+            
+            ** LEURRES ARTIFICIELS (Technique moderne - PRÉSENTATION LENTE) :**
+            
+             **CLÉ DU SUCCÈS = PRÉSENTATION LENTE + CONTACT FOND**
+            
+            • **Animation :** LENTE, bondissements, pauses longues (80% contact fond)
+            • **Vitesse traîne :** 2-4 nœuds MAX (espèce benthique lente)
+            • **Zones cibles :** Bordures herbiers, fonds sableux récif-barrière, patates (10-30m)
+            • **Montages :** Drop shot, Carolina rig, Texan (herbiers), Jig tête plombée
+            • **Hameçons :** 2/0 à 4/0 (bouche moyenne)
+            • **Fluorocarbone :** 25-30 lb (dents présentes, pas coupantes)
+            
+            **ERREURS À ÉVITER :**
+            ❌ Animation trop rapide (espèce lente benthique)
+            ❌ Leurres trop gros (proies naturelles 3-8 cm)
+            ❌ Pêche pleine eau (ignore zone alimentation)
+            ❌ Absence pauses (ne laisse pas temps attaque)
+            """,
+            
+            leuresSpecifiques: [
+                // PRIORITÉ 1 - Imitation Crustacés (OPTIMAL)
+                "Jigs crabe/écrevisse 10-15g (couleurs: brun/vert, orange)",
+                "Leurres souples type crevette 8-12cm (couleurs: rose/orange, naturel)",
+                "Jigs verticaux petite taille animation bondissante",
+                "Crazy Fish type shrimp",
+                
+                // PRIORITÉ 2 - Imitation Petits Poissons Benthiques
+                "Poissons nageurs suspending 8-12cm (diving depth 2-4m)",
+                "Lipless crankbaits lents",
+                "Stick baits pour lancer (animation linéaire lente)",
+                "Couleurs: argenté, dos olive, ventre blanc",
+                
+                // PRIORITÉ 3 - Leurres de Fond
+                "Jigs têtes plombées 10-20g + trailers souples",
+                "Drop shot imitation ver/crevette",
+                "Carolina rig leurre souple",
+                "Montage texan anti-accroche (herbiers)"
+            ],
+            
+            appatsNaturels: [
+                // Par ordre d'efficacité (régime naturel)
+                "Crabes (entiers ou morceaux) - OPTIMAL",
+                "Crevettes (vivantes ou mortes)",
+                "Poulpes (morceaux)",
+                "Calmars (lanières)",
+                "Bivalves (chair de bénitier, huîtres)",
+                "Petits poissons entiers (mulets, sardines)",
+                "Oursins (chair - technique locale)",
+                "Vers marins (secondaire)"
+            ],
+            
+            meilleursHoraires: """
+            **SAISON :** Mars à Août (OPTIMAL - activité alimentaire maximale)
+            
+            **À ÉVITER :** Septembre-Octobre (reproduction, activité alimentaire réduite, \
+            estomacs souvent vides)
+            
+            **JOURNÉE :** Matin et après-midi (activité diurne confirmée Grande Terre/Province Nord)
+            
+            **MARÉE :** Pas de préférence marquée (activité constante, pas de pic coefficient)
+            
+            **LUNE :** Pas de données scientifiques. Traditions locales suggèrent éviter pleine lune.
+            
+            **CONDITIONS OPTIMALES :** Mer calme, eau claire, début de courant entrant (dispersion \
+            odeurs appâts). Meilleurs rendements Ouvéa > Lagon SW > Province Nord.
+            """,
+            
+            conditionsOptimales: """
+            **MÉTÉO :**
+            • Mer calme à peu agitée (accès fonds sableux)
+            • Eau claire (visibilité alimentation benthique)
+            • Vent <15 nœuds (précision pose palangre/lancer)
+            
+            **COURANT :**
+            • Début courant entrant (dispersion odeurs)
+            • Courant modéré (pas trop fort = accrochages)
+            
+            **EAU :**
+            • Température : 22-28°C (optimum espèce tropicale)
+            • Clarté : Bonne à moyenne
+            • Salinité : Marine normale (évite estuaires)
+            
+            **FOND :**
+            • Sable fin à moyen (habitat préférentiel)
+            • Proximité récif-barrière (meilleure zone)
+            • Présence structures isolées (patates)
+            • Bordures herbiers (zones transition)
+            
+            **PRESSION :** Zones peu fréquentées > zones urbaines (stocks moins appauvris)
+            """,
+            
+            // ═══════════════════════════════════════════
+            // 🆕 VALORISATION CULINAIRE & SÉCURITÉ
+            // ═══════════════════════════════════════════
+            
+            qualiteCulinaire: """
+             **CHAIR TRÈS PRISÉE - ESPÈCE COMMERCIALE #1 DU LAGON**
+            
+            **QUALITÉS GUSTATIVES :**
+            • Chair blanche, ferme et fine
+            • Saveur délicate, légèrement sucrée
+            • Texture excellente (pas filandreuse)
+            • Très peu d'arêtes
+            • Tenue parfaite à la cuisson
+            
+            **PRÉPARATIONS RECOMMANDÉES :**
+            • **Au four :** Entier ou filets avec aromates (classique NC)
+            • **Grillé :** Filets plancha ou BBQ (excellent)
+            • **Papillote :** Préserve moelleux et arômes
+            • **Poisson cru :** À la tahitienne (chair ferme idéale)
+            • **Court-bouillon :** Tradition calédonienne
+            • **Frit :** Petits individus entiers
+            • **Sashimi :** Chair ferme convient (ultra-frais)
+            
+            **CONSERVATION :**
+            • Chair délicate : consommer rapidement (24-36h au frais)
+            • Congélation acceptable si ultra-frais
+            • Vider et écailler immédiatement après capture
+            
+            **PRIX MARCHÉ NC :** Élevé (espèce très recherchée, stocks limités zones urbaines)
+            """,
+            
+            risqueCiguatera: .faible,
+            
+            ciguateraDetail: """
+            ⚠️ **RISQUE FAIBLE MAIS PRÉSENT - PRUDENCE SELON TAILLE**
+            
+            Le Bec-de-cane N'EST PAS classé comme démersal profond (risque élevé), mais comme \
+            **poisson lagonaire emblématique**. Cependant, étant strictement CARNIVORE et pouvant \
+            atteindre grande taille, le risque ciguatera existe par bioaccumulation.
+            
+            **FACTEURS DE RISQUE :**
+            • **Taille :** Grands spécimens (>50 cm, >3 kg) accumulent plus de toxines
+            • **Âge :** Individus âgés (>7-8 ans) = bioaccumulation prolongée  
+            • **Habitat :** Zones perturbées, passes, récifs dégradés = risque accru
+            • **Régime carnivore :** Mange crustacés/mollusques/poissons (bioamplification)
+            • **Hermaphrodisme :** Vieux individus = femelles (œufs à ne pas consommer)
+            
+            **RECOMMANDATIONS SÉCURITÉ :**
+            ✅ Privilégier individus <45 cm (<2 kg) - RISQUE MINIMAL
+            ✅ Prudence 45-55 cm (2-3.5 kg) - RISQUE FAIBLE
+            ⚠️ Éviter >55 cm (>3.5 kg) - RISQUE MODÉRÉ (surtout femelles reproductrices)
+            ❌ NE JAMAIS consommer viscères, tête, œufs, foie (concentration toxines)
+            ✅ Renseigner zones à risque localement (pêcheurs expérimentés)
+            ✅ Varier espèces consommées (ne pas manger que bec-de-cane)
+            
+            **COMPARAISON RISQUE :**
+            • Bien INFÉRIEUR : Loches, Vivaneaux profonds, Carangues GT, Barracudas
+            • SIMILAIRE : Autres Lethrinidae (Empereurs, Picots)
+            • SUPÉRIEUR : Perroquets, Poissons-chirurgiens herbivores
+            
+            **CONSOMMATION NC :** Espèce consommée régulièrement sans incidents majeurs si \
+            tailles <50 cm. Cas de ciguatera très rares, généralement gros individus >60 cm \
+            de zones à risque connues.
+            
+            🏥 En cas de symptômes (fourmillements, démangeaisons, inversions chaud/froid, \
+            troubles digestifs) : CONSULTER IMMÉDIATEMENT services urgences.
+            """,
+            
+            // ═══════════════════════════════════════════
+            // 🆕 RÉGLEMENTATION & CONSERVATION
+            // ═══════════════════════════════════════════
+            
+            reglementationNC: """
+            ⚠️ **ABSENCE DE RÉGLEMENTATION SPÉCIFIQUE (2025) - PROBLÉMATIQUE**
+            
+            **STATUT ACTUEL :**
+            • Aucune taille minimale de capture légale
+            • Aucune période de fermeture
+            • Aucun quota
+            • Aucune limitation engins de pêche
+            
+            **PROBLÈME :** Espèce surexploitée zones urbaines sans protection réglementaire.
+            
+            **RECOMMANDATIONS SCIENTIFIQUES IRD (Borsa, Kulbicki 2009) :**
+            
+            **Taille minimale suggérée : 40 cm LF (Longueur Fourche)**
+            • Permet au moins 1 reproduction avant capture
+            • Maturité sexuelle : Mâles 35-40 cm, Femelles 40-45 cm
+            • Âge première reproduction : 4-5 ans
+            • Taille actuelle capture moyenne : 35-40 cm (TROP PETITE)
+            
+            **Protection habitats juvéniles : ESSENTIEL**
+            • Herbiers et algueraies côtiers = nourriceries critiques
+            • Juvéniles dépendent zones 0-5 m
+            • Urbanisation côtière = menace principale
+            • Inclure herbiers dans périmètres AMP
+            
+            **Période sensible : Septembre-Octobre (reproduction)**
+            • Limiter pêche durant pic reproduction
+            • Regroupements herbiers îlots = vulnérabilité
+            
+            **Limitation captures grandes femelles (>55 cm) :**
+            • Sex-ratio biaisé : 70% femelles chez >60 cm
+            • Grandes femelles = reproductrices clés
+            • Hermaphrodisme protandre : capturer gros = retirer femelles
+            
+            **AUTRES LETHRINIDAE NÉCESSITANT GESTION SIMILAIRE :**
+            • Lethrinus miniatus (Empereur/Picot)
+            • Lethrinus lentjan
+            • Lethrinus atkinsoni
+            • Lethrinus harak
+            • Lethrinus obsoletus
+            """,
+            
+            quotas: """
+            ⚠️ **AUCUN QUOTA ACTUELLEMENT (2025)**
+            
+            **PROPOSITION GESTION RATIONNELLE :**
+            
+            **Pêche récréative :**
+            • 5 individus/pêcheur/jour MAX (toutes espèces Lethrinidae confondues)
+            • Taille minimale 40 cm
+            • Limiter prélèvement gros individus >55 cm (1/jour max)
+            
+            **Pêche professionnelle :**
+            • Quotas par zone selon densités stocks
+            • Zones urbaines (Nouméa) : Réduction effort 30-50%
+            • Zones préservées (Ouvéa, Province Nord éloignée) : Quotas adaptés
+            • Déclarations captures obligatoires
+            • Maillage minimum filets (sélectivité taille)
+            
+            **Zones sensibles :**
+            • Herbiers juvéniles : Pêche interdite
+            • Regroupements reproduction (sept-oct, herbiers îlots) : Fermeture temporaire
+            """,
+            
+            zonesInterdites: """
+            ⚠️ **Vérifier Aires Marines Protégées (AMP) locales**
+            
+            Certaines réserves marines NC interdisent toute pêche. Consulter réglementation \
+            provinciale (Sud, Nord, Îles) avant sortie.
+            
+            **Zones protection recommandées (non exhaustif) :**
+            • Herbiers côtiers nourriceries (0-5 m)
+            • Regroupements reproduction (herbiers îlots, sept-oct)
+            • Zones récifs fragiles/dégradés (reconstitution)
+            
+            **Rappel :** Aires marines UNESCO Grande Terre = réglementation spécifique selon zones.
+            """,
+            
+            statutConservation: """
+            **STATUT CONSERVATION :**
+            
+            **UICN (Mondial) :** Non évalué spécifiquement. Genre Lethrinus = Préoccupation mineure
+            
+            **NOUVELLE-CALÉDONIE :** ⚠️ **LOCALEMENT SUREXPLOITÉ zones urbaines**
+
+            
+            **VULNÉRABILITÉ INTRINSÈQUE - MODÉRÉE :**
+            ✅ Croissance relativement rapide (résilience)
+            ❌ Maturité sexuelle tardive 4-5 ans (vulnérabilité)
+            ❌ Hermaphrodisme protandre (capture sélective gros = perte femelles)
+            ✅ Phase larvaire longue ~37j (brassage génétique = résilience)
+            ❌ Dépendance habitats spécifiques herbiers juvéniles (vulnérables urbanisation)
+            
+            **PRESSIONS :**
+            • Pêche : Espèce commerciale #1 = pression maximale
+            • Habitat : Urbanisation côtière = destruction herbiers nourriceries
+            • Pollution : Dégradation qualité eau lagonaire
+            • Changement climatique : Élévation température, acidification
+            
+            **TENDANCE :** ⬇️ Déclin continu zones urbaines / ➡️ Stable zones isolées
+            
+            **ACTIONS CONSERVATION PRIORITAIRES :**
+            1. Taille minimale capture 40 cm (réglementation)
+            2. Protection herbiers nourriceries (AMP, limitation urbanisation)
+            3. Quotas pêche professionnelle zones sensibles
+            4. Sensibilisation pêcheurs récréatifs (relâcher petits)
+            5. Suivi scientifique régulier stocks (monitoring)
+            6. Fermeture temporaire zones reproduction (sept-oct)
+            7. Contrôle accru braconnage AMP
+            8. Recherche aquaculture (potentiel avéré, non exploité NC)
+            """,
+            
+            // ═══════════════════════════════════════════
+            // 🆕 PÉDAGOGIE & SENSIBILISATION
+            // ═══════════════════════════════════════════
+            
+            leSaviezVous: """
+            🧬 **HERMAPHRODISME PROTANDRE FASCINANT :**
+            Tous les Becs-de-cane naissent MÂLES, puis deviennent FEMELLES avec l'âge/taille ! \
+            Ce changement de sexe progressif explique le sex-ratio biaisé : 58% femelles globalement, \
+            mais 70% chez les grands individus (>60 cm). Mécanisme assurant reproduction même si \
+            peu d'individus, mais créant vulnérabilité : capturer gros poissons = retirer femelles \
+            reproductrices !
+            
+            🏝️ **HABITATS ESSENTIELS - CYCLE DE VIE COMPLET :**
+            Le Bec-de-cane a besoin d'un ENSEMBLE d'habitats pour compléter son cycle : (1) Herbiers \
+            et algueraies côtiers (juvéniles 0-2 ans, 0-5 m) = NOURRICERIES CRITIQUES, (2) Fonds \
+            sableux milieu lagon (sub-adultes 3-5 ans, 5-20 m), (3) Bordure récif-barrière (adultes \
+            >5 ans, 20-40 m). Détruire UN SEUL de ces habitats = compromettre population entière ! \
+            Protection herbiers = protection stock futur.
+            
+            🎣 **IMPORTANCE SOCIO-ÉCONOMIQUE MAJEURE :**
+            Espèce #1 pêche lagonaire NC (avec Empereurs). Chair très prisée = prix élevé marché. \
+            Pêche professionnelle + vivrière + récréative = pression maximale. Stocks zones urbaines \
+            effondrés, mais espèce encore abondante zones isolées (Ouvéa). Potentiel aquacole avéré \
+            (non exploité NC) = opportunité développement durable futur.
+            
+            ⚖️ **EXPLOITATION PROCHE MAXIMUM SOUTENABLE :**
+            Caractéristiques vie (croissance moyenne, maturité 4-5 ans, hermaphrodisme) + niveau \
+            actuel pêche = proche point rupture zones urbaines. Augmentation effort pêche = risque \
+            effondrement stocks irréversible. Nécessité URGENTE gestion stricte (taille min, quotas, \
+            protection habitats) pour assurer pérennité ressource.
+            """,
+            
+            nePasPecher: false,  // Pêche autorisée mais gestion responsable recommandée
+            
+            raisonProtection: """
+            ⚠️ **ESPÈCE SUREXPLOITÉE ZONES URBAINES - PÊCHE RESPONSABLE ESSENTIELLE**
+            
+            Bien que pêche autorisée, le Bec-de-cane nécessite GESTION RESPONSABLE pour éviter \
+            effondrement stocks :
+            
+            **PÊCHE RESPONSABLE - ENGAGEMENTS VOLONTAIRES :**
+            
+            ✅ **Respecter taille minimale 40 cm** (permet 1 reproduction minimum)
+            ✅ **Relâcher individus <40 cm** (futurs reproducteurs)
+            ✅ **Limiter prélèvement gros >55 cm** (femelles reproductrices clés)
+            ✅ **Éviter période reproduction** (septembre-octobre)
+            ✅ **Ne pas pêcher herbiers côtiers** (zones juvéniles)
+            ✅ **Limiter captures** (5 individus/sortie max recommandé)
+            ✅ **Varier espèces ciblées** (réduire pression stock)
+            ✅ **Partager bonnes pratiques** (sensibiliser autres pêcheurs)
+            
+            **SI TOUT LE MONDE RESPECTE CES RÈGLES :** Stock se reconstitue zones urbaines, \
+            pêche pérenne assurée générations futures, espèce emblématique préservée !
+            
+            **ESPÈCE À PROTÉGER, PAS À INTERDIRE.** La solution = pêche RAISONNÉE, pas arrêt total.
+            """
         )
     ]
     
@@ -1468,13 +2520,13 @@ class EspecesDatabase {
                 "Thazard rayé",
                 "Vivaneau queue noire",
                 "Loche croissant",
-                "Bec-de-cane"
+                "Bec de canne"
             ],
             .recif: [
                 "Carangue GT",
                 "Loche pintade",
                 "Loche aréolée",
-                "Bec de canne",
+                "Bec de cane",
                 "Vivaneau chien rouge",
                 "Empereur",
                 "Mérou",
@@ -1492,7 +2544,7 @@ class EspecesDatabase {
             ],
             .tombant: [
                 "Loche pintade (100-280m)",
-                "Bec de canne",
+                "Bec de cane",
                 "Vivaneau rubis (200-300m)",
                 "Vivaneau la flamme (200-300m)",
                 "Vivaneau blanc (150-250m)",

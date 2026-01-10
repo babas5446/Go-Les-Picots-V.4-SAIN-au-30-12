@@ -165,12 +165,6 @@ class NoteAnalysisService {
             }
         }
         
-        // Bec de cane
-        if texte.contains("bec de cane") || 
-           texte.contains("bec-de-cane") {
-            especes.append("Bec de cane")
-        }
-        
         // Coureur arc-en-ciel
         if texte.contains("coureur") {
             especes.append("Coureur arc-en-ciel")
