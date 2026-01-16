@@ -481,11 +481,11 @@ extension TechniqueDatabase {
                 "Pas de vérification après chaque prise : un hameçon tordu ou un nœud abîmé compromet la sortie suivante",
                 "Utilisation de fil nylon en bas de ligne : trop visible en eau claire, les poissons méfiants refusent"
             ],
-            videoURL: nil,
+            videoURL: "https://mcprod.rapala.com/media/wysiwyg/rapala_3.gif",
             photosIllustrations: [
                 "LigneDeTraine_illustration",
                 "NoeudFG_illustration",
-                "NoeudRapala_illustration",
+                "NoeudRapala-illustration",
                 "Emerillons_illustration",
                 "SchemaStrikeZone",
                 "TableauRecapSpread5"
@@ -558,7 +558,7 @@ extension TechniqueDatabase {
                     ordre: 3,
                     titre: "Mise à l'eau du Short Corner à 10-15 mètres",
                     description: "Filer le leurre Short Corner à 10-15 mètres derrière le bateau, directement dans le bouillon blanc créé par les hélices. Vérifier que le leurre nage correctement et maintient une action stable malgré la turbulence. Ajuster la distance si nécessaire selon la taille du sillage du bateau.",
-                    illustrationsEtapes: "StrikeZone_illustration",
+                    illustrationsEtapes: "SchemaStrikeZone",
                     conseil: "Dans le bouillon, le leurre doit rester visible par intermittence. Si le sillage est très important, vous pouvez reculer légèrement à 15-18m pour éviter que le leurre ne soit complètement noyé dans la mousse."
                 ),
                 EtapeTechnique(
@@ -642,7 +642,7 @@ extension TechniqueDatabase {
                 "NoeudFG_illustration",
                 "NoeudRapala_illustration",
                 "Emerillons_illustration",
-                "SchemaStrikeZone",
+                "Spread5Vagues",
                 "TableauRecapSpread5",
                 "surfeur pas touriste",
                 "spread_template_ok"
@@ -970,11 +970,14 @@ extension TechniqueDatabase {
             niveauDifficulte: .intermediaire,
             dureeApprentissage: "45-60 minutes",
             description: """
-            Le popping est une technique explosive de pêche de surface qui utilise des leurres à tête concave (cup face ou pusher) pour créer des éclaboussures spectaculaires et des bruits intenses imitant une proie blessée ou une chasse active. Cette approche visuelle et sonore provoque des attaques réflexes chez les prédateurs les plus agressifs.
+            Le popping est une technique explosive de pêche de surface qui utilise des leurres à tête concave (cup face ou pusher) fondée sur la production volontaire d’un stimulus : créer des éclaboussures spectaculaires et des bruits intenses imitant une proie blessée ou une chasse active. Cette approche visuelle et sonore provoque des attaques réflexes chez les prédateurs les plus agressifs.
             
-            Le principe du popper repose sur sa forme spécifique : la tête concave ou tronquée capte l'eau lors des tractions brusques de la canne et la projette violemment en créant un 'pop' sonore caractéristique accompagné d'éclaboussures et de bulles. Cette perturbation en surface attire l'attention des prédateurs à grande distance et déclenche leur instinct de chasse, même lorsqu'ils ne sont pas en activité alimentaire.
+            Le principe du popper repose sur sa forme spécifique : la tête concave ou tronquée capte l'eau lors des tractions brusques de la canne et la projette violemment en créant un 'pop' sonore caractéristique accompagné d'éclaboussures et de bulles. Cette perturbation en surface attire l'attention des prédateurs à grande distance et déclenche leur instinct de chasse, même lorsqu'ils ne sont pas en activité alimentaire. Le popper n’imite pas un poisson qui nage normalement.
+            Il évoque plutôt : une proie paniquée en surface, un poisson blessé, ou une intrusion sur un territoire.
+            Réactions déclenchées : agressivité, réflexe de domination, compétition alimentaire.
+            👉 C’est une pêche de réaction, pas de persuasion.
             
-            Le popping est particulièrement efficace à l'aube et au crépuscule, lorsque les prédateurs chassent activement en surface. Par mer agitée ou en présence de clapot, l'action bruyante et visible du popper perce le chaos ambiant et reste détectable par les poissons, contrairement aux leurres plus discrets qui se fondent dans le bruit de fond.
+            C’est une pêche spectaculaire, mais surtout très codifiée, avec des règles précises : mal exécutée, elle devient vite inefficace. Le popping est particulièrement efficace à l'aube et au crépuscule, lorsque les prédateurs chassent activement en surface. Par mer agitée ou en présence de clapot, l'action bruyante et visible du popper perce le chaos ambiant et reste détectable par les poissons, contrairement aux leurres plus discrets qui se fondent dans le bruit de fond.
             
             En Nouvelle-Calédonie, cette technique excelle sur les carangues GT qui patrouillent les récifs-barrières et les passes, ainsi que sur les thons, thazards et barracudas qui chassent en surface autour des chasses d'oiseaux. L'attaque d'une GT de 20 kg sur un popper reste l'une des expériences les plus spectaculaires et mémorables de la pêche sportive.
             """,
@@ -1036,7 +1039,7 @@ extension TechniqueDatabase {
                     id: "step6",
                     ordre: 6,
                     titre: "Traction ample et brusque vers le bas",
-                    description: "Effectuer une traction ample et brusque de la canne vers le bas (de la position 10h vers 8h environ), tout en récupérant simultanément le fil avec le moulinet. Ce geste combiné fait plonger la tête concave du popper dans l'eau et projette un jet d'eau vers l'avant, créant le 'pop' sonore caractéristique. L'amplitude de la traction détermine l'intensité du pop : plus la traction est ample, plus le pop est violent.",
+                    description: "Effectuer une traction ample et brusque de la canne vers le bas (de la position 10h vers 8h environ), tout en récupérant simultanément le fil avec le moulinet. Ce geste combiné fait plonger la tête concave du popper dans l'eau et projette un jet d'eau vers l'avant, créant le 'pop' sonore caractéristique. L'amplitude de la traction détermine l'intensité du pop : plus la traction est ample, plus le pop est violent. La tirée Courte, sèche, canne basse ou latérale",
                     illustrationsEtapes: "popper_action",
                     conseil: "Le mouvement doit être franc et décidé, pas hésitant. Imaginez que vous essayez de faire jaillir une grosse éclaboussure. La canne descend rapidement de 10h à 8h pendant que vous donnez un tour de moulinet rapide. C'est ce geste synchronisé qui crée l'effet optimal."
                 ),
@@ -1044,7 +1047,7 @@ extension TechniqueDatabase {
                     id: "step7",
                     ordre: 7,
                     titre: "Création du pop sonore et des éclaboussures",
-                    description: "Le résultat du geste précédent doit être un 'pop' audible accompagné d'éclaboussures visibles et d'une traînée de bulles. Si vous êtes proche, vous devez entendre distinctement le bruit. Ce son se propage bien dans l'eau et attire les prédateurs de loin. L'aspect visuel (éclaboussures, bulles) complète l'effet et simule un poisson affolé en surface.",
+                    description: "Le résultat du geste précédent doit être un 'pop' audible accompagné d'éclaboussures visibles et d'une traînée de bulles. Si vous êtes proche, vous devez entendre distinctement le bruit. Ce son se propage bien dans l'eau et attire les prédateurs de loin. L'aspect visuel (éclaboussures, bulles) complète l'effet et simule un poisson affolé en surface. Le son doit être net, pas étouffé, un Pop franc, pas clapotis",
                     illustrationsEtapes: nil,
                     conseil: "Par temps calme, un pop trop violent peut parfois effrayer les poissons méfiants. Dans ce cas, modérez l'amplitude de vos tractions. À l'inverse, par mer agitée, n'hésitez pas à forcer le trait pour que votre popper se distingue du bruit ambiant."
                 ),
@@ -1052,7 +1055,7 @@ extension TechniqueDatabase {
                     id: "step8",
                     ordre: 8,
                     titre: "Pause de 1-2 secondes",
-                    description: "Après chaque pop, marquer une pause d'1 à 2 secondes en laissant le popper immobile à la surface. Durant cette pause, le leurre flotte et se stabilise, créant des ondulations qui s'éloignent en cercles concentriques. C'est souvent durant ces pauses que les poissons attaquent, soit parce qu'ils ont été attirés par le pop précédent, soit parce que l'immobilité soudaine déclenche leur instinct de prédation.",
+                    description: "Après chaque pop, marquer une pause d'1 à 2 secondes en laissant le popper immobile à la surface. Durant cette pause, le leurre flotte et se stabilise, créant des ondulations qui s'éloignent en cercles concentriques. C'est souvent durant ces pauses que les poissons attaquent, soit parce qu'ils ont été attirés par le pop précédent, soit parce que l'immobilité soudaine déclenche leur instinct de prédation. La pause est souvent plus importante que le pop. 👉 Beaucoup d’attaques ont lieu à l’arrêt.",
                     illustrationsEtapes: nil,
                     conseil: "Les pauses sont aussi importantes que les pops. Beaucoup de pêcheurs débutants animent trop rapidement sans laisser aux poissons le temps de réagir. Si vous voyez une GT suivre votre popper sans attaquer, augmentez la durée des pauses - cela déclenche souvent l'attaque."
                 ),

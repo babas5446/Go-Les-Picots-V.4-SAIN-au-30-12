@@ -24,6 +24,7 @@
 		613F7A0E2F0397FD00DA3053 /* Jiggingchoicesheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 613F7A0D2F0397E400DA3053 /* Jiggingchoicesheet.swift */; };
 		613F7A102F03D73400DA3053 /* Typedenagedetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 613F7A0F2F03D72F00DA3053 /* Typedenagedetector.swift */; };
 		615BB61C2F0BDABC0064C985 /* TechniqueDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 615BB61A2F0BDAA70064C985 /* TechniqueDatabase.swift */; };
+		615BBB992F1259CE0064C985 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 615BBB982F1259CE0064C985 /* SDWebImageSwiftUI */; };
 		617DD0182EF1F74B002C82F1 /* LeurreWebScraperService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617DD0172EF1F74B002C82F1 /* LeurreWebScraperService.swift */; };
 		617DD0DE2EF4A5EB002C82F1 /* SpreadSchemaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617DD0DD2EF4A5EB002C82F1 /* SpreadSchemaView.swift */; };
 		617DD1482EF53C4B002C82F1 /* DiagnosticView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617DD1472EF53C4B002C82F1 /* DiagnosticView.swift */; };
@@ -116,10 +117,16 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		615BBAE92F1213C90064C985 /* Exceptions for "Go Les Picots V.4Tests" folder in "Go Les Picots V.4" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Go_Les_Picots_V_4Tests.swift,
+			);
+			target = 6193EA122EE1400D000BE2F6 /* Go Les Picots V.4 */;
+		};
 		617DD01F2EF1FBFC002C82F1 /* Exceptions for "Go Les Picots V.4" folder in "Go Les Picots V.4" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				"Go Les Picots V.4Tests/Go_Les_Picots_V_4Tests.swift",
 				"Go Les Picots V.4UITests/Go_Les_Picots_V_4UITests.swift",
 				"Go Les Picots V.4UITests/Go_Les_Picots_V_4UITestsLaunchTests.swift",
 			);
@@ -148,6 +155,14 @@
 			path = "Module4_Bibliothèque";
 			sourceTree = "<group>";
 		};
+		615BBAE82F1213C90064C985 /* Go Les Picots V.4Tests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				615BBAE92F1213C90064C985 /* Exceptions for "Go Les Picots V.4Tests" folder in "Go Les Picots V.4" target */,
+			);
+			path = "Go Les Picots V.4Tests";
+			sourceTree = "<group>";
+		};
 		6193EA152EE1400D000BE2F6 /* Go Les Picots V.4 */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -163,6 +178,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				615BBB992F1259CE0064C985 /* SDWebImageSwiftUI in Frameworks */,
 				61045E1D2F06800B0033CD9F /* ZIPFoundation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -191,13 +207,9 @@
 				6193EA422EE1428C000BE2F6 /* Module1 */,
 				6193EA142EE1400D000BE2F6 /* Products */,
 				6193EA6B2EE25162000BE2F6 /* Module2_SuggestionIA */,
-				617DD0172EF1F74B002C82F1 /* LeurreWebScraperService.swift */,
-				61C5FBDA2EF909E80030C95D /* CreerCouleurView.swift */,
-				61C5FBDC2EF90A460030C95D /* CouleurCustom.swift */,
-				61C5FBDE2EF90A7F0030C95D /* CouleurSearchField.swift */,
-				61C5FBE02EF90AA20030C95D /* GestionCouleursCustomView.swift */,
 				61C5FBE22EF90AAD0030C95D /* ParametresAppView.swift */,
-				6100BCAE2EFE3A560084CFB5 /* RainbowCircle.swift */,
+				6127557F2F0A878C00B76A6E /* Module4_Bibliothèque */,
+				61045D762F04EBDE0033CD9F /* DOC */,
 			);
 			sourceTree = "<group>";
 		};
@@ -222,6 +234,7 @@
 				6193EA492EE142F1000BE2F6 /* Resources */,
 				6193EA4B2EE142F1000BE2F6 /* ViewModels */,
 				6193EA502EE142F1000BE2F6 /* Views */,
+				615BBAE82F1213C90064C985 /* Go Les Picots V.4Tests */,
 			);
 			path = Module1;
 			sourceTree = "<group>";
@@ -251,6 +264,12 @@
 				617DD1512EF56062002C82F1 /* ImageCoordinatePickerView.swift */,
 				61C5FC222EFA87B30030C95D /* NoteAnalysisService.swift */,
 				61C5FC242EFA87F60030C95D /* LeurreIntelligenceService.swift */,
+				617DD0172EF1F74B002C82F1 /* LeurreWebScraperService.swift */,
+				61C5FBDA2EF909E80030C95D /* CreerCouleurView.swift */,
+				61C5FBDC2EF90A460030C95D /* CouleurCustom.swift */,
+				61C5FBDE2EF90A7F0030C95D /* CouleurSearchField.swift */,
+				61C5FBE02EF90AA20030C95D /* GestionCouleursCustomView.swift */,
+				6100BCAE2EFE3A560084CFB5 /* RainbowCircle.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -258,7 +277,6 @@
 		6193EA492EE142F1000BE2F6 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				61045D762F04EBDE0033CD9F /* DOC */,
 				617DD14F2EF55FAF002C82F1 /* leurres_database_COMPLET.json */,
 				61045E1E2F0681590033CD9F /* LeureDatabase.swift */,
 				61941ACD2EEA0B170019B66B /* EspecesDatabase.swift */,
@@ -305,7 +323,6 @@
 				6193EA802EE25312000BE2F6 /* SpreadVisualizationView.swift */,
 				6193EA812EE25312000BE2F6 /* SuggestionInputView.swift */,
 				6193EA822EE25312000BE2F6 /* SuggestionResultView.swift */,
-				6127557F2F0A878C00B76A6E /* Module4_Bibliothèque */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -339,11 +356,13 @@
 				61263A502EE95CED00BBF0A8 /* Services */,
 				61263A552EE95DEA00BBF0A8 /* Components */,
 				6127557F2F0A878C00B76A6E /* Module4_Bibliothèque */,
+				615BBAE82F1213C90064C985 /* Go Les Picots V.4Tests */,
 				6193EA152EE1400D000BE2F6 /* Go Les Picots V.4 */,
 			);
 			name = "Go Les Picots V.4";
 			packageProductDependencies = (
 				61045E1C2F06800B0033CD9F /* ZIPFoundation */,
+				615BBB982F1259CE0064C985 /* SDWebImageSwiftUI */,
 			);
 			productName = "Go Les Picots V.4";
 			productReference = 6193EA132EE1400D000BE2F6 /* Go Les Picots V.4.app */;
@@ -423,6 +442,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				61045E1B2F06800B0033CD9F /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
+				615BBB972F1259CE0064C985 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 6193EA142EE1400D000BE2F6 /* Products */;
@@ -680,7 +700,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -716,7 +736,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -868,6 +888,14 @@
 				minimumVersion = 0.9.20;
 			};
 		};
+		615BBB972F1259CE0064C985 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.1.4;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -875,6 +903,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 61045E1B2F06800B0033CD9F /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
 			productName = ZIPFoundation;
+		};
+		615BBB982F1259CE0064C985 /* SDWebImageSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 615BBB972F1259CE0064C985 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
+			productName = SDWebImageSwiftUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

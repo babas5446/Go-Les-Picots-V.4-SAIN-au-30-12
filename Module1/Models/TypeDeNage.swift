@@ -26,6 +26,8 @@ enum TypeDeNage: String, CaseIterable, Codable {
     case fastJigging = "Fast jigging"
     case paddleSwimming = "Paddle swimming"
     case vibration = "Vibration"
+    case rattling = "Rattling"
+    case popping = "Popping"
     case thumping = "Thumping"
     case balayageLarge = "Nage de balayage large"
     case plongeanteControlee = "Nage plongeante contrôlée"
@@ -87,6 +89,12 @@ enum TypeDeNage: String, CaseIterable, Codable {
             
         case .vibration:
             return "Vibrations rapides et fines, tremblements haute fréquence. Génère des ondes de pression attractives détectées par la ligne latérale même en eau trouble. Signature vibratoire dominante."
+        
+        case .rattling:
+            return "Vibration forte et erratique où la bille accentue les ondes sonores et les secousses lors de la récupération linéaire rapide. Cette action imite une proie en panique, avec des côtés plats qui amplifient le roulis et le bruit. Le terme rattling « bruiteur » est donc fonctionnel : il renvoie à la présence de billes sonores, quelle que soit la famille du leurre. Il induit une technique de pêche légèrement différente. Cf Fiches Techniques."
+            
+        case .popping:
+            return "Pêche spectaculaire, mais surtout très codifiée consistant à animer un popper par des tirées sèches, afin de produire un “pop” sonore, une gerbe d’eau, et une immobilisation brutale du leurre. Le popper ne nage pas. Il évoque une proie paniquée en surface, un poisson blessé, ou une intrusion sur un territoire et déclenche agressivité, réflexe de dominqtion et compétition alimentaire."
             
         case .thumping:
             return "Pulsations profondes et sourdes. Vibrations basse fréquence percutantes créant une onde de choc. Signal hydrodynamique puissant perçu à longue distance. Attractivité sur gros poissons."
@@ -108,11 +116,11 @@ enum TypeDeNage: String, CaseIterable, Codable {
     // MARK: - Catégorie du type de nage
     var categorie: String {
         switch self {
-        case .rectiligneStable, .wobbling, .wobblingLarge, .wobblingSerré, .rolling, .wobblingRolling:
+        case .rectiligneStable, .wobbling, .wobblingLarge, .wobblingSerré, .rolling, .wobblingRolling, .popping:
             return "I. Nages linéaires continues"
         case .darting, .walkTheDog, .slashing:
             return "II. Nages erratiques et désordonnées"
-        case .flutter, .falling, .jigging, .slowJigging, .fastJigging:
+        case .flutter, .falling, .jigging, .slowJigging, .fastJigging, .rattling:
             return "III. Nages verticales et semi-verticales"
         case .paddleSwimming, .vibration, .thumping:
             return "IV. Nages ondulantes et vibratoires"
@@ -174,6 +182,12 @@ enum TypeDeNage: String, CaseIterable, Codable {
         case .vibration:
             return "Eau trouble ou teintée, visibilité réduite, ligne latérale sensible, détection vibratoire prioritaire, nuit"
             
+        case .rattling:
+            return "Eau trouble, faible luminosité, en cas de mer avec clapot ou du courant. Le poisson compense la vue par ses sens mécaniques. Le bruit devient un repère spatial."
+            
+        case .popping:
+            return "Mer ridée, eau claire à légèregement teintée, sur des poissons actifs spécialement sur chasses vsibles."
+            
         case .thumping:
             return "Grande profondeur, gros poissons, attractivité longue distance, eaux profondes >50m, pélagiques de taille"
             
@@ -226,6 +240,10 @@ enum TypeDeNage: String, CaseIterable, Codable {
             return "Lancer-ramener linéaire, traîne lente"
         case .vibration:
             return "Récupération continue moyenne à rapide"
+        case .rattling:
+            return "Twitching/Jerking, Walking th Dog, Stop & Go, Récupération linéaire, Fast Pitch/Slow Pitch Jiggig, Montage traîne simple"
+        case .popping:
+            return "Lancer-Ramener, Saccadés les pauses sont plus importantes que les tirées"
         case .thumping:
             return "Jigging lourd, coups de scion amples"
         case .balayageLarge:

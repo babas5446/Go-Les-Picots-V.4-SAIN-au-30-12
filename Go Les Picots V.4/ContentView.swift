@@ -184,7 +184,6 @@ struct ModuleGridView: View {
 }
 
 // MARK: - Bouton de module
-// MARK: - Bouton de module
 struct ModuleButton: View {
     let module: ModuleItem
     let leureViewModel: LeureViewModel
@@ -217,29 +216,6 @@ struct ModuleButton: View {
                     .foregroundColor(Color(hex: "0277BD"))
                     .multilineTextAlignment(.center)
                 
-                // Badge "Nouveau" pour Module 2
-                if module.title == "Suggestion IA" {
-                    Text("NOUVEAU")
-                        .font(.caption2)
-                        .fontWeight(.bold)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color(hex: "FFBC42"))
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
-                }
-                
-                // 🆕 Badge "Nouveau" pour Module 4
-                if module.title == "Bibliothèque" {
-                    Text("NOUVEAU")
-                        .font(.caption2)
-                        .fontWeight(.bold)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color(hex: "4CAF50"))
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
-                }
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 15)

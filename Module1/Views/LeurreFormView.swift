@@ -8,7 +8,11 @@
 //  - Champs conditionnels (traîne)
 //  - Intégration photo
 //
+//  Version 2.0 : Suppression des variantes (inefficace)
+//  Focus sur la description fabricant
+//
 //  Created: 2024-12-10
+//  Updated: 2026-01-15
 //
 
 import SwiftUI
@@ -87,9 +91,9 @@ struct LeurreFormView: View {
     
     // Couleurs
     @State private var couleurPrincipale: Couleur = .bleuArgente
-    @State private var couleurPrincipaleCustom: CouleurCustom? = nil  // 🆕
+    @State private var couleurPrincipaleCustom: CouleurCustom? = nil
     @State private var couleurSecondaire: Couleur? = nil
-    @State private var couleurSecondaireCustom: CouleurCustom? = nil  // 🆕
+    @State private var couleurSecondaireCustom: CouleurCustom? = nil
     @State private var hasCouleurSecondaire: Bool = false
     @State private var finitionSelectionnee: Finition? = nil
     
@@ -98,7 +102,7 @@ struct LeurreFormView: View {
     @State private var showWobblingChoice = false
     @State private var showJiggingChoice = false
     @State private var showTypeDeNagePicker = false
-    @State private var showTypeDeNageDescription: TypeDeNage? = nil  // 🆕 Pour le modal
+    @State private var showTypeDeNageDescription: TypeDeNage? = nil
     
     // Traîne (conditionnel)
     @State private var profondeurMin: String = ""
@@ -108,9 +112,9 @@ struct LeurreFormView: View {
     
     // Notes
     @State private var notes: String = ""
-    @State private var detectedTypes: [TypeDeNage] = []           // ✅ AJOUTER
-    @State private var showTypeDetectionSuggestion = false        // ✅ AJOUTER
-    @State private var hasIgnoredSuggestion = false               // ✅ AJOUTER
+    @State private var detectedTypes: [TypeDeNage] = []
+    @State private var showTypeDetectionSuggestion = false
+    @State private var hasIgnoredSuggestion = false
     
     // Photo
     @State private var selectedImage: UIImage? = nil
@@ -127,8 +131,6 @@ struct LeurreFormView: View {
     @State private var urlProduit: String = ""
     @State private var isExtractingInfos = false
     @State private var infosExtraites: LeurreInfosExtraites?
-    @State private var showVariantSelection = false
-    @State private var variantesDisponibles: [VarianteLeurre] = []
     
     // Validation
     @State private var showValidationError = false
@@ -151,7 +153,7 @@ struct LeurreFormView: View {
             _typeLeurre = State(initialValue: leurre.typeLeurre)
             _typePeche = State(initialValue: leurre.typePeche)
             
-            // 🆕 Charger les techniques compatibles
+            // Charger les techniques compatibles
             let compatibles = leurre.typesPecheCompatibles ?? []
             _typesPecheCompatibles = State(initialValue: Set(compatibles))
             _showTechniquesCompatibles = State(initialValue: !compatibles.isEmpty)
@@ -159,11 +161,11 @@ struct LeurreFormView: View {
             _longueur = State(initialValue: String(format: "%.1f", leurre.longueur))
             _poids = State(initialValue: leurre.poids.map { String(format: "%.0f", $0) } ?? "")
             _couleurPrincipale = State(initialValue: leurre.couleurPrincipale)
-            _couleurPrincipaleCustom = State(initialValue: leurre.couleurPrincipaleCustom)  // 🆕
+            _couleurPrincipaleCustom = State(initialValue: leurre.couleurPrincipaleCustom)
             _couleurSecondaire = State(initialValue: leurre.couleurSecondaire)
-            _couleurSecondaireCustom = State(initialValue: leurre.couleurSecondaireCustom)  // 🆕
+            _couleurSecondaireCustom = State(initialValue: leurre.couleurSecondaireCustom)
             _hasCouleurSecondaire = State(initialValue: leurre.couleurSecondaire != nil || leurre.couleurSecondaireCustom != nil)
-            _finitionSelectionnee = State(initialValue: leurre.finition)  // ✅ Initialiser la finition
+            _finitionSelectionnee = State(initialValue: leurre.finition)
             _typesDeNage = State(initialValue: leurre.typesDeNage ?? [])
             _profondeurMin = State(initialValue: leurre.profondeurNageMin.map { String(format: "%.1f", $0) } ?? "")
             _profondeurMax = State(initialValue: leurre.profondeurNageMax.map { String(format: "%.1f", $0) } ?? "")
@@ -201,7 +203,7 @@ struct LeurreFormView: View {
                 // Section Type
                 sectionType
                 
-                // 🆕 Section Techniques compatibles (facultatif)
+                // Section Techniques compatibles (facultatif)
                 sectionTechniquesCompatibles
                 
                 // Section Caractéristiques
@@ -214,9 +216,9 @@ struct LeurreFormView: View {
                 sectionFinition
                 
                 // Section Traîne (conditionnel)
-                            if typePeche == .traine {
-                                sectionTraine
-                            }
+                if typePeche == .traine {
+                    sectionTraine
+                }
                 
                 // Section Types de nage (multi-sélection)
                 Section(header: Text("Types de nage (optionnel)")) {
@@ -316,16 +318,6 @@ struct LeurreFormView: View {
             } message: {
                 Text("Collez l'URL de la page du leurre (Rapala, Pêcheur.com, Decathlon...)")
             }
-            .sheet(isPresented: $showVariantSelection) {
-                SelectionVarianteView(
-                    variantes: variantesDisponibles,
-                    onSelection: { variante in
-                        appliquerVariante(variante)
-                        showVariantSelection = false
-                    }
-                )
-            }
-            // ✅ AJOUTER CES 2 SHEETS ICI
             .sheet(isPresented: $showWobblingChoice) {
                 WobblingChoiceSheet(selectedTypes: $typesDeNage)
             }
@@ -433,7 +425,7 @@ struct LeurreFormView: View {
         } header: {
             Text("Gain de temps")
         } footer: {
-            Text("L'app va extraire la marque, le nom, les dimensions et la photo depuis la page produit. Vous pourrez ensuite ajuster manuellement.")
+            Text("L'app va extraire la marque, le nom et la description depuis la page produit. Vous pourrez ensuite ajuster manuellement.")
         }
     }
     
@@ -538,7 +530,7 @@ struct LeurreFormView: View {
                 }
             }
             .onChange(of: typePeche) { newValue in
-                // 🆕 Mettre à jour automatiquement les techniques compatibles
+                // Mettre à jour automatiquement les techniques compatibles
                 if showTechniquesCompatibles {
                     typesPecheCompatibles.insert(newValue)
                 }
@@ -555,7 +547,7 @@ struct LeurreFormView: View {
         }
     }
     
-    // 🆕 NOUVELLE SECTION : Techniques compatibles (facultatif)
+    // NOUVELLE SECTION : Techniques compatibles (facultatif)
     private var sectionTechniquesCompatibles: some View {
         Section {
             // Toggle pour activer/désactiver la section
@@ -661,7 +653,7 @@ struct LeurreFormView: View {
             // Couleur principale avec autocomplétion
             CouleurSearchField(
                 couleurSelectionnee: $couleurPrincipale,
-                couleurCustomSelectionnee: $couleurPrincipaleCustom,  // 🆕
+                couleurCustomSelectionnee: $couleurPrincipaleCustom,
                 titre: "Couleur principale"
             )
             .padding(.vertical, 4)
@@ -675,7 +667,7 @@ struct LeurreFormView: View {
                         get: { couleurSecondaire ?? .blanc },
                         set: { couleurSecondaire = $0 }
                     ),
-                    couleurCustomSelectionnee: $couleurSecondaireCustom,  // 🆕
+                    couleurCustomSelectionnee: $couleurSecondaireCustom,
                     titre: "Couleur secondaire"
                 )
                 .padding(.vertical, 4)
@@ -803,7 +795,7 @@ struct LeurreFormView: View {
         } header: {
             Text("Notes personnelles")
         } footer: {
-            Text("Remarques, retours d'expérience, etc.")
+            Text("Remarques, retours d'expérience, description fabricant...")
         }
     }
     
@@ -833,10 +825,6 @@ struct LeurreFormView: View {
             showValidationError = true
             return false
         }
-        
-        // Types exclusivement traîne (JAMAIS au lancer)
-        // Note : Pour l'instant, tous les types peuvent potentiellement être traînés
-        // Mais on peut ajouter des restrictions si nécessaire
         
         return true
     }
@@ -899,7 +887,7 @@ struct LeurreFormView: View {
         
         let couleurSec: Couleur? = hasCouleurSecondaire ? couleurSecondaire : nil
         
-        // 🆕 Préparer les techniques compatibles (seulement si activé)
+        // Préparer les techniques compatibles (seulement si activé)
         let techniquesCompatiblesArray: [TypePeche]? = showTechniquesCompatibles ?
             Array(typesPecheCompatibles).sorted(by: { $0.displayName < $1.displayName }) :
             nil
@@ -916,15 +904,15 @@ struct LeurreFormView: View {
                 modele: modele.isEmpty ? nil : modele.trimmingCharacters(in: .whitespaces),
                 typeLeurre: typeLeurre,
                 typePeche: typePeche,
-                typesPecheCompatibles: techniquesCompatiblesArray,  // 🆕 Ajouter les techniques
+                typesPecheCompatibles: techniquesCompatiblesArray,
                 longueur: longueurValue,
                 poids: poidsValue,
                 couleurPrincipale: couleurPrincipale,
-                couleurPrincipaleCustom: couleurPrincipaleCustom,  // 🆕 Ajouter la couleur custom
+                couleurPrincipaleCustom: couleurPrincipaleCustom,
                 couleurSecondaire: couleurSec,
-                couleurSecondaireCustom: hasCouleurSecondaire ? couleurSecondaireCustom : nil,  // 🆕
-                finition: finitionSelectionnee,  // ✅ Inclure la finition
-                typesDeNage: typesDeNage.isEmpty ? nil : typesDeNage,  // ✅ Passer l'array complet
+                couleurSecondaireCustom: hasCouleurSecondaire ? couleurSecondaireCustom : nil,
+                finition: finitionSelectionnee,
+                typesDeNage: typesDeNage.isEmpty ? nil : typesDeNage,
                 profondeurNageMin: profMinValue,
                 profondeurNageMax: profMaxValue,
                 vitesseTraineMin: vitMinValue,
@@ -950,15 +938,15 @@ struct LeurreFormView: View {
             leurreModifie.modele = modele.isEmpty ? nil : modele.trimmingCharacters(in: .whitespaces)
             leurreModifie.typeLeurre = typeLeurre
             leurreModifie.typePeche = typePeche
-            leurreModifie.typesPecheCompatibles = techniquesCompatiblesArray  // 🆕 Ajouter les techniques
+            leurreModifie.typesPecheCompatibles = techniquesCompatiblesArray
             leurreModifie.longueur = longueurValue
             leurreModifie.poids = poidsValue
             leurreModifie.couleurPrincipale = couleurPrincipale
-            leurreModifie.couleurPrincipaleCustom = couleurPrincipaleCustom  // 🆕
+            leurreModifie.couleurPrincipaleCustom = couleurPrincipaleCustom
             leurreModifie.couleurSecondaire = couleurSec
-            leurreModifie.couleurSecondaireCustom = hasCouleurSecondaire ? couleurSecondaireCustom : nil  // 🆕
-            leurreModifie.finition = finitionSelectionnee  // ✅ Inclure la finition
-            leurreModifie.typesDeNage = typesDeNage.isEmpty ? nil : typesDeNage  // ✅ DOIT ASSIGNER L'ARRAY COMPLET
+            leurreModifie.couleurSecondaireCustom = hasCouleurSecondaire ? couleurSecondaireCustom : nil
+            leurreModifie.finition = finitionSelectionnee
+            leurreModifie.typesDeNage = typesDeNage.isEmpty ? nil : typesDeNage
             leurreModifie.profondeurNageMin = profMinValue
             leurreModifie.profondeurNageMax = profMaxValue
             leurreModifie.vitesseTraineMin = vitMinValue
@@ -1050,7 +1038,39 @@ struct LeurreFormView: View {
                         self.typeLeurre = type
                     }
                     
-                    // ✅ CORRECTION : Terminer l'extraction AVANT d'afficher la sheet ou le message
+                    // 📝 Remplir type de pêche
+                    if let typePeche = infos.typePeche {
+                        self.typePeche = typePeche
+                    }
+
+                    // 📝 Remplir techniques compatibles
+                    if let compatibles = infos.typesPecheCompatibles, !compatibles.isEmpty {
+                        self.showTechniquesCompatibles = true
+                        self.typesPecheCompatibles = Set(compatibles)
+                    }
+
+                    // 📝 Remplir profondeur de traîne
+                    if let profMin = infos.profondeurMin {
+                        self.profondeurMin = String(format: "%.1f", profMin)
+                    }
+                    if let profMax = infos.profondeurMax {
+                        self.profondeurMax = String(format: "%.1f", profMax)
+                    }
+
+                    // 📝 Remplir vitesse de traîne
+                    if let vitMin = infos.vitesseTraineMin {
+                        self.vitesseMin = String(format: "%.1f", vitMin)
+                    }
+                    if let vitMax = infos.vitesseTraineMax {
+                        self.vitesseMax = String(format: "%.1f", vitMax)
+                    }
+                    
+                    // 📝 Remplir les notes avec la description fabricant
+                    if let description = infos.descriptionFabricant, !description.isEmpty {
+                        self.notes = description
+                    }
+                    
+                    // Terminer l'extraction
                     isExtractingInfos = false
                     urlProduit = ""
                     
@@ -1059,47 +1079,22 @@ struct LeurreFormView: View {
                         telechargerPhotoDepuisURLString(urlPhoto)
                     }
                     
-                    // ✅ CORRECTION : Gérer les variantes avec un délai pour éviter les conflits UI
-                    // Si plusieurs variantes, demander à l'utilisateur de choisir
-                    if infos.variantes.count > 1 {
-                        variantesDisponibles = infos.variantes
-                        
-                        // Petit délai pour s'assurer que l'UI est stable
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                            print("📊 Affichage sélecteur de variantes : \(infos.variantes.count) options")
-                            showVariantSelection = true
-                        }
-                    } else if let variante = infos.variantes.first {
-                        // Une seule variante : appliquer directement
-                        print("✅ Application automatique de la variante unique")
-                        appliquerVariante(variante)
-                        
-                        // Message de succès après application
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                            let champsRemplis = [
-                                infos.marque != nil ? "marque" : nil,
-                                infos.nom != nil ? "nom" : nil,
-                                infos.typeLeurre != nil ? "type" : nil,
-                                infos.urlPhoto != nil ? "photo" : nil,
-                                "dimensions"
-                            ].compactMap { $0 }
-                            
-                            validationMessage = "✅ Informations extraites : \(champsRemplis.joined(separator: ", "))\n\nVous pouvez maintenant ajuster manuellement les champs."
-                            showValidationError = true
-                        }
-                    } else {
-                        // Aucune variante trouvée : afficher message immédiatement
-                        let champsRemplis = [
-                            infos.marque != nil ? "marque" : nil,
-                            infos.nom != nil ? "nom" : nil,
-                            infos.typeLeurre != nil ? "type" : nil,
-                            infos.urlPhoto != nil ? "photo" : nil
-                        ].compactMap { $0 }
-                        
-                        if !champsRemplis.isEmpty {
-                            validationMessage = "✅ Informations extraites : \(champsRemplis.joined(separator: ", "))\n\nVous pouvez maintenant ajuster manuellement les champs."
-                            showValidationError = true
-                        }
+                    // Message de succès
+                    let champsRemplis = [
+                        infos.marque != nil ? "marque" : nil,
+                        infos.nom != nil ? "nom" : nil,
+                        infos.typeLeurre != nil ? "type" : nil,
+                        infos.typePeche != nil ? "technique" : nil,
+                        infos.typesPecheCompatibles != nil ? "compatibilités" : nil,
+                        infos.profondeurMin != nil || infos.profondeurMax != nil ? "profondeur" : nil,
+                        infos.vitesseTraineMin != nil || infos.vitesseTraineMax != nil ? "vitesse" : nil,
+                        infos.urlPhoto != nil ? "photo" : nil,
+                        infos.descriptionFabricant != nil ? "description" : nil
+                    ].compactMap { $0 }
+                    
+                    if !champsRemplis.isEmpty {
+                        validationMessage = "✅ Informations extraites : \(champsRemplis.joined(separator: ", "))\n\nVous pouvez maintenant ajuster manuellement les champs."
+                        showValidationError = true
                     }
                 }
             } catch {
@@ -1126,24 +1121,6 @@ struct LeurreFormView: View {
         }
     }
     
-    private func appliquerVariante(_ variante: VarianteLeurre) {
-        if let longueur = variante.longueur {
-            self.longueur = String(format: "%.1f", longueur)
-        }
-        
-        if let poids = variante.poids {
-            self.poids = String(format: "%.0f", poids)
-        }
-        
-        if let profMin = variante.profondeurMin {
-            self.profondeurMin = String(format: "%.1f", profMin)
-        }
-        
-        if let profMax = variante.profondeurMax {
-            self.profondeurMax = String(format: "%.1f", profMax)
-        }
-    }
-    
     // MARK: - Utilitaires
     
     private func determinerContrastePrevisu(principale: Couleur, secondaire: Couleur?) -> Contraste {
@@ -1157,9 +1134,10 @@ struct LeurreFormView: View {
         }
         return principale.contrasteNaturel
     }
+    
     // MARK: - Détection Type de Nage (multi-sélections)
         
-        /// Détecte automatiquement les types de nage mentionnés dans les notes
+    /// Détecte automatiquement les types de nage mentionnés dans les notes
     private func detectTypeDeNage(in text: String) {
         guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             withAnimation {
@@ -1336,62 +1314,3 @@ struct LeurreFormView: View {
 #Preview("Création") {
     LeurreFormView(viewModel: LeureViewModel(), mode: .creation)
 }
-
-// MARK: - Vue de sélection de variante
-
-struct SelectionVarianteView: View {
-    let variantes: [VarianteLeurre]
-    let onSelection: (VarianteLeurre) -> Void
-    
-    @Environment(\.dismiss) private var dismiss
-    
-    var body: some View {
-        NavigationStack {
-            List {
-                Section {
-                    ForEach(variantes) { variante in
-                        Button {
-                            onSelection(variante)
-                            dismiss()
-                        } label: {
-                            HStack {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(variante.description)
-                                        .font(.headline)
-                                        .foregroundColor(.primary)
-                                    
-                                    if let longueur = variante.longueur, let poids = variante.poids {
-                                        Text("Longueur: \(Int(longueur)) cm • Poids: \(Int(poids))g")
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
-                                    }
-                                }
-                                
-                                Spacer()
-                                
-                                Image(systemName: "chevron.right")
-                                    .foregroundColor(.secondary)
-                            }
-                            .padding(.vertical, 4)
-                        }
-                    }
-                } header: {
-                    Text("Plusieurs variantes disponibles")
-                } footer: {
-                    Text("Sélectionnez la taille que vous possédez")
-                }
-            }
-            .navigationTitle("Choisir la variante")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Annuler") {
-                        dismiss()
-                    }
-                }
-            }
-        }
-    }
-}
-
-

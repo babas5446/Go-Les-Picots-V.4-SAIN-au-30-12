@@ -1,0 +1,27 @@
+{
+  "images" : [
+    {
+      "filename" : "Infographie La meilleure façon de choir un leurre de traîne.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "Infographie_choix_leurre 1.png",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "Infographie_choix_leurre.png",
+      "idiom" : "universal",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "compression-type" : "gpu-optimized-best",
+    "template-rendering-intent" : "original"
+  }
+}

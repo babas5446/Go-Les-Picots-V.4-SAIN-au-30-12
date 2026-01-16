@@ -98,6 +98,25 @@ struct TypeDeNageDetector {
         "slash": .slashing,
         "coup de queue": .slashing,
         
+        "cup": .popping,
+        "deep cup": .popping,
+        "shallow cup": .popping,
+        "chug": .popping,
+        "deep chug": .popping,
+        "chugger": .popping,
+        "splash": .popping,
+        "eclaboussure": .popping,
+        "pop": .popping,
+        
+        "bille": .rattling,
+        "rattle": .rattling,
+        "one-knocker": .rattling,
+        "high pitch rattle": .rattling,
+        "low pitch rattle": .rattling,
+        "steel rattle": .rattling,
+        "rattled": .rattling,
+        "son": .rattling,
+        
         // ═══════════════════════════════════════════════════════════
         // NAGES VERTICALES
         // ═══════════════════════════════════════════════════════════
