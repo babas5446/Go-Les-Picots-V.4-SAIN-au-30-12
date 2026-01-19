@@ -1411,22 +1411,6 @@ enum MomentJournee: String, Codable, CaseIterable, Hashable {
     }
 }
 
-enum EtatMer: String, Codable, CaseIterable, Hashable {
-    case calme = "calme"
-    case peuAgitee = "peuAgitee"
-    case agitee = "agitee"
-    case formee = "formee"
-    
-    var displayName: String {
-        switch self {
-        case .calme: return "Calme"
-        case .peuAgitee: return "Peu agitée"
-        case .agitee: return "Agitée"
-        case .formee: return "Formée"
-        }
-    }
-}
-
 enum Turbidite: String, Codable, CaseIterable, Hashable {
     case claire = "claire"
     case legerementTrouble = "legerementTrouble"

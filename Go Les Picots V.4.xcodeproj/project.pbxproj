@@ -17,6 +17,7 @@
 		61045E1F2F06815C0033CD9F /* LeureDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61045E1E2F0681590033CD9F /* LeureDatabase.swift */; };
 		61045EBB2F070F420033CD9F /* BibliothequeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61045EBA2F070F320033CD9F /* BibliothequeView.swift */; };
 		61045F662F07B20F0033CD9F /* RisqueCiguatera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61045F622F07B20F0033CD9F /* RisqueCiguatera.swift */; };
+		6114058A2F1CCA55000289DD /* TypesCommuns.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611405892F1CCA50000289DD /* TypesCommuns.swift */; };
 		61263A542EE95DC400BBF0A8 /* LeurreFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61263A532EE95DC400BBF0A8 /* LeurreFormView.swift */; };
 		613F7A082F0238E100DA3053 /* TypeDeNage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 613F7A072F0238CB00DA3053 /* TypeDeNage.swift */; };
 		613F7A0A2F0291FD00DA3053 /* Wobblingchoicesheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 613F7A092F0291D200DA3053 /* Wobblingchoicesheet.swift */; };
@@ -50,6 +51,8 @@
 		61C5FBE32EF90AAD0030C95D /* ParametresAppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C5FBE22EF90AAD0030C95D /* ParametresAppView.swift */; };
 		61C5FC232EFA87B30030C95D /* NoteAnalysisService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C5FC222EFA87B30030C95D /* NoteAnalysisService.swift */; };
 		61C5FC252EFA87F60030C95D /* LeurreIntelligenceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C5FC242EFA87F60030C95D /* LeurreIntelligenceService.swift */; };
+		61EB66F32F1C2A6600EDB9AF /* APIConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61EB66F22F1C2A6600EDB9AF /* APIConfig.swift */; };
+		61EB66F52F1C2A8200EDB9AF /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 61EB66F42F1C2A8200EDB9AF /* .gitignore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,6 +82,7 @@
 		61045E1E2F0681590033CD9F /* LeureDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeureDatabase.swift; sourceTree = "<group>"; };
 		61045EBA2F070F320033CD9F /* BibliothequeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BibliothequeView.swift; sourceTree = "<group>"; };
 		61045F622F07B20F0033CD9F /* RisqueCiguatera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RisqueCiguatera.swift; sourceTree = "<group>"; };
+		611405892F1CCA50000289DD /* TypesCommuns.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypesCommuns.swift; sourceTree = "<group>"; };
 		61263A532EE95DC400BBF0A8 /* LeurreFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeurreFormView.swift; sourceTree = "<group>"; };
 		613F7A072F0238CB00DA3053 /* TypeDeNage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeDeNage.swift; sourceTree = "<group>"; };
 		613F7A092F0291D200DA3053 /* Wobblingchoicesheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Wobblingchoicesheet.swift; sourceTree = "<group>"; };
@@ -114,6 +118,8 @@
 		61C5FBE22EF90AAD0030C95D /* ParametresAppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParametresAppView.swift; sourceTree = "<group>"; };
 		61C5FC222EFA87B30030C95D /* NoteAnalysisService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteAnalysisService.swift; sourceTree = "<group>"; };
 		61C5FC242EFA87F60030C95D /* LeurreIntelligenceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeurreIntelligenceService.swift; sourceTree = "<group>"; };
+		61EB66F22F1C2A6600EDB9AF /* APIConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIConfig.swift; sourceTree = "<group>"; };
+		61EB66F42F1C2A8200EDB9AF /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -138,6 +144,11 @@
 		61045D762F04EBDE0033CD9F /* DOC */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = DOC;
+			sourceTree = "<group>";
+		};
+		6114067A2F1CE343000289DD /* Module 3 Cartographie */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Module 3 Cartographie";
 			sourceTree = "<group>";
 		};
 		61263A502EE95CED00BBF0A8 /* Services */ = {
@@ -203,13 +214,17 @@
 		6193EA0A2EE1400D000BE2F6 = {
 			isa = PBXGroup;
 			children = (
+				611405892F1CCA50000289DD /* TypesCommuns.swift */,
 				6193EA152EE1400D000BE2F6 /* Go Les Picots V.4 */,
 				6193EA422EE1428C000BE2F6 /* Module1 */,
-				6193EA142EE1400D000BE2F6 /* Products */,
 				6193EA6B2EE25162000BE2F6 /* Module2_SuggestionIA */,
-				61C5FBE22EF90AAD0030C95D /* ParametresAppView.swift */,
+				6114067A2F1CE343000289DD /* Module 3 Cartographie */,
 				6127557F2F0A878C00B76A6E /* Module4_Bibliothèque */,
+				6193EA142EE1400D000BE2F6 /* Products */,
 				61045D762F04EBDE0033CD9F /* DOC */,
+				61EB66F22F1C2A6600EDB9AF /* APIConfig.swift */,
+				61EB66F42F1C2A8200EDB9AF /* .gitignore */,
+				61C5FBE22EF90AAD0030C95D /* ParametresAppView.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -353,6 +368,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				61045D762F04EBDE0033CD9F /* DOC */,
+				6114067A2F1CE343000289DD /* Module 3 Cartographie */,
 				61263A502EE95CED00BBF0A8 /* Services */,
 				61263A552EE95DEA00BBF0A8 /* Components */,
 				6127557F2F0A878C00B76A6E /* Module4_Bibliothèque */,
@@ -461,6 +477,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				61EB66F52F1C2A8200EDB9AF /* .gitignore in Resources */,
 				617DD1502EF55FAF002C82F1 /* leurres_database_COMPLET.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -522,7 +539,9 @@
 				6193EA552EE142F1000BE2F6 /* BoiteView.swift in Sources */,
 				61C5FBDD2EF90A460030C95D /* CouleurCustom.swift in Sources */,
 				6100BCAF2EFE3A560084CFB5 /* RainbowCircle.swift in Sources */,
+				6114058A2F1CCA55000289DD /* TypesCommuns.swift in Sources */,
 				617DD1482EF53C4B002C82F1 /* DiagnosticView.swift in Sources */,
+				61EB66F32F1C2A6600EDB9AF /* APIConfig.swift in Sources */,
 				61045EBB2F070F420033CD9F /* BibliothequeView.swift in Sources */,
 				617DD0182EF1F74B002C82F1 /* LeurreWebScraperService.swift in Sources */,
 				6193EA562EE142F1000BE2F6 /* FiltresView.swift in Sources */,
@@ -692,15 +711,17 @@
 				DEVELOPMENT_TEAM = DP9UY27ZQX;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Go-Les-Picots-V-4-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.navigation";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Go les Picots utilise la caméra pour photographier vos leurres";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Go Les Picots peut enregistrer votre trajet pendant les sorties de pêche.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "o les Picots accède à votre galerie pour importer des photos de leurres";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -728,15 +749,17 @@
 				DEVELOPMENT_TEAM = DP9UY27ZQX;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Go-Les-Picots-V-4-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.navigation";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Go les Picots utilise la caméra pour photographier vos leurres";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Go Les Picots peut enregistrer votre trajet pendant les sorties de pêche.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "o les Picots accède à votre galerie pour importer des photos de leurres";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

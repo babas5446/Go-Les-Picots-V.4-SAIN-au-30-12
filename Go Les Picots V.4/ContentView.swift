@@ -143,6 +143,7 @@ struct ModuleGridView: View {
     let navigationCoordinator: NavigationCoordinator
     
     let modules : [ModuleItem] = [
+        // Ligne 1
         ModuleItem(
             title: "Ma Boîte",
             iconName: "BoitePhysique",
@@ -153,14 +154,26 @@ struct ModuleGridView: View {
             iconName: "BoiteIA",
             color: Color(hex: "FFBC42")
         ),
+        // Ligne 2
         ModuleItem(
-            title: "Cartographie",
-            iconName: "Navigation",
+            title: "Navigation",
+            iconName: "Navigation", // 🎨 IMAGE À AJOUTER
             color: Color(hex: "0277BD")
         ),
         ModuleItem(
+            title: "Météo",
+            iconName: "Meteo", // 🎨 IMAGE À AJOUTER
+            color: Color(hex: "FFBC42")
+        ),
+        // Ligne 3
+        ModuleItem(
             title: "Bibliothèque",
             iconName: "Bibliotheque",
+            color: Color(hex: "0277BD")
+        ),
+        ModuleItem(
+            title: "Statistiques",
+            iconName: "Statistiques", // 🎨 IMAGE À AJOUTER
             color: Color(hex: "FFBC42")
         )
     ]
@@ -194,10 +207,13 @@ struct ModuleButton: View {
     
     var body: some View {
         Button(action: {
-            // 🆕 Ajouter Bibliothèque aux modules actifs
+            // Tous les modules sont maintenant actifs
             if module.title == "Ma Boîte" ||
                module.title == "Suggestion IA" ||
-               module.title == "Bibliothèque" {
+               module.title == "Navigation" ||
+               module.title == "Météo" ||
+               module.title == "Bibliothèque" ||
+               module.title == "Statistiques" {
                 showingModule = true
             }
         }) {
@@ -237,9 +253,21 @@ struct ModuleButton: View {
                         navigationCoordinator: navigationCoordinator
                     )
                 }
-            } else if module.title == "Bibliothèque" {  // 🆕 AJOUTER CETTE CONDITION
+            } else if module.title == "Navigation" {
+                NavigationStack {
+                    NavigationMapView()
+                }
+            } else if module.title == "Météo" {
+                NavigationStack {
+                    MeteoSolunaireView()
+                }
+            } else if module.title == "Bibliothèque" {
                 NavigationStack {
                     BibliothequeMenuView()
+                }
+            } else if module.title == "Statistiques" {
+                NavigationStack {
+                    StatistiquesView()
                 }
             }
         }
