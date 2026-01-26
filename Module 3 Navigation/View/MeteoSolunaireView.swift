@@ -38,46 +38,18 @@ struct MeteoSolunaireView: View {
     // MARK: - Body
     var body: some View {
         NavigationStack {
-            ScrollView {
-                if isLoading {
-                    loadingView
-                } else if let error = errorMessage {
-                    errorView(error)
-                } else {
-                    VStack(spacing: 24) {
-                        // Section 1 : Indice qualité pêche
-                        if solunarData != nil {
-                            indiceQualiteSection
-                        }
-                        
-                        // Section 2 : Conditions actuelles
-                        if currentData != nil {
-                            conditionsActuellesSection
-                        }
-                        
-                        // Section 3 : Prévisions horaires 24h
-                        if !hourlyForecast.isEmpty {
-                            previsionsHorairesSection
-                        }
-                        
-                        // Section 4 : Périodes solunaires
-                        if solunarData != nil {
-                            periodesSolunairesSection
-                        }
-                        
-                        // Section 5 : Soleil & Lune
-                        if solunarData != nil {
-                            soleilLuneSection
-                        }
-                        
-                        // Section 6 : Marées
-                        if !tideEvents.isEmpty {
-                            mareeSection
-                        }
-                    }
-                    .padding()
+            TabView {
+                ForEach(0..<8) { dayOffset in
+                    DayPageView(
+                        dayOffset: dayOffset,
+                        coordinate: coordinate,
+                        stormglassService: stormglassService,
+                        solunarService: solunarService
+                    )
+                    .tag(dayOffset)
                 }
             }
+            .tabViewStyle(.page(indexDisplayMode: .never))
             .navigationTitle("Météo & Solunaire")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
@@ -85,22 +57,6 @@ struct MeteoSolunaireView: View {
                     Button(action: { Task { await loadData() } }) {
                         Image(systemName: "arrow.clockwise")
                     }
-                    .disabled(isLoading)
-                }
-            }
-            .task {
-                await loadData()
-            }
-            .fullScreenCover(isPresented: $isGraphFullScreen) {
-                if !tideEvents.isEmpty, let solunar = solunarData {
-                    FullScreenTideGraph(
-                        tides: tideEvents,
-                        sunrise: solunar.sunrise ?? Date(),
-                        sunset: solunar.sunset ?? Date(),
-                        moonrise: solunar.moonrise,
-                        moonset: solunar.moonset,
-                        isPresented: $isGraphFullScreen
-                    )
                 }
             }
         }
@@ -1238,7 +1194,232 @@ struct SolunarPeriodCard: View {
         }
     }
 }
-
+struct DayPageView: View {
+    let dayOffset: Int
+    let coordinate: CLLocationCoordinate2D
+    let stormglassService: StormglassService
+    let solunarService: SolunarService
+    
+    @State private var currentData: MarineData?
+    @State private var hourlyForecast: [MarineData] = []
+    @State private var tideEvents: [TideEvent] = []
+    @State private var solunarData: SolunarData?
+    @State private var isLoading = false
+    @State private var isGraphFullScreen = false
+    
+    var targetDate: Date {
+        Calendar.current.date(byAdding: .day, value: dayOffset, to: Date()) ?? Date()
+    }
+    
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 24) {
+                // DATE DU JOUR EN HAUT
+                Text(targetDate, format: .dateTime.day().month().year())
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .environment(\.locale, Locale(identifier: "fr_FR"))
+                    .padding(.top)
+                
+                if isLoading {
+                    ProgressView("Chargement...")
+                } else {
+                    // Section 1 : Indice qualité pêche
+                    if solunarData != nil {
+                        indiceQualiteSection
+                    }
+                    
+                    // Section 2 : Conditions (actuelles si J=0, prévisions sinon)
+                    if currentData != nil {
+                        conditionsSection
+                    }
+                    
+                    // Section 3 : Prévisions horaires 24h
+                    if !hourlyForecast.isEmpty {
+                        previsionsHorairesSection
+                    }
+                    
+                    // Section 4 : Périodes solunaires
+                    if solunarData != nil {
+                        periodesSolunairesSection
+                    }
+                    
+                    // Section 5 : Soleil & Lune
+                    if solunarData != nil {
+                        soleilLuneSection
+                    }
+                    
+                    // Section 6 : Marées
+                    if !tideEvents.isEmpty {
+                        mareeSection
+                    }
+                }
+            }
+            .padding()
+        }
+        .task {
+            await loadDataForDay()
+        }
+        .fullScreenCover(isPresented: $isGraphFullScreen) {
+            if !tideEvents.isEmpty, let solunar = solunarData {
+                FullScreenTideGraph(
+                    tides: tideEvents,
+                    sunrise: solunar.sunrise ?? Date(),
+                    sunset: solunar.sunset ?? Date(),
+                    moonrise: solunar.moonrise,
+                    moonset: solunar.moonset,
+                    isPresented: $isGraphFullScreen
+                )
+            }
+        }
+    }
+    
+    // MARK: - Sections (copier-coller depuis MeteoSolunaireView)
+    
+    private var indiceQualiteSection: some View {
+        Group {
+            if let solunar = solunarData {
+                VStack(spacing: 12) {
+                    HStack {
+                        Text(solunar.qualityEmoji).font(.system(size: 50))
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Qualité du jour").font(.subheadline).foregroundStyle(.secondary)
+                            Text(solunar.qualityText).font(.title2).fontWeight(.bold)
+                            Text("\(solunar.globalScore)/100").font(.caption).foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                    }
+                    ProgressView(value: Double(solunar.globalScore), total: 100)
+                        .tint(qualityColor(solunar.globalScore))
+                }
+                .padding()
+                .background(Color(.systemGray6))
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+            }
+        }
+    }
+    
+    private var conditionsSection: some View {
+        // COPIER conditionsActuellesSection mais adapter le titre
+        Text(dayOffset == 0 ? "Conditions actuelles" : "Prévisions du jour")
+            .font(.headline)
+        // ... reste du code
+    }
+    
+    private var previsionsHorairesSection: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack {
+                Image(systemName: "clock").foregroundStyle(.orange)
+                Text("Prévisions 24 heures").font(.headline)
+                Spacer()
+            }
+            .padding()
+            
+            if !tideEvents.isEmpty, let solunar = solunarData {
+                TideGraphCompact(
+                    tides: tideEvents,
+                    sunrise: solunar.sunrise ?? Date(),
+                    sunset: solunar.sunset ?? Date(),
+                    moonrise: solunar.moonrise,
+                    moonset: solunar.moonset
+                )
+                .frame(height: 200)
+                .padding(.horizontal)
+                .onTapGesture { isGraphFullScreen = true }
+            }
+            
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 0) {
+                    ForEach(Array(hourlyForecast.prefix(24).enumerated()), id: \.offset) { _, data in
+                        TideColoredHourCard(data: data, tides: tideEvents)
+                    }
+                }
+                .padding(.horizontal)
+            }
+        }
+        .background(Color(.systemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .shadow(color: .black.opacity(0.05), radius: 8, y: 4)
+    }
+    
+    // ... (copier toutes les autres sections)
+    
+    private func qualityColor(_ score: Int) -> Color {
+        switch score {
+        case 80...100: return .green
+        case 60..<80: return .blue
+        case 40..<60: return .orange
+        default: return .gray
+        }
+    }
+    
+    // MARK: - Data Loading
+    private func loadDataForDay() async {
+        isLoading = true
+        
+        do {
+            // Charger données pour targetDate
+            let forecast = try await stormglassService.fetchForecast(
+                latitude: coordinate.latitude,
+                longitude: coordinate.longitude,
+                days: dayOffset + 2
+            )
+            
+            // Filtrer les 24h de ce jour
+            let startOfDay = Calendar.current.startOfDay(for: targetDate)
+            let endOfDay = Calendar.current.date(byAdding: .day, value: 1, to: startOfDay)!
+            
+            let dayForecast = forecast.filter { data in
+                data.timestamp >= startOfDay && data.timestamp < endOfDay
+            }
+            
+            let tides = try await stormglassService.fetchTideData(
+                latitude: coordinate.latitude,
+                longitude: coordinate.longitude
+            )
+            
+            // Filtrer marées de ce jour
+            let dayTides = tides.filter { tide in
+                tide.time >= startOfDay && tide.time < endOfDay
+            }
+            
+            let solunar = try await solunarService.fetchSolunarData(
+                latitude: coordinate.latitude,
+                longitude: coordinate.longitude,
+                date: targetDate,
+                timezone: 11
+            )
+            
+            await MainActor.run {
+                self.currentData = dayForecast.first
+                self.hourlyForecast = dayForecast
+                self.tideEvents = dayTides
+                self.solunarData = solunar
+                self.isLoading = false
+            }
+            
+        } catch {
+            print("Erreur chargement J+\(dayOffset): \(error)")
+            isLoading = false
+        }
+    }
+    
+    // Copier les sections périodes solunaires, soleil/lune, marées...
+    private var periodesSolunairesSection: some View {
+        // COPIER depuis MeteoSolunaireView
+        EmptyView()
+    }
+    
+    private var soleilLuneSection: some View {
+        // COPIER depuis MeteoSolunaireView
+        EmptyView()
+    }
+    
+    private var mareeSection: some View {
+        // COPIER depuis MeteoSolunaireView
+        EmptyView()
+    }
+}
 #Preview {
     MeteoSolunaireView()
 }
