@@ -15,11 +15,6 @@ struct NavigationModuleView: View {
     var body: some View {
         TabView(selection: $selectedTab) {
             // RUBRIQUE 1 : Météo & Solunaire
-            MeteoSolunaireView()
-                .tabItem {
-                    Label("Météo", image: "Meteo-icon") // Remplacez "icone_meteo" par le nom de votre asset
-                }
-                .tag(0)
             
             // RUBRIQUE 2 : Carte & Spots
             CarteSpotsView()
