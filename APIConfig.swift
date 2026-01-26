@@ -9,12 +9,10 @@
 
 import Foundation
 
-/// Configuration des clés API
 struct APIConfig {
-    /// Clé API OpenWeatherMap One Call 3.0
-    /// Obtenez votre clé sur : https://home.openweathermap.org/api_keys
+    /// Clé API OpenWeatherMap (météo)
     static let openWeatherMapKey = "REMPLACER_PAR_VOTRE_CLE"
     
-    // Autres clés API futures
-    // static let autreServiceKey = "..."
+    /// Clé API Stormglass.io (marées + soleil/lune + météo marine)
+    static let stormglassKey = "REMPLACER_PAR_VOTRE_CLE" // ⚠️ À REMPLACER
 }
