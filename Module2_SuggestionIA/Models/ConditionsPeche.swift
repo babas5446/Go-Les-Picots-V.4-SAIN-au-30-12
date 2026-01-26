@@ -26,7 +26,7 @@ struct ConditionsPeche: Codable, Hashable {
     
     // MARK: - Conditions Marines
     var etatMer: EtatMer
-    var typeMaree: TypeMaree
+    var typeMaree: TypeMaree  // ✅ Utilise TypeMaree de Leurre.swift (montante/descendante/etale)
     var phaseLunaire: PhaseLunaire
     
     // MARK: - Optionnel

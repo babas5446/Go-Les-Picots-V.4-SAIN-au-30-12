@@ -3,10 +3,7 @@
 //  Go Les Picots V.4
 //
 //  MODULE 0 - Écran d'accueil
-//  VERSION CORRIGÉE avec NavigationCoordinator
-//
-//  Created by LANES Sebastien on 04/12/2025.
-//  Updated: 2024-12-05 (correction navigation Module 2)
+//  VERSION AVEC STORMGLASS
 //
 
 import SwiftUI
@@ -20,7 +17,7 @@ struct ContentView: View {
     
     // État pour le diagnostic
     @State private var showingDiagnostic = false
-    @State private var showExportImport = false  // 🆕 AJOUTER CETTE LIGNE
+    @State private var showExportImport = false
 
     
     init() {
@@ -107,7 +104,7 @@ struct ContentView: View {
         .sheet(isPresented: $showingDiagnostic) {
             DiagnosticView()
         }
-        .sheet(isPresented: $showExportImport) {  // 🆕 AJOUTER CETTE SHEET
+        .sheet(isPresented: $showExportImport) {
             ExportImportView(viewModel: leureViewModel)
         }
         .onChange(of: navigationCoordinator.showResults) { oldValue, newValue in
@@ -157,12 +154,12 @@ struct ModuleGridView: View {
         // Ligne 2
         ModuleItem(
             title: "Navigation",
-            iconName: "Navigation", // 🎨 IMAGE À AJOUTER
+            iconName: "Navigation",
             color: Color(hex: "0277BD")
         ),
         ModuleItem(
             title: "Météo",
-            iconName: "Meteo", // 🎨 IMAGE À AJOUTER
+            iconName: "Meteo",
             color: Color(hex: "FFBC42")
         ),
         // Ligne 3
@@ -173,7 +170,7 @@ struct ModuleGridView: View {
         ),
         ModuleItem(
             title: "Statistiques",
-            iconName: "Statistiques", // 🎨 IMAGE À AJOUTER
+            iconName: "Statistiques",
             color: Color(hex: "FFBC42")
         )
     ]
@@ -258,9 +255,8 @@ struct ModuleButton: View {
                     NavigationMapView()
                 }
             } else if module.title == "Météo" {
-                NavigationStack {
-                    MeteoSolunaireView()
-                }
+                // 🆕 MODULE MÉTÉO AVEC STORMGLASS
+                MeteoSolunaireView()
             } else if module.title == "Bibliothèque" {
                 NavigationStack {
                     BibliothequeMenuView()

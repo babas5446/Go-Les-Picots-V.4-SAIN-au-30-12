@@ -17,7 +17,6 @@
 		61045E1F2F06815C0033CD9F /* LeureDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61045E1E2F0681590033CD9F /* LeureDatabase.swift */; };
 		61045EBB2F070F420033CD9F /* BibliothequeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61045EBA2F070F320033CD9F /* BibliothequeView.swift */; };
 		61045F662F07B20F0033CD9F /* RisqueCiguatera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61045F622F07B20F0033CD9F /* RisqueCiguatera.swift */; };
-		6114058A2F1CCA55000289DD /* TypesCommuns.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611405892F1CCA50000289DD /* TypesCommuns.swift */; };
 		61263A542EE95DC400BBF0A8 /* LeurreFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61263A532EE95DC400BBF0A8 /* LeurreFormView.swift */; };
 		613F7A082F0238E100DA3053 /* TypeDeNage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 613F7A072F0238CB00DA3053 /* TypeDeNage.swift */; };
 		613F7A0A2F0291FD00DA3053 /* Wobblingchoicesheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 613F7A092F0291D200DA3053 /* Wobblingchoicesheet.swift */; };
@@ -44,6 +43,9 @@
 		6193EA852EE25312000BE2F6 /* SpreadVisualizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6193EA802EE25312000BE2F6 /* SpreadVisualizationView.swift */; };
 		6193EAE52EE6A88F000BE2F6 /* SuggestionEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6193EAE42EE6A88F000BE2F6 /* SuggestionEngine.swift */; };
 		61941ACE2EEA0B170019B66B /* EspecesDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61941ACD2EEA0B170019B66B /* EspecesDatabase.swift */; };
+		61C2A82F2F1F09B0003074F5 /* CORRECTION_ENUMS_TYPES_COMMUNS.md in Resources */ = {isa = PBXBuildFile; fileRef = 61C2A82E2F1F09B0003074F5 /* CORRECTION_ENUMS_TYPES_COMMUNS.md */; };
+		61C2A8332F1F0A93003074F5 /* HARMONISATION_FINALE_ENUMS.md in Resources */ = {isa = PBXBuildFile; fileRef = 61C2A8322F1F0A93003074F5 /* HARMONISATION_FINALE_ENUMS.md */; };
+		61C2A8352F1F0C1B003074F5 /* CORRECTION_FINALE_DOUBLONS_LEURRE.md in Resources */ = {isa = PBXBuildFile; fileRef = 61C2A8342F1F0C1B003074F5 /* CORRECTION_FINALE_DOUBLONS_LEURRE.md */; };
 		61C5FBDB2EF909E80030C95D /* CreerCouleurView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C5FBDA2EF909E80030C95D /* CreerCouleurView.swift */; };
 		61C5FBDD2EF90A460030C95D /* CouleurCustom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C5FBDC2EF90A460030C95D /* CouleurCustom.swift */; };
 		61C5FBDF2EF90A7F0030C95D /* CouleurSearchField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C5FBDE2EF90A7F0030C95D /* CouleurSearchField.swift */; };
@@ -82,7 +84,6 @@
 		61045E1E2F0681590033CD9F /* LeureDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeureDatabase.swift; sourceTree = "<group>"; };
 		61045EBA2F070F320033CD9F /* BibliothequeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BibliothequeView.swift; sourceTree = "<group>"; };
 		61045F622F07B20F0033CD9F /* RisqueCiguatera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RisqueCiguatera.swift; sourceTree = "<group>"; };
-		611405892F1CCA50000289DD /* TypesCommuns.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypesCommuns.swift; sourceTree = "<group>"; };
 		61263A532EE95DC400BBF0A8 /* LeurreFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeurreFormView.swift; sourceTree = "<group>"; };
 		613F7A072F0238CB00DA3053 /* TypeDeNage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeDeNage.swift; sourceTree = "<group>"; };
 		613F7A092F0291D200DA3053 /* Wobblingchoicesheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Wobblingchoicesheet.swift; sourceTree = "<group>"; };
@@ -111,6 +112,9 @@
 		6193EA822EE25312000BE2F6 /* SuggestionResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuggestionResultView.swift; sourceTree = "<group>"; };
 		6193EAE42EE6A88F000BE2F6 /* SuggestionEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuggestionEngine.swift; sourceTree = "<group>"; };
 		61941ACD2EEA0B170019B66B /* EspecesDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EspecesDatabase.swift; sourceTree = "<group>"; };
+		61C2A82E2F1F09B0003074F5 /* CORRECTION_ENUMS_TYPES_COMMUNS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CORRECTION_ENUMS_TYPES_COMMUNS.md; sourceTree = "<group>"; };
+		61C2A8322F1F0A93003074F5 /* HARMONISATION_FINALE_ENUMS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = HARMONISATION_FINALE_ENUMS.md; sourceTree = "<group>"; };
+		61C2A8342F1F0C1B003074F5 /* CORRECTION_FINALE_DOUBLONS_LEURRE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CORRECTION_FINALE_DOUBLONS_LEURRE.md; sourceTree = "<group>"; };
 		61C5FBDA2EF909E80030C95D /* CreerCouleurView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreerCouleurView.swift; sourceTree = "<group>"; };
 		61C5FBDC2EF90A460030C95D /* CouleurCustom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CouleurCustom.swift; sourceTree = "<group>"; };
 		61C5FBDE2EF90A7F0030C95D /* CouleurSearchField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CouleurSearchField.swift; sourceTree = "<group>"; };
@@ -146,9 +150,9 @@
 			path = DOC;
 			sourceTree = "<group>";
 		};
-		6114067A2F1CE343000289DD /* Module 3 Cartographie */ = {
+		6114067A2F1CE343000289DD /* Module 3 Navigation */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "Module 3 Cartographie";
+			path = "Module 3 Navigation";
 			sourceTree = "<group>";
 		};
 		61263A502EE95CED00BBF0A8 /* Services */ = {
@@ -214,17 +218,16 @@
 		6193EA0A2EE1400D000BE2F6 = {
 			isa = PBXGroup;
 			children = (
-				611405892F1CCA50000289DD /* TypesCommuns.swift */,
 				6193EA152EE1400D000BE2F6 /* Go Les Picots V.4 */,
 				6193EA422EE1428C000BE2F6 /* Module1 */,
 				6193EA6B2EE25162000BE2F6 /* Module2_SuggestionIA */,
-				6114067A2F1CE343000289DD /* Module 3 Cartographie */,
+				6114067A2F1CE343000289DD /* Module 3 Navigation */,
 				6127557F2F0A878C00B76A6E /* Module4_Bibliothèque */,
 				6193EA142EE1400D000BE2F6 /* Products */,
 				61045D762F04EBDE0033CD9F /* DOC */,
-				61EB66F22F1C2A6600EDB9AF /* APIConfig.swift */,
 				61EB66F42F1C2A8200EDB9AF /* .gitignore */,
 				61C5FBE22EF90AAD0030C95D /* ParametresAppView.swift */,
+				61EB66F22F1C2A6600EDB9AF /* APIConfig.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -285,6 +288,9 @@
 				61C5FBDE2EF90A7F0030C95D /* CouleurSearchField.swift */,
 				61C5FBE02EF90AA20030C95D /* GestionCouleursCustomView.swift */,
 				6100BCAE2EFE3A560084CFB5 /* RainbowCircle.swift */,
+				61C2A82E2F1F09B0003074F5 /* CORRECTION_ENUMS_TYPES_COMMUNS.md */,
+				61C2A8322F1F0A93003074F5 /* HARMONISATION_FINALE_ENUMS.md */,
+				61C2A8342F1F0C1B003074F5 /* CORRECTION_FINALE_DOUBLONS_LEURRE.md */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -368,7 +374,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				61045D762F04EBDE0033CD9F /* DOC */,
-				6114067A2F1CE343000289DD /* Module 3 Cartographie */,
+				6114067A2F1CE343000289DD /* Module 3 Navigation */,
 				61263A502EE95CED00BBF0A8 /* Services */,
 				61263A552EE95DEA00BBF0A8 /* Components */,
 				6127557F2F0A878C00B76A6E /* Module4_Bibliothèque */,
@@ -479,6 +485,9 @@
 			files = (
 				61EB66F52F1C2A8200EDB9AF /* .gitignore in Resources */,
 				617DD1502EF55FAF002C82F1 /* leurres_database_COMPLET.json in Resources */,
+				61C2A82F2F1F09B0003074F5 /* CORRECTION_ENUMS_TYPES_COMMUNS.md in Resources */,
+				61C2A8332F1F0A93003074F5 /* HARMONISATION_FINALE_ENUMS.md in Resources */,
+				61C2A8352F1F0C1B003074F5 /* CORRECTION_FINALE_DOUBLONS_LEURRE.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -539,7 +548,6 @@
 				6193EA552EE142F1000BE2F6 /* BoiteView.swift in Sources */,
 				61C5FBDD2EF90A460030C95D /* CouleurCustom.swift in Sources */,
 				6100BCAF2EFE3A560084CFB5 /* RainbowCircle.swift in Sources */,
-				6114058A2F1CCA55000289DD /* TypesCommuns.swift in Sources */,
 				617DD1482EF53C4B002C82F1 /* DiagnosticView.swift in Sources */,
 				61EB66F32F1C2A6600EDB9AF /* APIConfig.swift in Sources */,
 				61045EBB2F070F420033CD9F /* BibliothequeView.swift in Sources */,

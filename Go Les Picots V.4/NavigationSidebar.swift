@@ -130,19 +130,6 @@ struct NavigationSidebar: View {
             
             Spacer()
         }
-        .fullScreenCover(isPresented: $showMeteo) {
-            NavigationStack {
-                MeteoSolunaireView(coordinate: tappedCoordinate)
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbar {
-                        ToolbarItem(placement: .navigationBarLeading) {
-                            Button("Fermer") {
-                                showMeteo = false
-                            }
-                        }
-                    }
-            }
-        }
     }
     
     // MARK: - Actions

@@ -1441,6 +1441,59 @@ enum TypeMaree: String, Codable, CaseIterable, Hashable {
     }
 }
 
+// MARK: - Phase Marée (4 cas pour compatibilité ConditionsMeteo)
+enum PhaseMaree: String, Codable, CaseIterable, Hashable {
+    case montante = "montante"
+    case etaleHaut = "etaleHaut"
+    case descendante = "descendante"
+    case etaleBas = "etaleBas"
+    
+    var displayName: String {
+        switch self {
+        case .montante: return "Montante"
+        case .etaleHaut: return "Étale haut"
+        case .descendante: return "Descendante"
+        case .etaleBas: return "Étale bas"
+        }
+    }
+    
+    var emoji: String {
+        switch self {
+        case .montante: return "⬆️"
+        case .etaleHaut: return "🔝"
+        case .descendante: return "⬇️"
+        case .etaleBas: return "🔽"
+        }
+    }
+    
+    /// Convertit vers TypeMaree (3 cas)
+    var toTypeMaree: TypeMaree {
+        switch self {
+        case .montante: return .montante
+        case .etaleHaut: return .etale
+        case .descendante: return .descendante
+        case .etaleBas: return .etale
+        }
+    }
+}
+
+// MARK: - État Mer
+enum EtatMer: String, Codable, CaseIterable, Hashable {
+    case calme = "calme"
+    case peuAgitee = "peuAgitee"
+    case agitee = "agitee"
+    case formee = "formee"
+    
+    var displayName: String {
+        switch self {
+        case .calme: return "Calme"
+        case .peuAgitee: return "Peu agitée"
+        case .agitee: return "Agitée"
+        case .formee: return "Formée"
+        }
+    }
+}
+
 enum PhaseLunaire: String, Codable, CaseIterable, Hashable {
     case nouvelleLune = "nouvelleLune"
     case premierQuartier = "premierQuartier"
@@ -1457,39 +1510,13 @@ enum PhaseLunaire: String, Codable, CaseIterable, Hashable {
     }
 }
 
-// MARK: - Structure pour la base de données JSON
-
-struct LeurreDatabase: Codable {
-    var metadata: DatabaseMetadata
-    var leurres: [Leurre]
-}
-
-struct DatabaseMetadata: Codable {
-    var version: String
-    var dateCreation: String
-    var derniereMiseAJour: String?  // ✅ RENDU OPTIONNEL
-    var nombreTotal: Int
-    var proprietaire: String
-    
-    // Champs additionnels du JSON qui peuvent être présents
-    var description: String?
-    var source: String?
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
-// MARK: - TYPES DE COMPATIBILITÉ POUR MODULE 2 (SuggestionEngine)
-// Ces types sont conservés pour assurer la compatibilité avec le moteur
-// de suggestion existant. Ils seront progressivement migrés.
-// ═══════════════════════════════════════════════════════════════════════════
-
-// MARK: - Luminosite (utilisé par Module 2)
-
+// MARK: - Luminosité
 enum Luminosite: String, Codable, CaseIterable, Hashable {
-    case forte = "forte"           // Soleil franc
-    case diffuse = "diffuse"       // Nuageux
-    case faible = "faible"         // Aube/Crépuscule
-    case sombre = "sombre"         // Nuages épais
-    case nuit = "nuit"             // Pêche de nuit
+    case forte = "forte"
+    case diffuse = "diffuse"
+    case faible = "faible"
+    case sombre = "sombre"
+    case nuit = "nuit"
     
     var displayName: String {
         switch self {
@@ -1532,19 +1559,7 @@ enum Luminosite: String, Codable, CaseIterable, Hashable {
     }
 }
 
-// MARK: - CategoriePeche (alias vers Zone pour compatibilité)
-
-typealias CategoriePeche = Zone
-
-// Extension pour ajouter les anciennes valeurs si nécessaire
-extension Zone {
-    static var lagonCotier: Zone { .lagon }
-    static var passes: Zone { .passe }
-    static var hauturier: Zone { .large }
-}
-
-// MARK: - Espece (enum pour compatibilité Module 2)
-
+// MARK: - Espèce
 enum Espece: String, Codable, CaseIterable, Hashable {
     // Pélagiques
     case thonJaune = "thonJaune"
@@ -1630,82 +1645,68 @@ enum Espece: String, Codable, CaseIterable, Hashable {
     }
     
     /// Types de pêche compatibles pour cette espèce
-    /// IMPORTANT : Une espèce peut être pêchée de plusieurs façons selon la zone
     var typesPecheCompatibles: [TypePeche] {
         switch self {
-        // Pélagiques hauturiers - Traîne principalement
-        case .thonJaune:
-            return [.traine]
-        case .thonObese:
-            return [.traine]
-        case .wahoo:
-            return [.traine]
-        case .mahiMahi:
-            return [.traine, .lancer]
-        case .marlin:
-            return [.traine]
-        case .voilier:
-            return [.traine]
-        case .bonite:
-            return [.traine, .lancer]
-            
-        // Thazards - Traîne et lancer
-        case .thazard:
-            return [.traine, .lancer]
-        case .thazardBatard:
-            return [.traine]
-            
-        // Carangues - Multiples techniques
-        case .carangue:
-            return [.traine, .lancer]
-        case .carangueGT:
-            return [.traine, .lancer, .jig]
-        case .carangueBleue:
-            return [.traine, .lancer]
-            
-        // Barracudas/Bécunes - Traîne et lancer
-        case .barracuda:
-            return [.traine, .lancer]
-        case .becune:
-            return [.traine, .lancer]
-            
-        // Loches - Jig et montage principalement, parfois traîne
-        case .loche:
-            return [.jig, .montage, .traine]
-        case .lochePintade:
-            return [.jig, .montage]
-            
-        // Mérous - Jig et montage
-        case .merou:
-            return [.jig, .montage]
-            
-        // Empereurs - Montage principalement
-        case .empereur:
-            return [.montage, .palangrotte]
-            
-        // Vivaneaux - Montage et jig profond
-        case .vivaneauRouge:
-            return [.montage, .jig, .palangrotte]
-        case .vivaneauChienRouge:
-            return [.montage, .jig]
-        case .vivaneauQueueNoire:
-            return [.montage]
-            
-        // Bec de cane - Montage uniquement (pas traîne!)
-        case .becDeCane:
-            return [.montage, .palangrotte]
-            
-        // Coureur arc-en-ciel - Traîne
-        case .coureurArcEnCiel:
-            return [.traine]
+        case .thonJaune: return [.traine]
+        case .thonObese: return [.traine]
+        case .wahoo: return [.traine]
+        case .mahiMahi: return [.traine, .lancer]
+        case .marlin: return [.traine]
+        case .voilier: return [.traine]
+        case .bonite: return [.traine, .lancer]
+        case .thazard: return [.traine, .lancer]
+        case .thazardBatard: return [.traine]
+        case .carangue: return [.traine, .lancer]
+        case .carangueGT: return [.traine, .lancer, .jig]
+        case .carangueBleue: return [.traine, .lancer]
+        case .barracuda: return [.traine, .lancer]
+        case .becune: return [.traine, .lancer]
+        case .loche: return [.jig, .montage, .traine]
+        case .lochePintade: return [.jig, .montage]
+        case .merou: return [.jig, .montage]
+        case .empereur: return [.montage, .palangrotte]
+        case .vivaneauRouge: return [.montage, .jig, .palangrotte]
+        case .vivaneauChienRouge: return [.montage, .jig]
+        case .vivaneauQueueNoire: return [.montage]
+        case .becDeCane: return [.montage, .palangrotte]
+        case .coureurArcEnCiel: return [.traine]
         }
     }
     
-    /// Indique si cette espèce est pêchable à la traîne
     var estPechableEnTraine: Bool {
         typesPecheCompatibles.contains(.traine)
     }
 }
+
+// MARK: - Alias et extensions pour compatibilité
+
+typealias CategoriePeche = Zone
+
+extension Zone {
+    static var lagonCotier: Zone { .lagon }
+    static var passes: Zone { .passe }
+    static var hauturier: Zone { .large }
+}
+
+// MARK: - Structure pour la base de données JSON
+
+struct LeurreDatabase: Codable {
+    var metadata: DatabaseMetadata
+    var leurres: [Leurre]
+}
+
+struct DatabaseMetadata: Codable {
+    var version: String
+    var dateCreation: String
+    var derniereMiseAJour: String?  // ✅ RENDU OPTIONNEL
+    var nombreTotal: Int
+    var proprietaire: String
+    
+    // Champs additionnels du JSON qui peuvent être présents
+    var description: String?
+    var source: String?
+}
+
 // MARK: - Extensions pour l'affichage des couleurs avec support Custom
 
 extension Leurre {
