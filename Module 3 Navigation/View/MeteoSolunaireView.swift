@@ -102,8 +102,12 @@ struct DayPageView: View {
                     if !hourlyForecast.isEmpty {
                         previsionsHorairesSection
                     }
+                    // Section 4 : Marées du jour
+                    if !tideEvents.isEmpty {
+                        mareeSection
+                    }
                     
-                    // Section 4 : Périodes solunaires
+                    // Section 5 : Périodes solunaires
                     if solunarData != nil {
                         periodesSolunairesSection
                     }
@@ -111,11 +115,6 @@ struct DayPageView: View {
                     // Section 5 : Soleil & Lune
                     if solunarData != nil {
                         soleilLuneSection
-                    }
-                    
-                    // Section 6 : Marées
-                    if !tideEvents.isEmpty {
-                        mareeSection
                     }
                 }
             }
@@ -259,13 +258,44 @@ struct DayPageView: View {
                             color: .blue
                         )
                         
-                        MeteoCard(
-                            icon: "thermometer",
-                            label: "Temp. air",
-                            value: data.airTemperatureFormatted,
-                            detail: nil,
-                            color: .orange
-                        )
+                        // Températures air + eau regroupées
+                        VStack(spacing: 4) {
+                            Image(systemName: "thermometer")
+                                .font(.title2)
+                                .foregroundStyle(.orange)
+                            
+                            Text("Températures")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                            
+                            HStack(spacing: 8) {
+                                VStack(spacing: 2) {
+                                    Text("Air")
+                                        .font(.caption2)
+                                        .foregroundStyle(.secondary)
+                                    Text(data.airTemperatureFormatted)
+                                        .font(.subheadline)
+                                        .fontWeight(.semibold)
+                                }
+                                
+                                if let waterTemp = data.waterTemperatureFormatted {
+                                    Divider()
+                                        .frame(height: 20)
+                                    VStack(spacing: 2) {
+                                        Text("Eau")
+                                            .font(.caption2)
+                                            .foregroundStyle(.secondary)
+                                        Text(waterTemp)
+                                            .font(.subheadline)
+                                            .fontWeight(.semibold)
+                                    }
+                                }
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.orange.opacity(0.1))
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
                     
                     // MER & HOULE (regroupé)
@@ -333,60 +363,7 @@ struct DayPageView: View {
                         }
                     }
                     
-                    // TEMPÉRATURE (regroupé)
-                    LazyVGrid(columns: [
-                        GridItem(.flexible()),
-                        GridItem(.flexible())
-                    ], spacing: 12) {
-                        // Températures air + eau
-                        VStack(spacing: 4) {
-                            Image(systemName: "thermometer")
-                                .font(.title2)
-                                .foregroundStyle(.orange)
-                            
-                            Text("Températures")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                            
-                            HStack(spacing: 8) {
-                                VStack(spacing: 2) {
-                                    Text("Air")
-                                        .font(.caption2)
-                                        .foregroundStyle(.secondary)
-                                    Text(data.airTemperatureFormatted)
-                                        .font(.subheadline)
-                                        .fontWeight(.semibold)
-                                }
-                                
-                                if let waterTemp = data.waterTemperatureFormatted {
-                                    Divider()
-                                        .frame(height: 20)
-                                    VStack(spacing: 2) {
-                                        Text("Eau")
-                                            .font(.caption2)
-                                            .foregroundStyle(.secondary)
-                                        Text(waterTemp)
-                                            .font(.subheadline)
-                                            .fontWeight(.semibold)
-                                    }
-                                }
-                            }
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.orange.opacity(0.1))
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                        
-                        MeteoCard(
-                            icon: "eye",
-                            label: "Visibilité",
-                            value: data.visibilityFormatted,
-                            detail: nil,
-                            color: .green
-                        )
-                    }
-                    
-                    // MÉTÉO & ATMOSPHÈRE (regroupé)
+                    // MÉTÉO & ATMOSPHÈRE (sans pression)
                     LazyVGrid(columns: [
                         GridItem(.flexible()),
                         GridItem(.flexible())
@@ -422,15 +399,13 @@ struct DayPageView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                         }
                         
-                        if let pressure = data.pressureFormatted {
-                            MeteoCard(
-                                icon: "gauge",
-                                label: "Pression",
-                                value: pressure,
-                                detail: nil,
-                                color: .brown
-                            )
-                        }
+                        MeteoCard(
+                            icon: "eye",
+                            label: "Visibilité",
+                            value: data.visibilityFormatted,
+                            detail: nil,
+                            color: .green
+                        )
                     }
                 }
                 .padding()
@@ -529,33 +504,126 @@ struct DayPageView: View {
                         Spacer()
                     }
                     
-                    // Phase lunaire
-                    HStack(spacing: 16) {
-                        Text(solunar.moonEmoji)
-                            .font(.system(size: 60))
-                        
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(solunar.moonPhaseFrench)
-                                .font(.headline)
+                    // Timeline horizontale PLEINE LARGEUR avec infos lunaires
+                    HStack(spacing: 0) {
+                        // COLONNE SOLEIL
+                        VStack(spacing: 8) {
+                            HStack(spacing: 4) {
+                                Text("☀️").font(.system(size: 16))
+                                Text("Soleil")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
                             
-                            Text("Illumination: \(Int(solunar.moonIllumination * 100))%")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
+                            HStack(spacing: 20) {
+                                // Lever soleil
+                                VStack(spacing: 4) {
+                                    if let sunrise = solunar.sunrise {
+                                        Text(sunrise, format: .dateTime.hour().minute())
+                                            .font(.system(size: 18, weight: .bold))
+                                            .foregroundStyle(.orange)
+                                            .environment(\.locale, Locale(identifier: "fr_FR"))
+                                    }
+                                    
+                                    Image(systemName: "sunrise.fill")
+                                        .font(.title2)
+                                        .foregroundStyle(.orange)
+                                    
+                                    Text("Lever")
+                                        .font(.caption2)
+                                        .foregroundStyle(.secondary)
+                                }
+                                
+                                // Coucher soleil
+                                VStack(spacing: 4) {
+                                    if let sunset = solunar.sunset {
+                                        Text(sunset, format: .dateTime.hour().minute())
+                                            .font(.system(size: 18, weight: .bold))
+                                            .foregroundStyle(.orange)
+                                            .environment(\.locale, Locale(identifier: "fr_FR"))
+                                    }
+                                    
+                                    Image(systemName: "sunset.fill")
+                                        .font(.title2)
+                                        .foregroundStyle(.orange)
+                                    
+                                    Text("Coucher")
+                                        .font(.caption2)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
                         }
+                        .frame(maxWidth: .infinity)
                         
-                        Spacer()
+                        Divider()
+                            .frame(height: 80)
+                        
+                        // COLONNE LUNE
+                        VStack(spacing: 8) {
+                            HStack(spacing: 4) {
+                                Text(solunar.moonEmoji).font(.system(size: 16))
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(solunar.moonPhaseFrench)
+                                        .font(.caption)
+                                        .fontWeight(.semibold)
+                                        .foregroundStyle(.primary)
+                                    Text("Illumination: \(Int(solunar.moonIllumination * 100))%")
+                                        .font(.caption2)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                            
+                            HStack(spacing: 20) {
+                                // Lever lune
+                                VStack(spacing: 4) {
+                                    if let moonrise = solunar.moonrise {
+                                        Text(moonrise, format: .dateTime.hour().minute())
+                                            .font(.system(size: 18, weight: .bold))
+                                            .foregroundStyle(.purple)
+                                            .environment(\.locale, Locale(identifier: "fr_FR"))
+                                    } else {
+                                        Text("--:--")
+                                            .font(.system(size: 18, weight: .bold))
+                                            .foregroundStyle(.purple)
+                                    }
+                                    
+                                    Image(systemName: "moonrise.fill")
+                                        .font(.title2)
+                                        .foregroundStyle(.purple)
+                                    
+                                    Text("Lever")
+                                        .font(.caption2)
+                                        .foregroundStyle(.secondary)
+                                }
+                                
+                                // Coucher lune
+                                VStack(spacing: 4) {
+                                    if let moonset = solunar.moonset {
+                                        Text(moonset, format: .dateTime.hour().minute())
+                                            .font(.system(size: 18, weight: .bold))
+                                            .foregroundStyle(.purple)
+                                            .environment(\.locale, Locale(identifier: "fr_FR"))
+                                    } else {
+                                        Text("--:--")
+                                            .font(.system(size: 18, weight: .bold))
+                                            .foregroundStyle(.purple)
+                                    }
+                                    
+                                    Image(systemName: "moonset.fill")
+                                        .font(.title2)
+                                        .foregroundStyle(.purple)
+                                    
+                                    Text("Coucher")
+                                        .font(.caption2)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
                     }
                     .padding()
-                    .background(Color(.systemGray6))
+                    .background(Color(.systemGray6).opacity(0.5))
                     .clipShape(RoundedRectangle(cornerRadius: 12))
-                    
-                    // Timeline 24h
-                    TimelineView(events: [
-                        TimelineEvent(time: solunar.sunrise, label: "Lever", icon: "sunrise.fill", color: .orange, type: .sun),
-                        TimelineEvent(time: solunar.sunset, label: "Coucher", icon: "sunset.fill", color: .orange, type: .sun),
-                        TimelineEvent(time: solunar.moonrise, label: "Lever", icon: "moonrise.fill", color: .purple, type: .moon),
-                        TimelineEvent(time: solunar.moonset, label: "Coucher", icon: "moonset.fill", color: .purple, type: .moon)
-                    ].compactMap { $0 })
                 }
                 .padding()
                 .background(Color(.systemBackground))
@@ -565,18 +633,19 @@ struct DayPageView: View {
         }
     }
     
-    // MARK: - Section 6 : Marées
+    // MARK: - Section 6 : Marées du jour
     private var mareeSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Image(systemName: "water.waves")
                     .foregroundStyle(.cyan)
-                Text("Marées")
+                Text("Marées du jour")
                     .font(.headline)
                 Spacer()
             }
             
-            ForEach(Array(tideEvents.prefix(4)), id: \.time) { tide in
+            // Afficher toutes les marées du jour cible
+            ForEach(Array(todayTides), id: \.time) { tide in
                 HStack {
                     Image(systemName: tide.type == "high" ? "arrow.up.circle.fill" : "arrow.down.circle.fill")
                         .foregroundStyle(tide.type == "high" ? .blue : .orange)
@@ -593,7 +662,7 @@ struct DayPageView: View {
                     
                     Spacer()
                     
-                    Text(tide.time, style: .time)
+                    Text(tide.time, format: .dateTime.hour().minute())
                         .font(.headline)
                         .foregroundStyle(tide.type == "high" ? .blue : .orange)
                         .environment(\.locale, Locale(identifier: "fr_FR"))
@@ -607,6 +676,17 @@ struct DayPageView: View {
         .background(Color(.systemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .shadow(color: .black.opacity(0.05), radius: 8, y: 4)
+    }
+    
+    // Helper pour récupérer les marées du jour cible uniquement
+    private var todayTides: [TideEvent] {
+        let calendar = Calendar.current
+        let startOfDay = calendar.startOfDay(for: targetDate)
+        let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!
+        
+        return tideEvents.filter { tide in
+            tide.time >= startOfDay && tide.time < endOfDay
+        }.sorted { $0.time < $1.time }
     }
     
     // MARK: - Tide Helpers
@@ -658,17 +738,21 @@ struct DayPageView: View {
                 data.timestamp >= startOfDay && data.timestamp < endOfDay
             }
             
+            // Récupérer les marées avec une plage étendue pour couvrir tous les jours affichés
             let tides = try await stormglassService.fetchTideData(
                 latitude: coordinate.latitude,
                 longitude: coordinate.longitude
             )
             
-            // Filtrer marées de ce jour (+ quelques heures avant/après pour continuité graphique)
-            let extendedStart = Calendar.current.date(byAdding: .hour, value: -6, to: startOfDay)!
-            let extendedEnd = Calendar.current.date(byAdding: .hour, value: 6, to: endOfDay)!
+            // Pour le graphique du jour, on filtre sur 24h + marge
+            
+            
+            // Inclure quelques heures avant pour continuité du graphique
+            let graphStart = Calendar.current.date(byAdding: .hour, value: -6, to: startOfDay)!
+            let graphEnd = Calendar.current.date(byAdding: .hour, value: 6, to: endOfDay)!
             
             let dayTides = tides.filter { tide in
-                tide.time >= extendedStart && tide.time < extendedEnd
+                tide.time >= graphStart && tide.time < graphEnd
             }
             
             let solunar = try await solunarService.fetchSolunarData(
