@@ -2,39 +2,60 @@
 //  LocationService.swift
 //  Go Les Picots V.4
 //
-//  Module 3 : Navigation
-//  Service de géolocalisation avec gestion des permissions
+//  Service de gestion de la localisation GPS
 //
 
 import Foundation
 import CoreLocation
-import Observation
+import Combine
 
-/// Service de géolocalisation
-@Observable
-class LocationService: NSObject {
+@MainActor
+final class LocationService: NSObject, ObservableObject {
     
-    // MARK: - Properties
-    private let locationManager = CLLocationManager()
+    // MARK: - Published Properties
     
     /// Position actuelle de l'utilisateur
-    var currentLocation: CLLocation?
+    @Published var currentLocation: CLLocation?
     
-    /// Statut de l'autorisation
-    var authorizationStatus: CLAuthorizationStatus = .notDetermined
+    /// Statut d'autorisation
+    @Published var authorizationStatus: CLAuthorizationStatus = .notDetermined
     
     /// Indicateur de mise à jour en cours
-    var isUpdatingLocation = false
+    @Published var isUpdating: Bool = false
     
-    /// Dernière erreur
-    var lastError: LocationError?
+    /// Précision GPS actuelle (en mètres)
+    @Published var accuracy: CLLocationAccuracy = 0
     
-    // MARK: - Initializer
+    /// Erreur éventuelle
+    @Published var error: LocationError?
+    
+    // MARK: - Private Properties
+    
+    private let locationManager = CLLocationManager()
+    private var lastUpdateTime: Date?
+    
+    // MARK: - Configuration
+    
+    /// Précision souhaitée (meilleur compromis batterie/précision)
+    private let desiredAccuracy: CLLocationAccuracy = kCLLocationAccuracyBest
+    
+    /// Distance minimale pour mise à jour (en mètres)
+    private let distanceFilter: CLLocationDistance = 10
+    
+    // MARK: - Initialisation
+    
     override init() {
         super.init()
+        setupLocationManager()
+    }
+    
+    private func setupLocationManager() {
         locationManager.delegate = self
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        locationManager.distanceFilter = 10 // Mise à jour tous les 10m
+        locationManager.desiredAccuracy = desiredAccuracy
+        locationManager.distanceFilter = distanceFilter
+        locationManager.activityType = .otherNavigation // Pour usage bateau
+        
+        // Mise à jour statut initial
         authorizationStatus = locationManager.authorizationStatus
     }
     
@@ -45,131 +66,162 @@ class LocationService: NSObject {
         locationManager.requestWhenInUseAuthorization()
     }
     
-    /// Démarre la mise à jour de la localisation
+    /// Démarre les mises à jour de localisation
     func startUpdatingLocation() {
-        guard authorizationStatus == .authorizedWhenInUse || authorizationStatus == .authorizedAlways else {
-            lastError = .unauthorized
+        guard authorizationStatus == .authorizedWhenInUse ||
+              authorizationStatus == .authorizedAlways else {
+            error = .unauthorized
             return
         }
         
-        isUpdatingLocation = true
+        isUpdating = true
         locationManager.startUpdatingLocation()
+        locationManager.startUpdatingHeading() // Pour direction bateau
     }
     
-    /// Arrête la mise à jour de la localisation
+    /// Arrête les mises à jour de localisation
     func stopUpdatingLocation() {
-        isUpdatingLocation = false
+        isUpdating = false
         locationManager.stopUpdatingLocation()
+        locationManager.stopUpdatingHeading()
     }
     
-    /// Obtient une position unique
-    func requestLocation() async throws -> CLLocation {
-        guard authorizationStatus == .authorizedWhenInUse || authorizationStatus == .authorizedAlways else {
-            throw LocationError.unauthorized
+    /// Demande une position unique (pour marquage spot sans tracking)
+    func requestSingleLocation(completion: @escaping (Result<CLLocation, LocationError>) -> Void) {
+        guard authorizationStatus == .authorizedWhenInUse ||
+              authorizationStatus == .authorizedAlways else {
+            completion(.failure(.unauthorized))
+            return
         }
         
-        return try await withCheckedThrowingContinuation { continuation in
-            var hasResumed = false
-            
-            // Timeout de 10 secondes
-            DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
-                if !hasResumed {
-                    hasResumed = true
-                    continuation.resume(throwing: LocationError.timeout)
-                }
-            }
-            
-            // Demande une position unique
-            Task { @MainActor in
-                if let location = currentLocation, location.timestamp.timeIntervalSinceNow > -30 {
-                    // Position récente disponible
-                    if !hasResumed {
-                        hasResumed = true
-                        continuation.resume(returning: location)
-                    }
-                } else {
-                    // Attente nouvelle position
-                    locationManager.requestLocation()
-                }
+        locationManager.requestLocation()
+        
+        // Timeout 10 secondes
+        DispatchQueue.main.asyncAfter(deadline: .now() + 10) { [weak self] in
+            guard let self = self else { return }
+            if let location = self.currentLocation {
+                completion(.success(location))
+            } else {
+                completion(.failure(.timeout))
             }
         }
     }
     
-    /// Calcule la distance entre deux positions
-    func distance(from: CLLocationCoordinate2D, to: CLLocationCoordinate2D) -> Double {
-        let fromLocation = CLLocation(latitude: from.latitude, longitude: from.longitude)
-        let toLocation = CLLocation(latitude: to.latitude, longitude: to.longitude)
-        return fromLocation.distance(from: toLocation) / 1000.0 // en km
+    /// Vérifie si la localisation est disponible
+    var isLocationAvailable: Bool {
+        authorizationStatus == .authorizedWhenInUse ||
+        authorizationStatus == .authorizedAlways
+    }
+    
+    /// Vérifie si la précision est acceptable (< 50m)
+    var isAccuracyAcceptable: Bool {
+        guard let location = currentLocation else { return false }
+        return location.horizontalAccuracy < 50 && location.horizontalAccuracy >= 0
+    }
+    
+    /// Distance depuis un spot donné
+    func distance(to spot: FishingSpot) -> CLLocationDistance? {
+        guard let currentLocation = currentLocation else { return nil }
+        return spot.distance(from: currentLocation)
     }
 }
 
 // MARK: - CLLocationManagerDelegate
+
 extension LocationService: CLLocationManagerDelegate {
     
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let location = locations.last else { return }
-        currentLocation = location
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        if let clError = error as? CLError {
-            switch clError.code {
-            case .denied:
-                lastError = .denied
-            case .locationUnknown:
-                lastError = .locationUnknown
-            default:
-                lastError = .unknown(error)
+    nonisolated func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        Task { @MainActor in
+            self.authorizationStatus = manager.authorizationStatus
+            
+            // Démarrage auto si autorisé
+            if manager.authorizationStatus == .authorizedWhenInUse ||
+               manager.authorizationStatus == .authorizedAlways {
+                self.startUpdatingLocation()
             }
-        } else {
-            lastError = .unknown(error)
         }
     }
     
-    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        authorizationStatus = manager.authorizationStatus
-        
-        // Démarre automatiquement si autorisé
-        if authorizationStatus == .authorizedWhenInUse || authorizationStatus == .authorizedAlways {
-            if isUpdatingLocation {
-                startUpdatingLocation()
+    nonisolated func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        Task { @MainActor in
+            guard let location = locations.last else { return }
+            
+            // Filtrage des positions invalides
+            guard location.horizontalAccuracy >= 0 else { return }
+            
+            self.currentLocation = location
+            self.accuracy = location.horizontalAccuracy
+            self.lastUpdateTime = Date()
+            self.error = nil
+            
+            // Warning si précision médiocre
+            if location.horizontalAccuracy > 100 {
+                self.error = .poorAccuracy(location.horizontalAccuracy)
+            }
+        }
+    }
+    
+    nonisolated func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        Task { @MainActor in
+            if let clError = error as? CLError {
+                switch clError.code {
+                case .denied:
+                    self.error = .unauthorized
+                case .network:
+                    self.error = .networkUnavailable
+                case .locationUnknown:
+                    self.error = .locationUnknown
+                default:
+                    self.error = .other(error.localizedDescription)
+                }
+            } else {
+                self.error = .other(error.localizedDescription)
             }
         }
     }
 }
 
-// MARK: - Location Error
+// MARK: - LocationError
+
 enum LocationError: LocalizedError {
     case unauthorized
-    case denied
+    case networkUnavailable
     case locationUnknown
     case timeout
-    case unknown(Error)
+    case poorAccuracy(CLLocationAccuracy)
+    case other(String)
     
     var errorDescription: String? {
         switch self {
         case .unauthorized:
-            return "Autorisation de localisation non accordée"
-        case .denied:
-            return "Accès à la localisation refusé. Activez-le dans Réglages."
+            return "Accès à la localisation non autorisé"
+        case .networkUnavailable:
+            return "Réseau indisponible pour le GPS"
         case .locationUnknown:
-            return "Impossible de déterminer votre position"
+            return "Position inconnue"
         case .timeout:
-            return "Délai d'attente dépassé pour obtenir la position"
-        case .unknown(let error):
-            return "Erreur de localisation : \(error.localizedDescription)"
+            return "Délai de localisation dépassé"
+        case .poorAccuracy(let accuracy):
+            return "Précision GPS faible (±\(Int(accuracy))m)"
+        case .other(let message):
+            return message
         }
     }
-}
-
-// MARK: - Predefined Locations (pour tests)
-extension LocationService {
-    /// Coordonnées prédéfinies Nouvelle-Calédonie
-    static let predefinedLocations: [String: CLLocationCoordinate2D] = [
-        "Nouméa": CLLocationCoordinate2D(latitude: -22.2758, longitude: 166.4580),
-        "Île des Pins": CLLocationCoordinate2D(latitude: -22.5889, longitude: 167.4846),
-        "Bourail": CLLocationCoordinate2D(latitude: -21.5667, longitude: 165.4833),
-        "Koné": CLLocationCoordinate2D(latitude: -21.0594, longitude: 164.8606),
-        "Lifou": CLLocationCoordinate2D(latitude: -20.9167, longitude: 167.2667)
-    ]
+    
+    var recoverySuggestion: String? {
+        switch self {
+        case .unauthorized:
+            return "Autorisez l'accès dans Réglages > Go Les Picots > Localisation"
+        case .networkUnavailable:
+            return "Vérifiez votre connexion réseau"
+        case .locationUnknown:
+            return "Rapprochez-vous d'une fenêtre ou d'un espace dégagé"
+        case .timeout:
+            return "Réessayez dans quelques secondes"
+        case .poorAccuracy:
+            return "Rapprochez-vous d'une fenêtre pour améliorer la précision"
+        case .other:
+            return "Réessayez plus tard"
+        }
+    }
 }
