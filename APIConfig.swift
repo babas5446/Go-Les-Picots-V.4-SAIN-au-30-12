@@ -11,8 +11,8 @@ import Foundation
 
 struct APIConfig {
     /// Clé API OpenWeatherMap (météo)
-    static let openWeatherMapKey = "REMPLACER_PAR_VOTRE_CLE"
+    static let openWeatherMapKey = " "
     
     /// Clé API Stormglass.io (marées + soleil/lune + météo marine)
-    static let stormglassKey = "REMPLACER_PAR_VOTRE_CLE" // ⚠️ À REMPLACER
+    static let stormglassKey = " " // ⚠️ À REMPLACER
 }
