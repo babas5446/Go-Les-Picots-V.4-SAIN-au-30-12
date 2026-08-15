@@ -104,3 +104,4 @@ Secrets.swift
 *.moved-aside
 *.xccheckout
 *.xcscmblueprint
+*.xcuserstate
