@@ -158,7 +158,7 @@ struct ModuleGridView: View {
             color: Color(hex: "0277BD")
         ),
         ModuleItem(
-            title: "Météo",
+            title: "Marée·Soluniare",
             iconName: "Meteo",
             color: Color(hex: "FFBC42")
         ),
@@ -208,7 +208,7 @@ struct ModuleButton: View {
             if module.title == "Ma Boîte" ||
                module.title == "Suggestion IA" ||
                module.title == "Navigation" ||
-               module.title == "Météo" ||
+               module.title == "Marée·Solunaire" ||
                module.title == "Bibliothèque" ||
                module.title == "Statistiques" {
                 showingModule = true
@@ -254,7 +254,7 @@ struct ModuleButton: View {
                 NavigationStack {
                     NavigationMapView()
                 }
-            } else if module.title == "Météo" {
+            } else if module.title == "Marée·Solunaire" {
                 // 🆕 MODULE MÉTÉO AVEC STORMGLASS
                 MeteoSolunaireView()
             } else if module.title == "Bibliothèque" {
