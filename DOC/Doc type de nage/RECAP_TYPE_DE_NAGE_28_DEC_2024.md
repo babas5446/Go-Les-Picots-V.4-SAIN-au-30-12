@@ -367,7 +367,7 @@ struct LeurreFormView: View {
             typeDeNage: typeDeNage,
             typeDeNageCustom: typeDeNageCustom
         )
-        leureViewModel.ajouterLeurre(leurre)
+        BoiteLeurresViewModel.ajouterLeurre(leurre)
     }
 }
 ```
@@ -387,7 +387,7 @@ Go Les Picots V.4/
 │   └── ...
 │
 ├── ViewModels/
-│   ├── LeureViewModel.swift              [OK - pas de modif]
+│   ├── BoiteLeurresViewModel.swift              [OK - pas de modif]
 │   └── ...
 │
 ├── Views/

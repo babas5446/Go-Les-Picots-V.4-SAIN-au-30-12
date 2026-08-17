@@ -519,7 +519,7 @@ private struct BubbleSlot: View {
 
 private struct LeurreDetailSheet: View {
     let suggestion: SuggestionEngine.SuggestionResult
-    @StateObject private var viewModel = LeureViewModel()
+    @StateObject private var viewModel = BoiteLeurresViewModel()
     
     var body: some View {
         ScrollView {
@@ -752,7 +752,8 @@ private struct LeurreDetailSheet: View {
     // 📸 Photo du leurre
     private var photoLeurre: some View {
         Group {
-            if let image = viewModel.chargerPhoto(pourLeurre: suggestion.leurre) {
+            if let photoData = suggestion.leurre.photoData,
+               let image = UIImage(data: photoData) {
                 Image(uiImage: image)
                     .resizable()
                     .scaledToFit()

@@ -30,11 +30,11 @@ class SuggestionEngine: ObservableObject {
 
     
     // MARK: - Dependencies
-    private let leureViewModel: LeureViewModel
-    var nombreLeurres: Int { leureViewModel.leurres.count }
+    private let BoiteLeurresViewModel: BoiteLeurresViewModel
+    var nombreLeurres: Int { BoiteLeurresViewModel.tousLesLeurres.count }
     
-    init(leureViewModel: LeureViewModel) {
-        self.leureViewModel = leureViewModel
+    init(BoiteLeurresViewModel: BoiteLeurresViewModel) {
+        self.BoiteLeurresViewModel = BoiteLeurresViewModel
     }
     
     // MARK: - 📦 STRUCTURES DE RÉSULTATS
@@ -324,7 +324,7 @@ class SuggestionEngine: ObservableObject {
             // PHASE 1 : Filtrage Technique (40%)
             let leuresCompatibles = self.filtrerLeuresCompatibles(
                 conditions: conditions,
-                tousLeurres: self.leureViewModel.leurres
+                tousLeurres: self.BoiteLeurresViewModel.tousLesLeurres
             )
             
             guard !leuresCompatibles.isEmpty else {
@@ -409,7 +409,7 @@ class SuggestionEngine: ObservableObject {
             
             // 0. ⚡️ RÈGLE ABSOLUE : SEULS LES LEURRES DE TRAÎNE POUR LE SPREAD
             // Un leurre est valide s'il est compatible avec la traîne
-            guard leurre.estLeurreDeTraîne else {
+            guard leurre.estLeurreDeTraine else {
                 return false
             }
             

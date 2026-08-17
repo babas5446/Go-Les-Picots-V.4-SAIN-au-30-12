@@ -242,7 +242,7 @@ struct EditCouleurView: View {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(c.displayName)
                                     .font(.body)
-                                Text(c.description)
+                                Text(c.displayName)
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             }

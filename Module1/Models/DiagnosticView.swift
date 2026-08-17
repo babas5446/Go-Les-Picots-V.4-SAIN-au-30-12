@@ -1,19 +1,22 @@
 //
 //  DiagnosticView.swift
-//  Go les Picots - Module 1 Phase 2
+//  Go les Picots V.4 — Module 1
 //
-//  Vue de diagnostic pour identifier les problèmes de chargement
-//  Affiche l'état du système de fichiers et des ressources
+//  Vue de diagnostic — état du système SwiftData et des fichiers.
 //
-//  Created: 2024-12-19
+//  V4 — Adaptations SwiftData :
+//  - service.chargerLeurres() → FetchDescriptor sur ModelContext
+//  - service.reinitialiserBase() supprimé → non applicable en SwiftData
+//  - LeurreStorageService.shared utilisé uniquement pour accès ModelContainer
 //
 
 import SwiftUI
+import SwiftData
 
 struct DiagnosticView: View {
     @State private var diagnostics: DiagnosticInfo?
     @State private var isLoading = true
-    
+
     var body: some View {
         NavigationView {
             List {
@@ -21,12 +24,11 @@ struct DiagnosticView: View {
                     Section {
                         HStack {
                             ProgressView()
-                            Text("Analyse en cours...")
-                                .foregroundColor(.secondary)
+                            Text("Analyse en cours...").foregroundColor(.secondary)
                         }
                     }
                 } else if let diag = diagnostics {
-                    // Section Fichiers
+
                     Section(header: Text("📁 FICHIERS")) {
                         DiagnosticRow(
                             label: "JSON dans Bundle",
@@ -34,61 +36,33 @@ struct DiagnosticView: View {
                             status: diag.jsonInBundle ? .success : .error,
                             detail: diag.bundleJSONPath
                         )
-                        
                         DiagnosticRow(
                             label: "JSON dans Documents",
                             value: diag.jsonInDocuments ? "✅ Présent" : "❌ Manquant",
                             status: diag.jsonInDocuments ? .success : .error,
                             detail: diag.documentsJSONPath
                         )
-                        
                         if diag.jsonInDocuments {
-                            DiagnosticRow(
-                                label: "Taille du fichier",
-                                value: diag.fileSize,
-                                status: .info
-                            )
-                            
-                            DiagnosticRow(
-                                label: "Dernière modification",
-                                value: diag.lastModified,
-                                status: .info
-                            )
+                            DiagnosticRow(label: "Taille du fichier",     value: diag.fileSize,     status: .info)
+                            DiagnosticRow(label: "Dernière modification", value: diag.lastModified,  status: .info)
                         }
                     }
-                    
-                    // Section Données
+
                     Section(header: Text("📊 DONNÉES")) {
                         DiagnosticRow(
-                            label: "Nombre de leurres",
+                            label: "Leurres dans SwiftData",
                             value: "\(diag.leuresCount)",
                             status: diag.leuresCount > 0 ? .success : .warning
                         )
-                        
                         if diag.leuresCount > 0 {
-                            DiagnosticRow(
-                                label: "Leurres de traîne",
-                                value: "\(diag.traineCount)",
-                                status: .info
-                            )
-                            
-                            DiagnosticRow(
-                                label: "Avec photos",
-                                value: "\(diag.photosCount)",
-                                status: .info
-                            )
+                            DiagnosticRow(label: "Leurres de traîne", value: "\(diag.traineCount)", status: .info)
+                            DiagnosticRow(label: "Avec photos",       value: "\(diag.photosCount)", status: .info)
                         }
-                        
                         if let error = diag.loadError {
-                            DiagnosticRow(
-                                label: "Erreur de chargement",
-                                value: error,
-                                status: .error
-                            )
+                            DiagnosticRow(label: "Erreur", value: error, status: .error)
                         }
                     }
-                    
-                    // Section Images
+
                     Section(header: Text("🖼️ RESSOURCES")) {
                         DiagnosticRow(
                             label: "Template Spread",
@@ -97,33 +71,19 @@ struct DiagnosticView: View {
                             detail: diag.spreadTemplateExists ? "Image trouvée dans Assets" : "Utilisera le fallback"
                         )
                     }
-                    
-                    // Section Système
+
                     Section(header: Text("⚙️ SYSTÈME")) {
-                        DiagnosticRow(
-                            label: "Chemin Documents",
-                            value: diag.documentsPath,
-                            status: .info
-                        )
-                        
-                        DiagnosticRow(
-                            label: "Bundle ID",
-                            value: diag.bundleID,
-                            status: .info
-                        )
+                        DiagnosticRow(label: "Chemin Documents", value: diag.documentsPath, status: .info)
+                        DiagnosticRow(label: "Bundle ID",        value: diag.bundleID,      status: .info)
                     }
-                    
-                    // Section Actions
+
                     Section(header: Text("🔧 ACTIONS")) {
-                        Button(action: forceMigration) {
-                            Label("Forcer migration depuis bundle", systemImage: "arrow.clockwise")
-                        }
-                        
-                        Button(action: clearDocuments) {
-                            Label("Supprimer fichiers Documents", systemImage: "trash")
+                        // ✅ V4 : reinitialiserBase supprimé — non applicable SwiftData
+                        Button(action: clearDocumentsJSON) {
+                            Label("Supprimer leurres.json.bak", systemImage: "trash")
                         }
                         .foregroundColor(.red)
-                        
+
                         Button(action: refresh) {
                             Label("Actualiser diagnostic", systemImage: "arrow.triangle.2.circlepath")
                         }
@@ -132,19 +92,10 @@ struct DiagnosticView: View {
             }
             .navigationTitle("Diagnostic")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Fermer") {
-                        // Fermeture gérée par le parent
-                    }
-                }
-            }
         }
-        .onAppear {
-            refresh()
-        }
+        .onAppear { refresh() }
     }
-    
+
     private func refresh() {
         isLoading = true
         Task {
@@ -154,177 +105,128 @@ struct DiagnosticView: View {
             }
         }
     }
-    
-    private func forceMigration() {
-        let service = LeurreStorageService.shared
-        do {
-            try service.reinitialiserBase()
-            refresh()
-        } catch {
-            print("❌ Erreur migration : \(error)")
-        }
-    }
-    
-    private func clearDocuments() {
-        let fileManager = FileManager.default
-        let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        let jsonURL = documentsURL.appendingPathComponent("leurres_database_COMPLET.json")
-        
-        do {
-            if fileManager.fileExists(atPath: jsonURL.path) {
-                try fileManager.removeItem(at: jsonURL)
-                print("✅ Fichier JSON supprimé")
-            }
-            refresh()
-        } catch {
-            print("❌ Erreur suppression : \(error)")
-        }
+
+    private func clearDocumentsJSON() {
+        let fm = FileManager.default
+        let docs = fm.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let bak  = docs.appendingPathComponent("leurres.json.bak")
+        try? fm.removeItem(at: bak)
+        print("🗑️ leurres.json.bak supprimé")
+        refresh()
     }
 }
 
-// MARK: - Diagnostic Row
+// MARK: - DiagnosticRow
 
 struct DiagnosticRow: View {
     let label: String
     let value: String
     let status: DiagnosticStatus
     var detail: String?
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             HStack {
-                Text(label)
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                
+                Text(label).font(.subheadline).foregroundColor(.secondary)
                 Spacer()
-                
-                Text(value)
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .foregroundColor(status.color)
+                Text(value).font(.subheadline).fontWeight(.semibold).foregroundColor(status.color)
             }
-            
             if let detail = detail {
-                Text(detail)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .lineLimit(2)
+                Text(detail).font(.caption).foregroundColor(.secondary).lineLimit(2)
             }
         }
         .padding(.vertical, 4)
     }
 }
 
-// MARK: - Diagnostic Status
+// MARK: - DiagnosticStatus
 
 enum DiagnosticStatus {
-    case success
-    case warning
-    case error
-    case info
-    
+    case success, warning, error, info
+
     var color: Color {
         switch self {
         case .success: return .green
         case .warning: return .orange
-        case .error: return .red
-        case .info: return .blue
+        case .error:   return .red
+        case .info:    return .blue
         }
     }
 }
 
-// MARK: - Diagnostic Info
+// MARK: - DiagnosticInfo
 
 struct DiagnosticInfo {
-    // Fichiers
-    let jsonInBundle: Bool
-    let jsonInDocuments: Bool
-    let bundleJSONPath: String
-    let documentsJSONPath: String
-    let fileSize: String
-    let lastModified: String
-    
-    // Données
-    let leuresCount: Int
-    let traineCount: Int
-    let photosCount: Int
-    let loadError: String?
-    
-    // Ressources
+    let jsonInBundle:       Bool
+    let jsonInDocuments:    Bool
+    let bundleJSONPath:     String
+    let documentsJSONPath:  String
+    let fileSize:           String
+    let lastModified:       String
+    let leuresCount:        Int
+    let traineCount:        Int
+    let photosCount:        Int
+    let loadError:          String?
     let spreadTemplateExists: Bool
-    
-    // Système
-    let documentsPath: String
-    let bundleID: String
-    
+    let documentsPath:      String
+    let bundleID:           String
+
+    @MainActor
     static func gather() -> DiagnosticInfo {
-        let fileManager = FileManager.default
-        
-        // Chemins
-        let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        let jsonURL = documentsURL.appendingPathComponent("leurres_database_COMPLET.json")
+        let fm    = FileManager.default
+        let docsURL  = fm.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let jsonURL  = docsURL.appendingPathComponent("leurres.json")
         let bundleURL = Bundle.main.url(forResource: "leurres_database_COMPLET", withExtension: "json")
-        
-        // Vérification fichiers
-        let jsonInBundle = bundleURL != nil
-        let jsonInDocuments = fileManager.fileExists(atPath: jsonURL.path)
-        
-        // Taille et date
-        var fileSize = "N/A"
+
+        let jsonInBundle    = bundleURL != nil
+        let jsonInDocuments = fm.fileExists(atPath: jsonURL.path)
+
+        var fileSize     = "N/A"
         var lastModified = "N/A"
-        
-        if jsonInDocuments {
-            if let attributes = try? fileManager.attributesOfItem(atPath: jsonURL.path) {
-                if let size = attributes[.size] as? Int64 {
-                    fileSize = ByteCountFormatter.string(fromByteCount: size, countStyle: .file)
-                }
-                if let date = attributes[.modificationDate] as? Date {
-                    let formatter = DateFormatter()
-                    formatter.dateStyle = .short
-                    formatter.timeStyle = .short
-                    lastModified = formatter.string(from: date)
-                }
+        if jsonInDocuments,
+           let attrs = try? fm.attributesOfItem(atPath: jsonURL.path) {
+            if let size = attrs[.size] as? Int64 {
+                fileSize = ByteCountFormatter.string(fromByteCount: size, countStyle: .file)
+            }
+            if let date = attrs[.modificationDate] as? Date {
+                let fmt = DateFormatter()
+                fmt.dateStyle = .short
+                fmt.timeStyle = .short
+                lastModified = fmt.string(from: date)
             }
         }
-        
-        // Chargement des données
+
+        // ✅ V4 : lecture via ModelContext SwiftData
         var leuresCount = 0
         var traineCount = 0
         var photosCount = 0
         var loadError: String?
-        
+
         do {
-            let service = LeurreStorageService.shared
-            let leurres = try service.chargerLeurres()
+            let context = LeurreStorageService.shared.mainContext
+            let descriptor = FetchDescriptor<Leurre>()
+            let leurres = try context.fetch(descriptor)
             leuresCount = leurres.count
             traineCount = leurres.filter { $0.typePeche == .traine }.count
-            photosCount = leurres.filter { $0.photoPath != nil }.count
+            photosCount = leurres.filter { $0.photoData != nil }.count
         } catch {
             loadError = error.localizedDescription
         }
-        
-        // Ressources
-        let spreadTemplateExists = UIImage(named: "spread_template_ok") != nil
-        
-        // Système
-        let documentsPath = documentsURL.path
-        let bundleID = Bundle.main.bundleIdentifier ?? "N/A"
-        
+
         return DiagnosticInfo(
-            jsonInBundle: jsonInBundle,
-            jsonInDocuments: jsonInDocuments,
-            bundleJSONPath: bundleURL?.path ?? "Non trouvé",
-            documentsJSONPath: jsonURL.path,
-            fileSize: fileSize,
-            lastModified: lastModified,
-            leuresCount: leuresCount,
-            traineCount: traineCount,
-            photosCount: photosCount,
-            loadError: loadError,
-            spreadTemplateExists: spreadTemplateExists,
-            documentsPath: documentsPath,
-            bundleID: bundleID
+            jsonInBundle:        jsonInBundle,
+            jsonInDocuments:     jsonInDocuments,
+            bundleJSONPath:      bundleURL?.path ?? "Non trouvé",
+            documentsJSONPath:   jsonURL.path,
+            fileSize:            fileSize,
+            lastModified:        lastModified,
+            leuresCount:         leuresCount,
+            traineCount:         traineCount,
+            photosCount:         photosCount,
+            loadError:           loadError,
+            spreadTemplateExists: UIImage(named: "spread_template_ok") != nil,
+            documentsPath:       docsURL.path,
+            bundleID:            Bundle.main.bundleIdentifier ?? "N/A"
         )
     }
 }

@@ -417,7 +417,7 @@ struct SuggestionCard: View {
     let suggestion: SuggestionEngine.SuggestionResult
     let isExpanded: Bool
     let onToggle: () -> Void
-    @StateObject private var viewModel = LeureViewModel()
+    @StateObject private var viewModel = BoiteLeurresViewModel()
     
     private var scoreInt: Int {
         Int(suggestion.scoreTotal)
@@ -549,7 +549,8 @@ struct SuggestionCard: View {
     
     @ViewBuilder
     private var photoSection: some View {
-        if let image = viewModel.chargerPhoto(pourLeurre: suggestion.leurre) {
+        if let photoData = suggestion.leurre.photoData,
+           let image = UIImage(data: photoData) {
             Image(uiImage: image)
                 .resizable()
                 .scaledToFit()
@@ -668,7 +669,7 @@ struct SuggestionCard: View {
 struct SuggestionCardCompact: View {
     let suggestion: SuggestionEngine.SuggestionResult
     var showPositionBadge: Bool = false  // Nouveau paramètre
-    @StateObject private var viewModel = LeureViewModel()
+    @StateObject private var viewModel = BoiteLeurresViewModel()
     @State private var showingDetail = false
     
     private var scoreInt: Int {

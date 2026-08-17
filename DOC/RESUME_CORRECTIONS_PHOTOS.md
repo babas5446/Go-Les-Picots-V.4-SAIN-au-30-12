@@ -127,10 +127,10 @@ Au lieu d'un simple texte "Aucune photo", j'ai créé un placeholder élégant :
 
 ### Chargement de la Photo
 
-J'utilise la méthode existante du `LeureViewModel` :
+J'utilise la méthode existante du `BoiteLeurresViewModel` :
 
 ```swift
-@StateObject private var viewModel = LeureViewModel()
+@StateObject private var viewModel = BoiteLeurresViewModel()
 
 // Dans la vue
 if let image = viewModel.chargerPhoto(pourLeurre: suggestion.leurre) {
@@ -201,17 +201,17 @@ Si pas de photo, j'affiche :
 ## 📝 Fichiers Modifiés
 
 1. ✅ **SpreadSchemaView.swift**
-   - Ajout `@StateObject private var viewModel = LeureViewModel()`
+   - Ajout `@StateObject private var viewModel = BoiteLeurresViewModel()`
    - Nouvelle computed property `photoLeurre`
    - Affichage modèle
    - Affichage couleur secondaire
 
 2. ✅ **SpreadVisualizationView.swift**
-   - Ajout `@StateObject private var viewModel = LeureViewModel()`
+   - Ajout `@StateObject private var viewModel = BoiteLeurresViewModel()`
    - Photo dans `if isExpanded` des cards
 
 3. ✅ **SuggestionResultView.swift**
-   - Ajout `@StateObject private var viewModel = LeureViewModel()`
+   - Ajout `@StateObject private var viewModel = BoiteLeurresViewModel()`
    - Photo dans `if isExpanded` des cards
    - Affichage modèle
 

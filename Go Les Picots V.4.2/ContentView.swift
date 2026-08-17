@@ -3,43 +3,47 @@
 //  Go Les Picots V.4
 //
 //  MODULE 0 - Écran d'accueil
-//  VERSION AVEC STORMGLASS
+//
+//  V4 — Adaptations SwiftData :
+//  - BoiteLeurresViewModel renommé boiteVM (conflit nom variable/type → Circular reference)
+//  - @Query var leurres pour passer la liste à ExportImportView
+//  - chargerLeurres() supprimé → alert OK suffit
 //
 
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
-    // ViewModels partagés pour l'app
-    
-    @StateObject private var leureViewModel = LeureViewModel()
-    @StateObject private var suggestionEngine: SuggestionEngine
-    @StateObject private var navigationCoordinator = NavigationCoordinator()
-    
-    // État pour le diagnostic
-    @State private var showingDiagnostic = false
-    @State private var showExportImport = false
 
-    
+    // ✅ V4 : renommé boiteVM — évite le Circular reference (variable ≠ type)
+    @StateObject private var boiteVM             = BoiteLeurresViewModel()
+    @StateObject private var suggestionEngine:     SuggestionEngine
+    @StateObject private var navigationCoordinator = NavigationCoordinator()
+
+    @State private var showingDiagnostic = false
+    @State private var showExportImport  = false
+
+    // ✅ V4 : @Query pour passer la liste à ExportImportView
+    @Query private var leurres: [Leurre]
+
     init() {
-        let lvm = LeureViewModel()
-        _leureViewModel = StateObject(wrappedValue: lvm)
-        _suggestionEngine = StateObject(wrappedValue: SuggestionEngine(leureViewModel: lvm))
+        let vm = BoiteLeurresViewModel()
+        _boiteVM        = StateObject(wrappedValue: vm)
+        _suggestionEngine = StateObject(wrappedValue: SuggestionEngine(BoiteLeurresViewModel: vm))
     }
-    
+
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
-                // BANDEAU EN HAUT
                 HomeBannerView()
-                
-                // GRILLE 2x2 DES MODULES
+
                 ModuleGridView(
-                    leureViewModel: leureViewModel,
+                    boiteVM: boiteVM,
                     suggestionEngine: suggestionEngine,
                     navigationCoordinator: navigationCoordinator
                 )
                 .padding(.top, 30)
-                
+
                 Spacer()
             }
             .background(Color(hex: "F5F5F5"))
@@ -51,9 +55,9 @@ struct ContentView: View {
                         } label: {
                             Label("Export/Import", systemImage: "arrow.up.arrow.down.circle")
                         }
-                        
+
                         Divider()
-                        
+
                         Button {
                             showingDiagnostic = true
                         } label: {
@@ -66,7 +70,6 @@ struct ContentView: View {
                 }
             }
         }
-        // ✅ FULLSCREEN COVER AU NIVEAU RACINE
         .fullScreenCover(isPresented: $navigationCoordinator.showResults) {
             NavigationStack {
                 if !navigationCoordinator.suggestions.isEmpty {
@@ -85,36 +88,35 @@ struct ContentView: View {
                 } else {
                     VStack {
                         ProgressView()
-                        Text("Chargement des résultats...")
-                            .padding()
+                        Text("Chargement des résultats...").padding()
                     }
                 }
             }
         }
-        .alert("Erreur de chargement", isPresented: $leureViewModel.showError) {
-            Button("OK", role: .cancel) { }
-            Button("Recharger") {
-                leureViewModel.chargerLeurres()
+        // ✅ V4 : chargerLeurres() supprimé — bouton OK suffit
+        .alert("Erreur", isPresented: $boiteVM.showError) {
+            Button("OK", role: .cancel) {
+                boiteVM.errorMessage = nil
             }
         } message: {
-            if let errorMessage = leureViewModel.errorMessage {
-                Text(errorMessage)
-            }
+            if let msg = boiteVM.errorMessage { Text(msg) }
         }
         .sheet(isPresented: $showingDiagnostic) {
             DiagnosticView()
         }
         .sheet(isPresented: $showExportImport) {
-            ExportImportView(viewModel: leureViewModel)
+            // ✅ V4 : leurres passé depuis @Query
+            ExportImportView(viewModel: boiteVM, leurres: leurres)
         }
         .onChange(of: navigationCoordinator.showResults) { oldValue, newValue in
-            print("🔄 ContentView - showResults changed: \(oldValue) → \(newValue)")
-            print("📊 ContentView - Nombre de suggestions: \(navigationCoordinator.suggestions.count)")
+            print("🔄 ContentView - showResults: \(oldValue) → \(newValue)")
+            print("📊 Suggestions: \(navigationCoordinator.suggestions.count)")
         }
     }
 }
 
 // MARK: - Bandeau
+
 struct HomeBannerView: View {
     var body: some View {
         Image("Banner")
@@ -126,55 +128,30 @@ struct HomeBannerView: View {
 }
 
 // MARK: - Modèle de données
+
 struct ModuleItem: Identifiable {
-    let id = UUID()
-    let title: String
+    let id    = UUID()
+    let title:    String
     let iconName: String
-    let color: Color
+    let color:    Color
 }
 
-// MARK: - Grille des 4 modules
+// MARK: - Grille des modules
+
 struct ModuleGridView: View {
-    let leureViewModel: LeureViewModel
-    let suggestionEngine: SuggestionEngine
+    let boiteVM:              BoiteLeurresViewModel
+    let suggestionEngine:     SuggestionEngine
     let navigationCoordinator: NavigationCoordinator
-    
-    let modules : [ModuleItem] = [
-        // Ligne 1
-        ModuleItem(
-            title: "Ma Boîte",
-            iconName: "BoitePhysique",
-            color: Color(hex: "0277BD")
-        ),
-        ModuleItem(
-            title: "Suggestion IA",
-            iconName: "BoiteIA",
-            color: Color(hex: "FFBC42")
-        ),
-        // Ligne 2
-        ModuleItem(
-            title: "Navigation",
-            iconName: "Navigation",
-            color: Color(hex: "0277BD")
-        ),
-        ModuleItem(
-            title: "Marée·Soluniare",
-            iconName: "Meteo",
-            color: Color(hex: "FFBC42")
-        ),
-        // Ligne 3
-        ModuleItem(
-            title: "Bibliothèque",
-            iconName: "Bibliotheque",
-            color: Color(hex: "0277BD")
-        ),
-        ModuleItem(
-            title: "Statistiques",
-            iconName: "Statistiques",
-            color: Color(hex: "FFBC42")
-        )
+
+    let modules: [ModuleItem] = [
+        ModuleItem(title: "Ma Boîte",         iconName: "BoitePhysique",  color: Color(hex: "0277BD")),
+        ModuleItem(title: "Suggestion IA",    iconName: "BoiteIA",        color: Color(hex: "FFBC42")),
+        ModuleItem(title: "Navigation",       iconName: "Navigation",     color: Color(hex: "0277BD")),
+        ModuleItem(title: "Marée·Solunaire",  iconName: "Meteo",          color: Color(hex: "FFBC42")),
+        ModuleItem(title: "Bibliothèque",     iconName: "Bibliotheque",   color: Color(hex: "0277BD")),
+        ModuleItem(title: "Journal Sorties",     iconName: "Statistiques",   color: Color(hex: "FFBC42"))
     ]
-    
+
     var body: some View {
         LazyVGrid(columns: [
             GridItem(.flexible(), spacing: 20),
@@ -183,7 +160,7 @@ struct ModuleGridView: View {
             ForEach(modules) { module in
                 ModuleButton(
                     module: module,
-                    leureViewModel: leureViewModel,
+                    boiteVM: boiteVM,
                     suggestionEngine: suggestionEngine,
                     navigationCoordinator: navigationCoordinator
                 )
@@ -194,41 +171,29 @@ struct ModuleGridView: View {
 }
 
 // MARK: - Bouton de module
+
 struct ModuleButton: View {
-    let module: ModuleItem
-    let leureViewModel: LeureViewModel
-    let suggestionEngine: SuggestionEngine
+    let module:               ModuleItem
+    let boiteVM:              BoiteLeurresViewModel
+    let suggestionEngine:     SuggestionEngine
     let navigationCoordinator: NavigationCoordinator
-    
+
     @State private var showingModule = false
-    
+
     var body: some View {
-        Button(action: {
-            // Tous les modules sont maintenant actifs
-            if module.title == "Ma Boîte" ||
-               module.title == "Suggestion IA" ||
-               module.title == "Navigation" ||
-               module.title == "Marée·Solunaire" ||
-               module.title == "Bibliothèque" ||
-               module.title == "Statistiques" {
-                showingModule = true
-            }
-        }) {
+        Button(action: { showingModule = true }) {
             VStack(spacing: 12) {
-                // Icône
                 Image(module.iconName)
                     .resizable()
                     .scaledToFit()
                     .frame(width: 100, height: 100)
                     .clipShape(RoundedRectangle(cornerRadius: 20))
                     .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
-                
-                // Label
+
                 Text(module.title)
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(Color(hex: "0277BD"))
                     .multilineTextAlignment(.center)
-                
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 15)
@@ -241,7 +206,7 @@ struct ModuleButton: View {
             if module.title == "Ma Boîte" {
                 NavigationStack {
                     BoiteView()
-                        .environmentObject(leureViewModel)
+                        .environmentObject(boiteVM)
                 }
             } else if module.title == "Suggestion IA" {
                 NavigationStack {
@@ -251,26 +216,20 @@ struct ModuleButton: View {
                     )
                 }
             } else if module.title == "Navigation" {
-                NavigationStack {
-                    NavigationMapView()
-                }
+                NavigationStack { NavigationMapView() }
             } else if module.title == "Marée·Solunaire" {
-                // 🆕 MODULE MÉTÉO AVEC STORMGLASS
-                MeteoSolunaireView()
+                NavigationStack { SolunarView() }
             } else if module.title == "Bibliothèque" {
-                NavigationStack {
-                    BibliothequeMenuView()
-                }
-            } else if module.title == "Statistiques" {
-                NavigationStack {
-                    StatistiquesView()
-                }
+                NavigationStack { BibliothequeMenuView() }
+            } else if module.title == "Journal Sorties" {
+                NavigationStack { JournalView() }
             }
         }
     }
 }
 
 // MARK: - Preview
+
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()

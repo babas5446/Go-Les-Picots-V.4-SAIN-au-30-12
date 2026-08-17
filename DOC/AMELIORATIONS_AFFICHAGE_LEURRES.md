@@ -28,7 +28,7 @@ Lors de la consultation des suggestions dans les vues **SpreadSuggestionView** e
 ```swift
 private struct LeurreDetailSheet: View {
     let suggestion: SuggestionEngine.SuggestionResult
-    @StateObject private var viewModel = LeureViewModel()  // ✅ NOUVEAU
+    @StateObject private var viewModel = BoiteLeurresViewModel()  // ✅ NOUVEAU
 ```
 
 **b) Affichage de la photo en haut de la fiche**
@@ -133,7 +133,7 @@ struct PositionDetailCard: View {
     let suggestion: SuggestionEngine.SuggestionResult
     let position: PositionSpread
     @State private var isExpanded = false
-    @StateObject private var viewModel = LeureViewModel()  // ✅ NOUVEAU
+    @StateObject private var viewModel = BoiteLeurresViewModel()  // ✅ NOUVEAU
 ```
 
 **b) Affichage de la photo dans les détails expandables**
@@ -170,7 +170,7 @@ struct SuggestionCard: View {
     let suggestion: SuggestionEngine.SuggestionResult
     let isExpanded: Bool
     let onToggle: () -> Void
-    @StateObject private var viewModel = LeureViewModel()  // ✅ NOUVEAU
+    @StateObject private var viewModel = BoiteLeurresViewModel()  // ✅ NOUVEAU
 ```
 
 **b) Affichage de la photo en haut de la card expandée**

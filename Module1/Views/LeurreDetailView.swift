@@ -1,75 +1,65 @@
 //
 //  LeurreDetailView.swift
-//  Go les Picots - Module 1 : Ma Boîte à Leurres
+//  Go les Picots V.4 — Module 1
 //
-//  Vue détaillée d'un leurre avec toutes ses caractéristiques
+//  Vue détaillée d'un leurre avec toutes ses caractéristiques.
 //
-//  MODIFIÉ: 2024-12-10 - Adaptation Phase 2 (nouveau modèle + LeurreFormView)
+//  V4 — Adaptations SwiftData :
+//  - chargerPhoto(pourLeurre:) supprimé → lecture directe de leurre.photoData
+//  - finition.description supprimé (membre réservé) → finition.conditionsIdeales
+//  - carteNonCalcule : mutation directe sur @Model, sans copie var
 //
 
 import SwiftUI
 
 struct LeurreDetailView: View {
-    let leurre: Leurre
-    @ObservedObject var viewModel: LeureViewModel
+    @Bindable var leurre: Leurre
+    @ObservedObject var viewModel: BoiteLeurresViewModel
     @Environment(\.dismiss) private var dismiss
-    
-    @State private var showingEditer = false
+
+    @State private var showingEditer    = false
     @State private var showingDupliquer = false
     @State private var showingSupprimer = false
-    
+
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
-                // Photo principale
                 photoPrincipale
-                
-                // Informations de base
                 carteInformationsBase
-                
-                // Types de nage (multi-sélection)
+
                 if let typesDeNage = leurre.typesDeNage, !typesDeNage.isEmpty {
                     carteTypeDeNage
                 }
-                
-                // Performance (seulement si traîne)
+
                 if leurre.typePeche == .traine {
                     cartePerformance
                 }
-                
-                // Espèces cibles (affichage des valeurs FINALES)
-                // ✅ Toujours afficher (déduction automatique si JSON vide)
+
                 if !leurre.especesCiblesFinales.isEmpty {
                     carteEspecesCibles
                 }
-                
-                // Zones adaptées (affichage des valeurs FINALES)
-                // ✅ Toujours afficher (déduction automatique si JSON vide)
+
                 if !leurre.zonesAdapteesFinales.isEmpty {
                     carteZonesAdaptees
                 }
-                
-                // Positions spread (si calculées et traîne)
+
                 if leurre.typePeche == .traine,
                    let positions = leurre.positionsSpread, !positions.isEmpty {
                     cartePositionsSpread
                 }
-                
-                // Conditions optimales (si calculées)
+
                 if let conditions = leurre.conditionsOptimales {
                     carteConditionsOptimales(conditions)
                 }
-                
-                // Notes
+
                 if let notes = leurre.notes, !notes.isEmpty {
                     carteNotes(notes)
                 }
-                
-                // Indicateur de calcul
+
                 if !leurre.isComputed {
                     carteNonCalcule
                 }
-                
+
                 Spacer(minLength: 40)
             }
             .padding()
@@ -95,33 +85,30 @@ struct LeurreDetailView: View {
                 }
             }
         }
-        // ═══════════════════════════════════════════════════════════
-        // MODIFICATION PHASE 2 : Utiliser LeurreFormView
-        // ═══════════════════════════════════════════════════════════
         .sheet(isPresented: $showingEditer) {
             LeurreFormView(viewModel: viewModel, mode: .edition(leurre))
         }
         .sheet(isPresented: $showingDupliquer) {
             LeurreFormView(viewModel: viewModel, mode: .duplication(leurre))
         }
-        
         .alert("Supprimer ce leurre ?", isPresented: $showingSupprimer) {
             Button("Annuler", role: .cancel) { }
             Button("Supprimer", role: .destructive) {
                 viewModel.supprimerLeurre(leurre)
-                dismiss()  // Retour à la liste après suppression
+                dismiss()
             }
         } message: {
             Text("Cette action est irréversible.")
         }
     }
-    
+
     // MARK: - Photo principale
-    
+
     private var photoPrincipale: some View {
         ZStack(alignment: .topTrailing) {
-            // Photo ou placeholder
-            if let image = viewModel.chargerPhoto(pourLeurre: leurre) {
+            // ✅ V4 : lecture directe de leurre.photoData — plus de chargerPhoto()
+            if let photoData = leurre.photoData,
+               let image = UIImage(data: photoData) {
                 Image(uiImage: image)
                     .resizable()
                     .scaledToFit()
@@ -141,10 +128,8 @@ struct LeurreDetailView: View {
                     }
                 }
             }
-            
-            // Badges en haut à droite
+
             VStack(alignment: .trailing, spacing: 8) {
-                // Badge type de pêche
                 Text(leurre.typePeche.displayName)
                     .font(.caption)
                     .fontWeight(.semibold)
@@ -153,10 +138,9 @@ struct LeurreDetailView: View {
                     .background(Color(hex: "0277BD"))
                     .foregroundColor(.white)
                     .cornerRadius(12)
-                
-                // Badge contraste (si calculé)
+
                 if let contraste = leurre.contraste {
-                    Text(contraste.displayName)
+                    Text(leurre.profilVisuel.displayName)
                         .font(.caption)
                         .fontWeight(.semibold)
                         .padding(.horizontal, 12)
@@ -169,38 +153,37 @@ struct LeurreDetailView: View {
             .padding(12)
         }
     }
-    
+
     // MARK: - Carte informations de base
-    
+
     private var carteInformationsBase: some View {
         VStack(alignment: .leading, spacing: 16) {
             SectionHeader(title: "Informations générales", icon: "info.circle.fill")
-            
+
             VStack(spacing: 12) {
                 InfoRow(label: "Marque", value: leurre.marque)
-                
+
                 if let modele = leurre.modele, !modele.isEmpty {
                     InfoRow(label: "Modèle", value: modele)
                 }
-                
+
                 InfoRow(label: "Type leurre", value: leurre.typeLeurre.displayName)
-                InfoRow(label: "Type pêche", value: leurre.typePeche.displayName)
-                InfoRow(label: "Longueur", value: "\(Int(leurre.longueur)) cm")
-                
+                InfoRow(label: "Type pêche",  value: leurre.typePeche.displayName)
+                InfoRow(label: "Longueur",    value: "\(Int(leurre.longueur)) cm")
+
                 if let poids = leurre.poids {
                     InfoRow(label: "Poids", value: "\(Int(poids)) g")
                 }
-                
+
                 // Couleurs
                 HStack(alignment: .top) {
                     Text("Couleurs :")
                         .font(.subheadline)
                         .foregroundColor(.gray)
                         .frame(width: 100, alignment: .leading)
-                    
+
                     VStack(alignment: .leading, spacing: 4) {
                         HStack(spacing: 8) {
-                            // ✅ CORRECTION : Utiliser couleurPrincipaleAffichage
                             let principaleInfo = leurre.couleurPrincipaleAffichage
                             if principaleInfo.isRainbow {
                                 RainbowCircle(size: 16, showBorder: true)
@@ -213,8 +196,7 @@ struct LeurreDetailView: View {
                                 .font(.subheadline)
                                 .fontWeight(.semibold)
                         }
-                        
-                        // ✅ CORRECTION : Utiliser couleurSecondaireAffichage
+
                         if let secondaireInfo = leurre.couleurSecondaireAffichage {
                             HStack(spacing: 8) {
                                 if secondaireInfo.isRainbow {
@@ -230,11 +212,11 @@ struct LeurreDetailView: View {
                             }
                         }
                     }
-                    
+
                     Spacer()
                 }
-                
-                // Finition (si présente)
+
+                // Finition
                 if let finition = leurre.finition {
                     VStack(alignment: .leading, spacing: 6) {
                         HStack {
@@ -242,7 +224,7 @@ struct LeurreDetailView: View {
                                 .font(.subheadline)
                                 .foregroundColor(.gray)
                                 .frame(width: 100, alignment: .leading)
-                            
+
                             HStack(spacing: 6) {
                                 Image(systemName: "sparkles")
                                     .foregroundColor(Color(hex: "FFBC42"))
@@ -251,25 +233,19 @@ struct LeurreDetailView: View {
                                     .font(.subheadline)
                                     .fontWeight(.semibold)
                             }
-                            
+
                             Spacer()
                         }
-                        
-                        // Description de la finition
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(finition.description)
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                                .fixedSize(horizontal: false, vertical: true)
-                            
-                            HStack(spacing: 4) {
-                                Image(systemName: "lightbulb.fill")
-                                    .font(.caption2)
-                                    .foregroundColor(.blue)
-                                Text(finition.conditionsIdeales)
-                                    .font(.caption2)
-                                    .foregroundColor(.blue)
-                            }
+
+                        // ✅ V4 : finition.description supprimé (membre réservé)
+                        // On affiche uniquement conditionsIdeales
+                        HStack(spacing: 4) {
+                            Image(systemName: "lightbulb.fill")
+                                .font(.caption2)
+                                .foregroundColor(.blue)
+                            Text(finition.conditionsIdeales)
+                                .font(.caption2)
+                                .foregroundColor(.blue)
                         }
                         .padding(.leading, 100)
                     }
@@ -281,14 +257,13 @@ struct LeurreDetailView: View {
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
     }
-    
-    // MARK: - Carte type de nage (multi-sélection)
+
+    // MARK: - Carte type de nage
 
     private var carteTypeDeNage: some View {
         VStack(alignment: .leading, spacing: 16) {
             SectionHeader(title: "Types de nage", icon: "water.waves")
-            
-            // Afficher les badges horizontaux
+
             if let typesDeNage = leurre.typesDeNage, !typesDeNage.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
@@ -297,11 +272,9 @@ struct LeurreDetailView: View {
                         }
                     }
                 }
-                
-                Divider()
-                    .padding(.vertical, 8)
-                
-                // Afficher les détails du premier type (principal)
+
+                Divider().padding(.vertical, 8)
+
                 if let premierType = typesDeNage.first {
                     detailsTypeDeNage(premierType)
                 }
@@ -313,14 +286,10 @@ struct LeurreDetailView: View {
         .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
     }
 
-    // Badge pour un type de nage
     private func typeDeNageBadge(for type: TypeDeNage) -> some View {
         HStack(spacing: 6) {
-            Image(systemName: "water.waves")
-                .font(.caption)
-            Text(type.rawValue)
-                .font(.subheadline)
-                .fontWeight(.medium)
+            Image(systemName: "water.waves").font(.caption)
+            Text(type.rawValue).font(.subheadline).fontWeight(.medium)
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
@@ -329,107 +298,65 @@ struct LeurreDetailView: View {
         .cornerRadius(16)
     }
 
-    // Détails d'un type de nage
     private func detailsTypeDeNage(_ type: TypeDeNage) -> some View {
         VStack(alignment: .leading, spacing: 14) {
-            // Catégorie
             HStack(spacing: 4) {
-                Image(systemName: "tag.fill")
-                    .font(.caption)
-                    .foregroundColor(.gray)
-                
-                Text(type.categorie)
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
+                Image(systemName: "tag.fill").font(.caption).foregroundColor(.gray)
+                Text(type.categorie).font(.subheadline).foregroundColor(.secondary)
             }
             .padding(.leading, 4)
-            
-            // Description
+
             VStack(alignment: .leading, spacing: 6) {
                 HStack(spacing: 4) {
-                    Image(systemName: "text.alignleft")
-                        .font(.caption)
-                        .foregroundColor(Color(hex: "0277BD"))
-                    Text("Description")
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                        .textCase(.uppercase)
+                    Image(systemName: "text.alignleft").font(.caption).foregroundColor(Color(hex: "0277BD"))
+                    Text("Description").font(.caption).foregroundColor(.gray).textCase(.uppercase)
                 }
-                
                 Text(type.description)
-                    .font(.body)
-                    .foregroundColor(.primary)
+                    .font(.body).foregroundColor(.primary)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.leading, 4)
             }
-            
-            Divider()
-                .padding(.vertical, 4)
-            
-            // Conditions idéales
+
+            Divider().padding(.vertical, 4)
+
             VStack(alignment: .leading, spacing: 6) {
                 HStack(spacing: 4) {
-                    Image(systemName: "lightbulb.fill")
-                        .font(.caption)
-                        .foregroundColor(Color(hex: "FFBC42"))
-                    Text("Conditions idéales")
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                        .textCase(.uppercase)
+                    Image(systemName: "lightbulb.fill").font(.caption).foregroundColor(Color(hex: "FFBC42"))
+                    Text("Conditions idéales").font(.caption).foregroundColor(.gray).textCase(.uppercase)
                 }
-                
                 Text(type.conditionsIdeales)
-                    .font(.subheadline)
-                    .foregroundColor(Color(hex: "0277BD"))
+                    .font(.subheadline).foregroundColor(Color(hex: "0277BD"))
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.leading, 4)
             }
         }
     }
-    
-    // MARK: - Carte performance (traîne uniquement)
-    
+
+    // MARK: - Carte performance
+
     private var cartePerformance: some View {
         VStack(alignment: .leading, spacing: 16) {
             SectionHeader(title: "Performance traîne", icon: "gauge.high")
-            
+
             VStack(spacing: 12) {
-                // Profondeur
                 if let profondeur = leurre.profondeurFormatee {
                     HStack {
-                        Text("Profondeur")
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
-                            .frame(width: 100, alignment: .leading)
-                        
+                        Text("Profondeur").font(.subheadline).foregroundColor(.gray).frame(width: 100, alignment: .leading)
                         HStack(spacing: 4) {
-                            Image(systemName: "arrow.down.circle.fill")
-                                .foregroundColor(Color(hex: "0277BD"))
-                            Text(profondeur)
-                                .font(.subheadline)
-                                .fontWeight(.semibold)
+                            Image(systemName: "arrow.down.circle.fill").foregroundColor(Color(hex: "0277BD"))
+                            Text(profondeur).font(.subheadline).fontWeight(.semibold)
                         }
-                        
                         Spacer()
                     }
                 }
-                
-                // Vitesse
+
                 if let vitesse = leurre.vitesseFormatee {
                     HStack {
-                        Text("Vitesse")
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
-                            .frame(width: 100, alignment: .leading)
-                        
+                        Text("Vitesse").font(.subheadline).foregroundColor(.gray).frame(width: 100, alignment: .leading)
                         HStack(spacing: 4) {
-                            Image(systemName: "speedometer")
-                                .foregroundColor(Color(hex: "FFBC42"))
-                            Text(vitesse)
-                                .font(.subheadline)
-                                .fontWeight(.semibold)
+                            Image(systemName: "speedometer").foregroundColor(Color(hex: "FFBC42"))
+                            Text(vitesse).font(.subheadline).fontWeight(.semibold)
                         }
-                        
                         Spacer()
                     }
                 }
@@ -440,24 +367,21 @@ struct LeurreDetailView: View {
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
     }
-    
+
     // MARK: - Carte zones adaptées
-    
+
     private var carteZonesAdaptees: some View {
         VStack(alignment: .leading, spacing: 16) {
             SectionHeader(title: "Zones adaptées", icon: "map.fill")
-            
-            // ✅ UTILISATION DES VALEURS FINALES (JSON > Notes > Déduction auto)
+
             FlowLayout(spacing: 8) {
                 ForEach(leurre.zonesAdapteesFinales, id: \.self) { zone in
                     HStack(spacing: 4) {
                         Text(zone.icon)
                         Text(zone.displayName)
                     }
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
+                    .font(.subheadline).fontWeight(.medium)
+                    .padding(.horizontal, 12).padding(.vertical, 8)
                     .background(Color(hex: "0277BD").opacity(0.15))
                     .foregroundColor(Color(hex: "0277BD"))
                     .cornerRadius(8)
@@ -469,14 +393,13 @@ struct LeurreDetailView: View {
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
     }
-    
+
     // MARK: - Carte espèces cibles
-    
+
     private var carteEspecesCibles: some View {
         VStack(alignment: .leading, spacing: 16) {
             SectionHeader(title: "Espèces cibles", icon: "fish.fill")
-            
-            // ✅ UTILISATION DES VALEURS FINALES (Notes > JSON > Déduction auto)
+
             FlowLayout(spacing: 8) {
                 ForEach(leurre.especesCiblesFinales, id: \.self) { espece in
                     BadgeView(text: espece, color: Color(hex: "FFBC42"), large: true)
@@ -488,28 +411,21 @@ struct LeurreDetailView: View {
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
     }
-    
+
     // MARK: - Carte positions spread
-    
+
     private var cartePositionsSpread: some View {
         VStack(alignment: .leading, spacing: 16) {
             SectionHeader(title: "Positions traîne", icon: "arrow.triangle.branch")
-            
+
             VStack(spacing: 8) {
                 ForEach(leurre.positionsSpread ?? [], id: \.self) { position in
                     HStack {
-                        Text(position.displayName)
-                            .font(.subheadline)
-                            .fontWeight(.medium)
-                        
+                        Text(position.displayName).font(.subheadline).fontWeight(.medium)
                         Spacer()
-                        
-                        Text(position.caracteristiques)
-                            .font(.caption)
-                            .foregroundColor(.secondary)
+                        Text(position.caracteristiques).font(.caption).foregroundColor(.secondary)
                     }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
+                    .padding(.horizontal, 12).padding(.vertical, 8)
                     .background(Color(hex: "0277BD").opacity(0.1))
                     .cornerRadius(8)
                 }
@@ -520,47 +436,28 @@ struct LeurreDetailView: View {
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
     }
-    
+
     // MARK: - Carte conditions optimales
-    
+
     private func carteConditionsOptimales(_ conditions: ConditionsOptimales) -> some View {
         VStack(alignment: .leading, spacing: 16) {
             SectionHeader(title: "Conditions optimales", icon: "sun.max.fill")
-            
+
             VStack(alignment: .leading, spacing: 12) {
                 if let moments = conditions.moments, !moments.isEmpty {
-                    ConditionSection(
-                        title: "Moments",
-                        items: moments.map { $0.displayName }
-                    )
+                    ConditionSection(title: "Moments", items: moments.map { $0.displayName })
                 }
-                
                 if let etatMer = conditions.etatMer, !etatMer.isEmpty {
-                    ConditionSection(
-                        title: "État de la mer",
-                        items: etatMer.map { $0.displayName }
-                    )
+                    ConditionSection(title: "État de la mer", items: etatMer.map { $0.displayName })
                 }
-                
                 if let turbidite = conditions.turbidite, !turbidite.isEmpty {
-                    ConditionSection(
-                        title: "Turbidité",
-                        items: turbidite.map { $0.displayName }
-                    )
+                    ConditionSection(title: "Turbidité", items: turbidite.map { $0.displayName })
                 }
-                
                 if let maree = conditions.maree, !maree.isEmpty {
-                    ConditionSection(
-                        title: "Marée (affinage)",
-                        items: maree.map { $0.displayName }
-                    )
+                    ConditionSection(title: "Marée (affinage)", items: maree.map { $0.displayName })
                 }
-                
                 if let phases = conditions.phasesLunaires, !phases.isEmpty {
-                    ConditionSection(
-                        title: "Phases lunaires (affinage)",
-                        items: phases.map { $0.displayName }
-                    )
+                    ConditionSection(title: "Phases lunaires (affinage)", items: phases.map { $0.displayName })
                 }
             }
         }
@@ -569,16 +466,14 @@ struct LeurreDetailView: View {
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
     }
-    
+
     // MARK: - Carte notes
-    
+
     private func carteNotes(_ notes: String) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             SectionHeader(title: "Notes", icon: "note.text")
-            
             Text(notes)
-                .font(.body)
-                .foregroundColor(.primary)
+                .font(.body).foregroundColor(.primary)
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding()
@@ -586,28 +481,25 @@ struct LeurreDetailView: View {
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
     }
-    
+
     // MARK: - Carte non calculé
-    
+
     private var carteNonCalcule: some View {
         VStack(spacing: 12) {
             Image(systemName: "exclamationmark.triangle")
-                .font(.title)
-                .foregroundColor(.orange)
-            
+                .font(.title).foregroundColor(.orange)
+
             Text("Champs déduits non calculés")
-                .font(.headline)
-                .foregroundColor(.orange)
-            
+                .font(.headline).foregroundColor(.orange)
+
             Text("Les zones, espèces et conditions optimales seront calculées automatiquement lors de la prochaine sauvegarde.")
-                .font(.caption)
-                .foregroundColor(.secondary)
+                .font(.caption).foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
-            
+
             Button("Recalculer maintenant") {
-                var leurreModifie = leurre
-                leurreModifie = viewModel.calculerChampsDeduits(leurreModifie)
-                viewModel.modifierLeurre(leurreModifie)
+                // ✅ V4 : mutation directe sur @Model — SwiftData tracke automatiquement
+                viewModel.calculerChampsDeduits(leurre)
+                viewModel.modifierLeurre(leurre)
             }
             .buttonStyle(.borderedProminent)
             .tint(.orange)
@@ -623,14 +515,11 @@ struct LeurreDetailView: View {
 struct SectionHeader: View {
     let title: String
     let icon: String
-    
+
     var body: some View {
         HStack(spacing: 8) {
-            Image(systemName: icon)
-                .foregroundColor(Color(hex: "0277BD"))
-            Text(title)
-                .font(.headline)
-                .foregroundColor(Color(hex: "0277BD"))
+            Image(systemName: icon).foregroundColor(Color(hex: "0277BD"))
+            Text(title).font(.headline).foregroundColor(Color(hex: "0277BD"))
         }
     }
 }
@@ -638,18 +527,13 @@ struct SectionHeader: View {
 struct InfoRow: View {
     let label: String
     let value: String
-    
+
     var body: some View {
         HStack {
             Text(label + " :")
-                .font(.subheadline)
-                .foregroundColor(.gray)
+                .font(.subheadline).foregroundColor(.gray)
                 .frame(width: 100, alignment: .leading)
-            
-            Text(value)
-                .font(.subheadline)
-                .fontWeight(.semibold)
-            
+            Text(value).font(.subheadline).fontWeight(.semibold)
             Spacer()
         }
     }
@@ -659,7 +543,7 @@ struct BadgeView: View {
     let text: String
     let color: Color
     var large: Bool = false
-    
+
     var body: some View {
         Text(text)
             .font(large ? .subheadline : .caption)
@@ -675,20 +559,15 @@ struct BadgeView: View {
 struct ConditionSection: View {
     let title: String
     let items: [String]
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text(title)
-                .font(.caption)
-                .foregroundColor(.gray)
-                .textCase(.uppercase)
-            
+            Text(title).font(.caption).foregroundColor(.gray).textCase(.uppercase)
             FlowLayout(spacing: 6) {
                 ForEach(items, id: \.self) { item in
                     Text(item)
                         .font(.caption)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
+                        .padding(.horizontal, 8).padding(.vertical, 4)
                         .background(Color(hex: "0277BD").opacity(0.1))
                         .foregroundColor(Color(hex: "0277BD"))
                         .cornerRadius(6)
@@ -698,18 +577,18 @@ struct ConditionSection: View {
     }
 }
 
-// MARK: - FlowLayout (pour badges qui wrap)
+// MARK: - FlowLayout
 
 struct FlowLayout: Layout {
     var spacing: CGFloat = 8
-    
+
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
         let sizes = subviews.map { $0.sizeThatFits(.unspecified) }
         var height: CGFloat = 0
         var lineHeight: CGFloat = 0
         var currentX: CGFloat = 0
         let maxWidth = proposal.width ?? 0
-        
+
         for size in sizes {
             if currentX + size.width > maxWidth && currentX > 0 {
                 height += lineHeight + spacing
@@ -720,24 +599,21 @@ struct FlowLayout: Layout {
             lineHeight = max(lineHeight, size.height)
         }
         height += lineHeight
-        
         return CGSize(width: maxWidth, height: height)
     }
-    
+
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
         var currentX = bounds.minX
         var currentY = bounds.minY
         var lineHeight: CGFloat = 0
-        
+
         for subview in subviews {
             let size = subview.sizeThatFits(.unspecified)
-            
             if currentX + size.width > bounds.maxX && currentX > bounds.minX {
                 currentY += lineHeight + spacing
                 currentX = bounds.minX
                 lineHeight = 0
             }
-            
             subview.place(at: CGPoint(x: currentX, y: currentY), proposal: .unspecified)
             currentX += size.width + spacing
             lineHeight = max(lineHeight, size.height)
@@ -768,7 +644,7 @@ struct LeurreDetailView_Previews: PreviewProvider {
                     vitesseTraineMax: 10.0,
                     notes: "Excellent pour le wahoo par mer formée"
                 ),
-                viewModel: LeureViewModel()
+                viewModel: BoiteLeurresViewModel()
             )
         }
     }

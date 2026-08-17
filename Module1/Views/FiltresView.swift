@@ -1,23 +1,25 @@
 //
 //  FiltresView.swift
-//  Go les Picots - Module 1 : Ma Boîte à Leurres
+//  Go les Picots V.4 — Module 1
 //
-//  Vue des filtres avancés
+//  Vue des filtres avancés.
 //
-//  Created: 2024-12-04
-//  Updated: 2024-12-11 - Alignement avec LeureViewModel
+//  V4 — Adaptation SwiftData :
+//  - viewModel.leurres supprimé — totalLeurres passé en paramètre depuis BoiteView
 //
 
 import SwiftUI
 
 struct FiltresView: View {
-    @ObservedObject var viewModel: LeureViewModel
+    @ObservedObject var viewModel: BoiteLeurresViewModel
     @Environment(\.dismiss) var dismiss
-    
+
+    /// Total des leurres non filtrés — fourni par @Query dans BoiteView.
+    var totalLeurres: Int
+
     var body: some View {
         NavigationView {
             Form {
-                // Type de leurre
                 Section("Type de leurre") {
                     Picker("Type", selection: $viewModel.filtreTypeLeurre) {
                         Text("Tous").tag(nil as TypeLeurre?)
@@ -26,8 +28,7 @@ struct FiltresView: View {
                         }
                     }
                 }
-                
-                // Type de pêche
+
                 Section("Type de pêche") {
                     Picker("Pêche", selection: $viewModel.filtreTypePeche) {
                         Text("Tous").tag(nil as TypePeche?)
@@ -36,8 +37,7 @@ struct FiltresView: View {
                         }
                     }
                 }
-                
-                // Zone de pêche
+
                 Section("Zone de pêche") {
                     Picker("Zone", selection: $viewModel.filtreZone) {
                         Text("Toutes").tag(nil as Zone?)
@@ -46,8 +46,7 @@ struct FiltresView: View {
                         }
                     }
                 }
-                
-                // Contraste
+
                 Section("Contraste") {
                     Picker("Contraste", selection: $viewModel.filtreContraste) {
                         Text("Tous").tag(nil as Contraste?)
@@ -56,17 +55,17 @@ struct FiltresView: View {
                         }
                     }
                 }
-                
-                // Statistiques
+
                 Section("Statistiques") {
                     HStack {
                         Text("Total leurres")
                         Spacer()
-                        Text("\(viewModel.leurres.count)")
+                        // ✅ V4 : totalLeurres reçu en paramètre depuis BoiteView (@Query)
+                        Text("\(totalLeurres)")
                             .fontWeight(.bold)
                             .foregroundColor(Color(hex: "0277BD"))
                     }
-                    
+
                     HStack {
                         Text("Résultats filtrés")
                         Spacer()
@@ -84,7 +83,7 @@ struct FiltresView: View {
                         viewModel.reinitialiserFiltres()
                     }
                 }
-                
+
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Fermer") {
                         dismiss()

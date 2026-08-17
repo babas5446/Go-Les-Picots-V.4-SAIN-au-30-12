@@ -14,7 +14,7 @@ Enrichir l'affichage des leurres dans les vues de suggestion pour inclure :
 ## 📁 Fichiers Modifiés
 
 ### 1. **SpreadSchemaView.swift**
-- [x] Ajout `@StateObject private var viewModel = LeureViewModel()`
+- [x] Ajout `@StateObject private var viewModel = BoiteLeurresViewModel()`
 - [x] Création de la computed property `photoLeurre`
 - [x] Affichage photo en haut de `LeurreDetailSheet`
 - [x] Affichage du modèle (avec icône tag)
@@ -22,12 +22,12 @@ Enrichir l'affichage des leurres dans les vues de suggestion pour inclure :
 - [x] Placeholder élégant si pas de photo (icône type leurre 64px)
 
 ### 2. **SpreadVisualizationView.swift**
-- [x] Ajout `@StateObject private var viewModel = LeureViewModel()` dans `PositionDetailCard`
+- [x] Ajout `@StateObject private var viewModel = BoiteLeurresViewModel()` dans `PositionDetailCard`
 - [x] Affichage photo dans les cards expandables (200px max)
 - [x] Photo affichée avant la justification de position
 
 ### 3. **SuggestionResultView.swift**
-- [x] Ajout `@StateObject private var viewModel = LeureViewModel()` dans `SuggestionCard`
+- [x] Ajout `@StateObject private var viewModel = BoiteLeurresViewModel()` dans `SuggestionCard`
 - [x] Affichage photo dans les cards expandables (250px max)
 - [x] Affichage du modèle après la photo (si existe)
 
@@ -315,7 +315,7 @@ Une fois les tests effectués, cochez les cases suivantes :
 ### ViewModel Lifecycle
 
 ```swift
-@StateObject private var viewModel = LeureViewModel()
+@StateObject private var viewModel = BoiteLeurresViewModel()
 ```
 
 **Pourquoi `@StateObject` ?**

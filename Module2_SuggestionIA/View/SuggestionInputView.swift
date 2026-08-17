@@ -426,7 +426,7 @@ struct SuggestionInputView: View {
                     
                     // ✅ Légende sous les boutons (optionnel)
                     if conditions.luminosite != .forte {
-                        Text(conditions.luminosite.description)
+                        Text(conditions.luminosite.displayName)
                             .font(.caption)
                             .foregroundColor(.secondary)
                             .padding(.top, 4)
@@ -660,6 +660,13 @@ struct SuggestionInputView: View {
             return
         }
         
+        // ← AJOUTER CES DEUX LIGNES :
+            if let data = try? JSONEncoder().encode(conditions) {
+                UserDefaults.standard.set(data, forKey: "dernieresConditionsPeche")
+            }
+            
+            print("🚀 Lancement de la génération...")
+            suggestionEngine.genererSuggestions(conditions: conditions)
         print("🚀 Lancement de la génération...")
         suggestionEngine.genererSuggestions(conditions: conditions)
         

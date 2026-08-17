@@ -3,9 +3,12 @@
 //  Go les Picots - Module 1 Phase 2
 //
 //  Modèle pour les couleurs personnalisées créées par l'utilisateur
-//  Version V2 - Simple et robuste
+//  Version V3 - Ajout toData() / fromData() pour stockage SwiftData
 //
-//  Created: 2024-12-22
+//  Modification V3 :
+//  - Ajout de toData() : sérialise la struct en Data (JSON)
+//  - Ajout de fromData(_:) : désérialise une Data en CouleurCustom
+//  - Aucune autre modification — le reste est identique à V2
 //
 
 import Foundation
@@ -41,22 +44,22 @@ struct CouleurCustom: Identifiable, Codable, Hashable {
         Color(red: red, green: green, blue: blue)
     }
     
-    /// 🆕 Luminosité perçue (ITU-R BT.709) - 0.0 (noir) à 1.0 (blanc)
+    /// Luminosité perçue (ITU-R BT.709) - 0.0 (noir) à 1.0 (blanc)
     var luminositePercue: Double {
         return 0.2126 * red + 0.7152 * green + 0.0722 * blue
     }
     
-    /// 🆕 Vérifie si c'est une couleur claire (luminosité > 0.5)
+    /// Vérifie si c'est une couleur claire (luminosité > 0.5)
     var estClaire: Bool {
         return luminositePercue > 0.5
     }
     
-    /// 🆕 Vérifie si c'est une couleur foncée (luminosité < 0.3)
+    /// Vérifie si c'est une couleur foncée (luminosité < 0.3)
     var estFoncee: Bool {
         return luminositePercue < 0.3
     }
     
-    /// 🆕 Description de la luminosité pour l'utilisateur
+    /// Description de la luminosité pour l'utilisateur
     var descriptionLuminosite: String {
         if isRainbow { return "Multicolore" }
         if luminositePercue > 0.7 { return "Très clair" }
@@ -68,7 +71,6 @@ struct CouleurCustom: Identifiable, Codable, Hashable {
     
     /// Initialisation depuis une Color SwiftUI
     init?(nom: String, from color: Color, contraste: Contraste, isRainbow: Bool = false) {
-        // Si arc-en-ciel, utiliser des valeurs neutres (ne seront pas affichées)
         if isRainbow {
             self.id = UUID()
             self.nom = nom
@@ -81,7 +83,6 @@ struct CouleurCustom: Identifiable, Codable, Hashable {
             return
         }
         
-        // Sinon, extraire les composantes de la couleur
         guard let uiColor = UIColor(color).cgColor.components,
               uiColor.count >= 3 else {
             return nil
@@ -113,9 +114,26 @@ struct CouleurCustom: Identifiable, Codable, Hashable {
         blue = try container.decode(Double.self, forKey: .blue)
         contraste = try container.decode(Contraste.self, forKey: .contraste)
         dateCreation = try container.decode(Date.self, forKey: .dateCreation)
-        
-        // 🔧 Migration : si isRainbow n'existe pas dans le JSON, utiliser false
         isRainbow = try container.decodeIfPresent(Bool.self, forKey: .isRainbow) ?? false
+    }
+    
+    // MARK: - Sérialisation pour stockage SwiftData
+    
+    /// Sérialise la couleur en Data (JSON) pour stockage dans un @Model SwiftData
+    /// Retourne nil en cas d'échec d'encodage (ne devrait pas arriver)
+    func toData() -> Data? {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        return try? encoder.encode(self)
+    }
+    
+    /// Désérialise une Data en CouleurCustom
+    /// Utilisé pour lire une couleur stockée dans SwiftData
+    /// Retourne nil si la Data est invalide ou corrompue
+    static func fromData(_ data: Data) -> CouleurCustom? {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        return try? decoder.decode(CouleurCustom.self, from: data)
     }
 }
 

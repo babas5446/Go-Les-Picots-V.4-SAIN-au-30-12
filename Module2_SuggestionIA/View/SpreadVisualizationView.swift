@@ -501,7 +501,7 @@ struct PositionDetailCard: View {
     let suggestion: SuggestionEngine.SuggestionResult
     let position: PositionSpread
     @State private var isExpanded = false
-    @StateObject private var viewModel = LeureViewModel()
+    @StateObject private var viewModel = BoiteLeurresViewModel()
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -560,7 +560,8 @@ struct PositionDetailCard: View {
                     Divider()
                     
                     // 📸 PHOTO DU LEURRE (si disponible)
-                    if let image = viewModel.chargerPhoto(pourLeurre: suggestion.leurre) {
+                    if let photoData = suggestion.leurre.photoData,
+                       let image = UIImage(data: photoData) {
                         Image(uiImage: image)
                             .resizable()
                             .scaledToFit()

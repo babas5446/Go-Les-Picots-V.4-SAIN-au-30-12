@@ -304,7 +304,7 @@ struct LeurreFormView: View {
             // ✅ PAR
             TypeDeNage: TypeDeNage.isEmpty ? nil : TypeDeNage
         )
-        leureViewModel.ajouterLeurre(leurre)
+        BoiteLeurresViewModel.ajouterLeurre(leurre)
     }
 }
 ```

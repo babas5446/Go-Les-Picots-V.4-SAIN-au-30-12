@@ -23,7 +23,7 @@
 - ❌ Supprimé : Passage des paramètres types de nage au modèle `Leurre`
 - ❌ Supprimé : Attribution `leurreModifie.TypeDeNage = ...`
 
-### 3. `LeureViewModel.swift` (ViewModel)
+### 3. `BoiteLeurresViewModel.swift` (ViewModel)
 - ✅ Aucune modification nécessaire - déjà propre
 
 ### 4. `LeurreDetailView.swift` (Vue détail)
