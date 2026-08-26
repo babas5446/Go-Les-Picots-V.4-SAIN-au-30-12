@@ -20,35 +20,36 @@ struct SpreadSchemaView: View {
     private let designSize = CGSize(width: 1024, height: 1536)
     
     // ✅ COORDONNÉES EXACTES DES BULLES BLANCHES (générées par ImageCoordinatePickerView)
-    // Mapping parfait avec votre image spread_template_ok
+    // Coordonnées relevées sur Spread_template_complet_ok.png (1024 × 1536)
+    // par détection des disques blancs — session 10.
     private let bubbles: [BubbleSpec] = [
         // 0L - Libre (position libre gauche)
-        .init(id: "0L", position: .libre, center: CGPoint(x: 255, y: 555), diameter: 165,
+        .init(id: "0L", position: .libre, center: CGPoint(x: 138, y: 558), diameter: 164,
               imageName: "lure_0_left", title: "Libre (gauche)", subtitle: "Bulle additionnelle",
               notes: "La meilleure suggestion"),
         
         // 1 - Short Corner (tribord, proche)
-        .init(id: "1", position: .shortCorner, center: CGPoint(x: 892, y: 492), diameter: 168,
+        .init(id: "1", position: .shortCorner, center: CGPoint(x: 779, y: 494), diameter: 164,
               imageName: "lure_1", title: "1 — Short Corner", subtitle: "Sortie courte",
               notes: "Agressif ou grande taille."),
         
         // 2 - Long Corner (bâbord, loin)
-        .init(id: "2", position: .longCorner, center: CGPoint(x: 627, y: 824), diameter: 156,
+        .init(id: "2", position: .longCorner, center: CGPoint(x: 514, y: 825), diameter: 164,
               imageName: "lure_2", title: "2 — Long Corner", subtitle: "Sortie longue",
               notes: "Discret ou naturel."),
         
         // 3 - Short Rigger (tribord, tangon)
-        .init(id: "3", position: .shortRigger, center: CGPoint(x: 991, y: 953), diameter: 164,
+        .init(id: "3", position: .shortRigger, center: CGPoint(x: 879, y: 953), diameter: 164,
               imageName: "lure_3", title: "3 — Short Rigger", subtitle: "Rigger court",
               notes: "Flashy."),
         
         // 4 - Long Rigger (bâbord, tangon)
-        .init(id: "4", position: .longRigger, center: CGPoint(x: 256, y: 955), diameter: 165,
+        .init(id: "4", position: .longRigger, center: CGPoint(x: 144, y: 956), diameter: 164,
               imageName: "lure_4", title: "4 — Long Rigger", subtitle: "Rigger long",
               notes: "Flashy."),
         
         // 5 - Shotgun (centre, très loin)
-        .init(id: "5", position: .shotgun, center: CGPoint(x: 770, y: 1200), diameter: 164,
+        .init(id: "5", position: .shotgun, center: CGPoint(x: 657, y: 1200), diameter: 164,
               imageName: "lure_5", title: "5 — Shotgun", subtitle: "Très arrière",
               notes: "Discret, contrasté, teaser éventuel, etc.")
     ]
@@ -92,21 +93,25 @@ struct SpreadSchemaView: View {
                     }
                 }
                 
-                // Bulles tappables
-                ForEach(bubbles) { bubble in
-                    if let suggestion = suggestionPourPosition(bubble.position) {
-                        BubbleSlot(
-                            spec: bubble,
-                            suggestion: suggestion,
-                            scale: scale,
-                            animationProgress: animationProgress
-                        ) {
-                            withAnimation(.spring(response: 0.22, dampingFraction: 0.95)) {
-                                selectedSuggestion = suggestion
+                // Bulles tappables — conteneur calé sur l'image rendue,
+                // pour que .position se résolve dans le repère du gabarit
+                ZStack {
+                    ForEach(bubbles) { bubble in
+                        if let suggestion = suggestionPourPosition(bubble.position) {
+                            BubbleSlot(
+                                spec: bubble,
+                                suggestion: suggestion,
+                                scale: scale,
+                                animationProgress: animationProgress
+                            ) {
+                                withAnimation(.spring(response: 0.22, dampingFraction: 0.95)) {
+                                    selectedSuggestion = suggestion
+                                }
                             }
                         }
                     }
                 }
+                .frame(width: renderedSize.width, height: renderedSize.height)
                 
                 // ⚡ INDICATEUR DE VITESSE (coin supérieur gauche)
                 VitesseIndicatorView(
@@ -459,41 +464,47 @@ private struct BubbleSlot: View {
         let y = spec.center.y * scale
         let d = spec.diameter * scale
         
+        let info = suggestion.leurre.couleurPrincipaleAffichage
+        let epaisseur = max(3, d * 0.08)
+        let couleurTexte: Color =
+            (info.isRainbow || !suggestion.leurre.estCouleurPrincipaleClaire) ? .white : .black
+        
         Button(action: onTap) {
             ZStack {
-                // Cercle de fond
+                // Disque : couleur principale du leurre suggéré
+                Group {
+                    if info.isRainbow {
+                        RainbowCircle(size: d, showBorder: false)
+                    } else {
+                        Circle()
+                            .fill(info.color)
+                            .frame(width: d, height: d)
+                    }
+                }
+                .shadow(color: couleurPosition.opacity(0.5), radius: 8, x: 0, y: 4)
+                
+                // Anneau : couleur de position
                 Circle()
-                    .fill(
-                        RadialGradient(
-                            gradient: Gradient(colors: [
-                                couleurPosition.opacity(0.8),
-                                couleurPosition
-                            ]),
-                            center: .center,
-                            startRadius: 0,
-                            endRadius: d / 2
-                        )
-                    )
-                    .frame(width: d, height: d)
-                    .shadow(color: couleurPosition.opacity(0.5), radius: 8, x: 0, y: 4)
+                    .stroke(couleurPosition, lineWidth: epaisseur)
+                    .frame(width: d - epaisseur, height: d - epaisseur)
                 
                 // Contenu
-                VStack(spacing: 4) {
-                    Text(spec.position.emoji)
-                        .font(.system(size: d * 0.25))
+                VStack(spacing: d * 0.03) {
+                    Text(spec.position.numero)
+                        .font(.system(size: d * 0.30, weight: .heavy, design: .rounded))
                     
                     Text(spec.position.displayName)
-                        .font(.system(size: d * 0.08, weight: .bold, design: .rounded))
-                        .foregroundColor(.white)
+                        .font(.system(size: d * 0.09, weight: .bold, design: .rounded))
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
                         .minimumScaleFactor(0.5)
                     
                     Text("\(suggestion.distanceSpread ?? 0)m")
                         .font(.system(size: d * 0.10, weight: .semibold, design: .rounded))
-                        .foregroundColor(.white.opacity(0.9))
+                        .opacity(0.85)
                 }
-                .padding(d * 0.1)
+                .foregroundColor(couleurTexte)
+                .frame(width: d * 0.74)
             }
         }
         .buttonStyle(ScaleButtonStyle())
@@ -509,7 +520,7 @@ private struct BubbleSlot: View {
         case .shortCorner: return .green
         case .longCorner: return .blue
         case .shortRigger: return .orange
-        case .longRigger: return Color(red: 1.0, green: 0.6, blue: 0.0)  // Orange foncé
+        case .longRigger: return Color(red: 1.0, green: 0.6, blue: 0.0)
         case .shotgun: return .red
         }
     }
@@ -531,9 +542,13 @@ private struct LeurreDetailSheet: View {
                 HStack {
                     VStack(alignment: .leading, spacing: 8) {
                         if let position = suggestion.positionSpread {
-                            HStack(spacing: 8) {
-                                Text(position.emoji)
-                                    .font(.title)
+                            HStack(spacing: 10) {
+                                PastilleNumeroPosition(
+                                    leurre: suggestion.leurre,
+                                    position: position,
+                                    couleurPosition: couleurPourPosition(position),
+                                    diametre: 34
+                                )
                                 Text(position.displayName)
                                     .font(.title3)
                                     .fontWeight(.bold)
@@ -739,7 +754,16 @@ private struct LeurreDetailSheet: View {
         .cornerRadius(24)
         .shadow(color: Color.black.opacity(0.3), radius: 20, x: 0, y: 10)
     }
-    
+    private func couleurPourPosition(_ position: PositionSpread) -> Color {
+        switch position {
+        case .libre: return .gray
+        case .shortCorner: return .green
+        case .longCorner: return .blue
+        case .shortRigger: return .orange
+        case .longRigger: return Color(red: 1.0, green: 0.6, blue: 0.0)
+        case .shotgun: return .red
+        }
+    }
     private func couleurScore(_ score: Double) -> Color {
         switch score {
         case 80...100: return .green

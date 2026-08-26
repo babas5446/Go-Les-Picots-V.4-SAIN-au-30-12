@@ -131,12 +131,45 @@ enum LeurreExportService {
         let data = try Data(contentsOf: jsonURL)
         let dtos  = try decoderJSON(data: data)
 
-        // 4. Récupérer les IDs existants
-        let descriptor  = FetchDescriptor<Leurre>()
-        let existants   = try context.fetch(descriptor)
+        // 4. Insérer les nouveaux leurres (doublons ignorés par id)
+        let compteur = try insererDTOs(dtos, dans: context)
+
+        print("✅ Import ZIP : \(compteur) leurres créés, \(dtos.count - compteur) ignorés (doublons)")
+        return compteur
+    }
+    /// Importe les leurres depuis un fichier JSON nu (non compressé).
+    /// Accepte le format V4 (LeurreDatabase) comme le format legacy (array direct).
+    /// Les leurres dont l'id existe déjà dans SwiftData sont ignorés.
+    /// Retourne le nombre de leurres effectivement créés.
+    @discardableResult
+    static func importerJSON(
+        depuis jsonURL: URL,
+        dans context: ModelContext
+    ) throws -> Int {
+
+        let data = try Data(contentsOf: jsonURL)
+        let dtos = try decoderJSON(data: data)
+
+        let compteur = try insererDTOs(dtos, dans: context)
+
+        print("✅ Import JSON : \(compteur) leurres créés, \(dtos.count - compteur) ignorés (doublons)")
+        return compteur
+    }
+
+    // MARK: - Insertion SwiftData
+
+    /// Insère les DTO absents de la base et retourne le nombre de créations.
+    /// Partagé par importerZIP et importerJSON — déduplication par id.
+    private static func insererDTOs(
+        _ dtos: [LeurreDTO],
+        dans context: ModelContext
+    ) throws -> Int {
+
+        // IDs déjà présents
+        let descriptor   = FetchDescriptor<Leurre>()
+        let existants    = try context.fetch(descriptor)
         let idsExistants = Set(existants.map { $0.id })
 
-        // 5. Insérer les nouveaux leurres
         var compteur = 0
         for dto in dtos {
             guard !idsExistants.contains(dto.id) else { continue }
@@ -154,7 +187,6 @@ enum LeurreExportService {
         }
 
         try context.save()
-        print("✅ Import ZIP : \(compteur) leurres créés, \(dtos.count - compteur) ignorés (doublons)")
         return compteur
     }
 
@@ -237,7 +269,7 @@ enum LeurreExportService {
     }
 
     /// Décode le JSON — essaie le format V4 (LeurreDatabase) puis legacy (array direct).
-    private static func decoderJSON(data: Data) throws -> [LeurreDTO] {
+    static func decoderJSON(data: Data) throws -> [LeurreDTO] {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
 

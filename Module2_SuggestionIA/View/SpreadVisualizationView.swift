@@ -205,15 +205,13 @@ struct LignePecheView: View {
             
             // Leurre (point final)
             Button(action: onTap) {
-                ZStack {
-                    Circle()
-                        .fill(couleurPosition)
-                        .frame(width: isSelected ? 40 : 30, height: isSelected ? 40 : 30)
-                        .shadow(color: couleurPosition.opacity(0.5), radius: 8)
-                    
-                    Text(position.emoji)
-                        .font(.system(size: isSelected ? 24 : 18))
-                }
+                PastilleNumeroPosition(
+                    leurre: suggestion.leurre,
+                    position: position,
+                    couleurPosition: couleurPosition,
+                    diametre: isSelected ? 40 : 30
+                )
+                .shadow(color: couleurPosition.opacity(0.5), radius: 8)
             }
             .position(x: coords.x, y: coords.y)
             .scaleEffect(animationProgress)
@@ -439,13 +437,12 @@ struct LegendRow: View {
     
     var body: some View {
         HStack(spacing: 12) {
-            Circle()
-                .fill(couleurPosition)
-                .frame(width: 20, height: 20)
-                .overlay(
-                    Text(position.emoji)
-                        .font(.caption2)
-                )
+            PastilleNumeroPosition(
+                leurre: suggestion.leurre,
+                position: position,
+                couleurPosition: couleurPosition,
+                diametre: 22
+            )
             
             VStack(alignment: .leading, spacing: 4) {
                 Text(position.displayName)
@@ -1000,5 +997,42 @@ struct CouleurPastille: View {
         }
     }
 }
+// MARK: - Pastille numérotée : couleur du leurre + anneau de position
 
+/// Disque à la couleur principale du leurre suggéré, cerclé de la couleur
+/// de position, portant le numéro de position du gabarit.
+struct PastilleNumeroPosition: View {
+    let leurre: Leurre
+    let position: PositionSpread
+    let couleurPosition: Color
+    let diametre: CGFloat
+
+    var body: some View {
+        let info = leurre.couleurPrincipaleAffichage
+        let epaisseur = max(2, diametre * 0.10)
+        let couleurTexte: Color =
+            (info.isRainbow || !leurre.estCouleurPrincipaleClaire) ? .white : .black
+
+        ZStack {
+            if info.isRainbow {
+                RainbowCircle(size: diametre, showBorder: false)
+            } else {
+                Circle()
+                    .fill(info.color)
+                    .frame(width: diametre, height: diametre)
+            }
+
+            Circle()
+                .stroke(couleurPosition, lineWidth: epaisseur)
+                .frame(width: diametre - epaisseur, height: diametre - epaisseur)
+
+            Text(position.numero)
+                .font(.system(size: diametre * 0.46, weight: .heavy, design: .rounded))
+                .foregroundColor(couleurTexte)
+                .minimumScaleFactor(0.5)
+                .lineLimit(1)
+        }
+        .frame(width: diametre, height: diametre)
+    }
+}
 

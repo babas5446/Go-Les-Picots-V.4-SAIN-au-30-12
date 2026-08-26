@@ -14,6 +14,7 @@ import MapKit
 struct NavigationMapView: View {
     // MARK: - Properties
     
+    @Environment(\.dismiss) private var dismiss
     @State private var locationService = LocationService()
     @State private var position: MapCameraPosition = .automatic
     @State private var showSidebar = false
@@ -112,6 +113,9 @@ struct NavigationMapView: View {
         .navigationTitle("Navigation")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button("Fermer") { dismiss() }
+            }
             ToolbarItem(placement: .topBarTrailing) {
                 Button(action: centerOnUserLocation) {
                     Image(systemName: "location.fill")

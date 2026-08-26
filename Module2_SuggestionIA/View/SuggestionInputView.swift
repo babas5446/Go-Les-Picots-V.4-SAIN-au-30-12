@@ -91,6 +91,45 @@ struct SuggestionInputView: View {
                 }
             }
         }
+        .onChange(of: navigationCoordinator.fermerModule) { _, demande in
+            guard demande else { return }
+            navigationCoordinator.fermerModule = false
+            dismiss()
+        }
+        .fullScreenCover(isPresented: $navigationCoordinator.showResults) {
+            NavigationStack {
+                if !navigationCoordinator.suggestions.isEmpty {
+                    SuggestionResultView(
+                        suggestions: navigationCoordinator.suggestions,
+                        configuration: navigationCoordinator.configuration
+                    )
+                    .navigationTitle("Résultats")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        // Sortie complète : résultats puis module.
+                        ToolbarItem(placement: .navigationBarLeading) {
+                            Button("Fermer") {
+                                navigationCoordinator.fermerModuleComplet()
+                            }
+                        }
+                        // Retour au formulaire : les conditions restent saisies.
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button {
+                                navigationCoordinator.dismissResults()
+                            } label: {
+                                Label("Modifier", systemImage: "slider.horizontal.3")
+                                    .labelStyle(.titleAndIcon)
+                            }
+                        }
+                    }
+                } else {
+                    VStack {
+                        ProgressView()
+                        Text("Chargement des résultats...").padding()
+                    }
+                }
+            }
+        }
         .alert("Validation", isPresented: $showingValidationAlert) {
             Button("OK", role: .cancel) { }
         } message: {
@@ -660,13 +699,11 @@ struct SuggestionInputView: View {
             return
         }
         
-        // ← AJOUTER CES DEUX LIGNES :
-            if let data = try? JSONEncoder().encode(conditions) {
-                UserDefaults.standard.set(data, forKey: "dernieresConditionsPeche")
-            }
-            
-            print("🚀 Lancement de la génération...")
-            suggestionEngine.genererSuggestions(conditions: conditions)
+        // Pont vers le Journal de sorties : mémorise les conditions saisies
+        if let data = try? JSONEncoder().encode(conditions) {
+            UserDefaults.standard.set(data, forKey: "dernieresConditionsPeche")
+        }
+        
         print("🚀 Lancement de la génération...")
         suggestionEngine.genererSuggestions(conditions: conditions)
         

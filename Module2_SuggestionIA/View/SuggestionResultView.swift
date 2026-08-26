@@ -34,8 +34,35 @@ struct SuggestionResultView: View {
     @State private var selectedTab = 0
     @State private var expandedCards: Set<UUID> = []
     
-    var body: some View {
-        NavigationView {
+    //
+    //  Remplacement du `body` de SuggestionResultView
+    //  Fichier source : SuggestionResultView.swift — lignes 36 à 83
+    //
+    //  Ce fichier n'est pas à ajouter au projet. Il contient le seul bloc à
+    //  substituer dans SuggestionResultView.swift : la propriété `body`, depuis
+    //  `var body: some View {` jusqu'à l'accolade fermante qui précède
+    //  `// MARK: - Header Stats`.
+    //
+    //  Ce qui change, et pourquoi :
+    //  - Le `NavigationView` interne disparaît. La vue est déjà présentée dans le
+    //    NavigationStack du fullScreenCover de ContentView. Sur iPad, un
+    //    NavigationView se rend par défaut en colonnes : d'où le titre enfermé dans
+    //    une bande étroite, les onglets débordants et le bouton flottant hors barre.
+    //  - La barre d'outils et son bouton « Fermer » disparaissent également. Les
+    //    deux boutons de sortie sont désormais portés par ContentView, seul endroit
+    //    d'où l'on peut distinguer « revenir aux conditions » de « quitter le
+    //    module ».
+    //  - `navigationTitle` et `navigationBarTitleDisplayMode` sont retirés d'ici :
+    //    ContentView les déclare, sans quoi ils seraient posés deux fois.
+    //  - `@Environment(\.dismiss) var dismiss` ligne 33 n'a plus d'appelant. Elle
+    //    peut rester sans dommage ; la supprimer évite un avertissement.
+    //  - Le pont vers le Journal est inchangé : le `.onAppear` migre simplement sur
+    //    le VStack, qui devient la racine de la vue.
+    //
+    //  Aucune modification du scoring, des pondérations ou des seuils.
+    //
+
+        var body: some View {
             VStack(spacing: 0) {
                 // En-tête statistiques
                 headerStats
@@ -63,18 +90,18 @@ struct SuggestionResultView: View {
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color(hex: "F5F5F5"))
-            .navigationTitle("Résultats")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Fermer") {
-                        dismiss()
-                    }
+            .onAppear {
+                // Pont Module 2 → Journal : capture du spread affiché.
+                // Symétrique de l'écriture des conditions dans SuggestionInputView.
+                if let configuration = configuration {
+                    SpreadSnapshotService.enregistrerDernier(
+                        SpreadSnapshot(configuration: configuration)
+                    )
                 }
             }
         }
-    }
     
     // MARK: - Header Stats
     

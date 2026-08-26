@@ -85,10 +85,10 @@ struct LeurreDetailView: View {
                 }
             }
         }
-        .sheet(isPresented: $showingEditer) {
+        .fullScreenCover(isPresented: $showingEditer) {
             LeurreFormView(viewModel: viewModel, mode: .edition(leurre))
         }
-        .sheet(isPresented: $showingDupliquer) {
+        .fullScreenCover(isPresented: $showingDupliquer) {
             LeurreFormView(viewModel: viewModel, mode: .duplication(leurre))
         }
         .alert("Supprimer ce leurre ?", isPresented: $showingSupprimer) {

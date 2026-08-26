@@ -848,6 +848,17 @@ enum PositionSpread: String, Codable, CaseIterable, Hashable {
         case .shotgun:     return "circle.fill"
         }
     }
+    /// Numéro de position tel qu'il figure sur le gabarit du spread.
+    var numero: String {
+        switch self {
+        case .libre:       return "L"
+        case .shortCorner: return "1"
+        case .longCorner:  return "2"
+        case .shortRigger: return "3"
+        case .longRigger:  return "4"
+        case .shotgun:     return "5"
+        }
+    }
 
     var distance: String {
         switch self {

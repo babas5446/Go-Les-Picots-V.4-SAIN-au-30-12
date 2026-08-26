@@ -25,6 +25,7 @@ struct SolunarView: View {
 
     // MARK: État
 
+    @Environment(\.dismiss) private var dismiss
     @State private var selectedDate: Date = Calendar.current.startOfDay(for: Date())
     @State private var solunarDay: SolunarDay?
     @State private var isCalculating: Bool = false
@@ -61,6 +62,11 @@ struct SolunarView: View {
         .background(Color(.systemGroupedBackground))
         .navigationTitle("Solunaire")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button("Fermer") { dismiss() }
+            }
+        }
         .task(id: selectedDate) {
             await computeSolunar()
         }

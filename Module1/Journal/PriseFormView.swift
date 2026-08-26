@@ -13,6 +13,23 @@
 //  - Position GPS actuelle si disponible
 //  - Photo du leurre copiée depuis la boîte si leurreID sélectionné
 //
+//  V4.2 — Chantier photo :
+//  - Appui sur la photo : agrandissement par PhotoViewerView, au lieu de
+//    rouvrir le sélecteur. La photo servait d'étiquette au bouton, ce qui
+//    rendait l'agrandissement impossible.
+//  - Menu à deux entrées : prise de vue directe ou bibliothèque. Seule la
+//    bibliothèque était accessible jusqu'ici.
+//  - Suppression possible, différée : elle n'atteint l'objet persisté qu'à
+//    la validation du formulaire, comme la photo elle-même.
+//  - Une seule présentation plein écran, arbitrée par PresentationPhoto :
+//    deux fullScreenCover sur un même nœud de vue s'annulent silencieusement.
+//  - photoAffichee supprimé : photoPoissonImage est désormais l'unique
+//    source de vérité pour la photo en cours de saisie.
+//  - État `notes` supprimé : jamais affiché ni sauvegardé, redondant avec
+//    les notes de la Sortie.
+//
+//  Requiert NSCameraUsageDescription dans les réglages du projet.
+//
 
 import SwiftUI
 import SwiftData
@@ -45,7 +62,6 @@ struct PriseFormView: View {
     @State private var relache: Bool
     @State private var leurreID: Int?
     @State private var leurreLibre: String
-    @State private var notes: String
 
     // MARK: - Mode saisie leurre
 
@@ -54,9 +70,28 @@ struct PriseFormView: View {
 
     // MARK: - Photos
 
-    @State private var photoPoisson: PhotosPickerItem?
-    @State private var photoAffichee: Image?
+    /// Photo du leurre, copiée de la boîte à la sélection.
     @State private var leurrePhotoData: Data?
+
+    /// Photo du poisson en cours de saisie. Source unique tant que le
+    /// formulaire n'est pas validé.
+    @State private var photoPoissonImage: UIImage?
+
+    /// Intention de suppression d'une photo déjà persistée. Un simple nil sur
+    /// photoPoissonImage ne suffirait pas : il signifie aussi « aucune nouvelle
+    /// photo choisie », ce qui laisserait l'ancienne en place.
+    @State private var photoSupprimee: Bool = false
+
+    /// Une seule présentation plein écran à la fois.
+    private enum PresentationPhoto: Int, Identifiable {
+        case visualiseur, appareil
+        var id: Int { rawValue }
+    }
+    @State private var presentationPhoto: PresentationPhoto?
+
+    @State private var afficherChoixPhoto: Bool = false
+    @State private var afficherBibliotheque: Bool = false
+    @State private var photoItem: PhotosPickerItem?
 
     // MARK: - Localisation
 
@@ -66,6 +101,10 @@ struct PriseFormView: View {
     // MARK: - Conditions
 
     @State private var conditions: ConditionsPeche?
+
+    // MARK: - Navigation
+
+    @State private var afficherLeurrePicker: Bool = false
 
     // MARK: - Alertes
 
@@ -86,7 +125,6 @@ struct PriseFormView: View {
         _relache          = State(initialValue: false)
         _leurreID         = State(initialValue: nil)
         _leurreLibre      = State(initialValue: "")
-        _notes            = State(initialValue: "")
         _modeLeurre       = State(initialValue: .aucun)
         _leurrePhotoData  = State(initialValue: nil)
         _conditions       = State(initialValue: viewModel.dernieresConditions())
@@ -112,7 +150,6 @@ struct PriseFormView: View {
         _relache          = State(initialValue: prise.relache)
         _leurreID         = State(initialValue: prise.leurreID)
         _leurreLibre      = State(initialValue: prise.leurreLibre ?? "")
-        _notes            = State(initialValue: "")
         _leurrePhotoData  = State(initialValue: prise.leurrePhotoData)
         _conditions       = State(initialValue: prise.conditions ?? viewModel.dernieresConditions())
         _afficherEspeceLibre = State(initialValue: prise.especeLibre != nil)
@@ -126,6 +163,17 @@ struct PriseFormView: View {
         } else {
             _modeLeurre = State(initialValue: .aucun)
         }
+    }
+
+    // MARK: - Photo courante
+
+    /// Arbitre les trois sources possibles, dans l'ordre de priorité :
+    /// suppression demandée, nouvelle photo choisie, photo déjà persistée.
+    private var photoCourante: UIImage? {
+        if photoSupprimee { return nil }
+        if let image = photoPoissonImage { return image }
+        if let data = prise?.photoData { return UIImage(data: data) }
+        return nil
     }
 
     // MARK: - Body
@@ -159,6 +207,78 @@ struct PriseFormView: View {
                         .disabled(especeNom.isEmpty && especeLibre.isEmpty)
                 }
             }
+            .sheet(isPresented: $afficherLeurrePicker) {
+                LeurrePickerView(selectionCourante: leurreID) { leurre in
+                    if let leurre {
+                        leurreID        = leurre.id
+                        leurrePhotoData = leurre.photoData
+                    } else {
+                        leurreID        = nil
+                        leurrePhotoData = nil
+                    }
+                }
+            }
+            .fullScreenCover(item: $presentationPhoto) { presentation in
+                switch presentation {
+
+                case .visualiseur:
+                    if let image = photoCourante {
+                        PhotoViewerView(
+                            image: image,
+                            titre: "Photo du poisson",
+                            onRemplacer: { afficherChoixPhoto = true },
+                            onSupprimer: { supprimerPhoto() }
+                        )
+                    }
+
+                case .appareil:
+                    AppareilPhotoPicker { image in
+                        if let image {
+                            photoPoissonImage = image
+                            photoSupprimee    = false
+                        }
+                    }
+                    .ignoresSafeArea()
+                }
+            }
+            .photosPicker(
+                isPresented: $afficherBibliotheque,
+                selection: $photoItem,
+                matching: .images
+            )
+            .confirmationDialog(
+                "Photo du poisson",
+                isPresented: $afficherChoixPhoto,
+                titleVisibility: .visible
+            ) {
+                Button("Prendre une photo") { presentationPhoto = .appareil }
+                Button("Choisir dans la bibliothèque") { afficherBibliotheque = true }
+                Button("Annuler", role: .cancel) { }
+            }
+            .onChange(of: photoItem) { _, item in
+                Task {
+                    if let data = try? await item?.loadTransferable(type: Data.self),
+                       let uiImage = UIImage(data: data) {
+                        photoPoissonImage = uiImage
+                        photoSupprimee    = false
+                    }
+                }
+            }
+            .onChange(of: photoItem) { _, item in
+                Task {
+                    if let data = try? await item?.loadTransferable(type: Data.self),
+                       let uiImage = UIImage(data: data) {
+                        photoPoissonImage = uiImage
+                        photoSupprimee    = false
+                    }
+                }
+            }
+            .onAppear {
+                print("▶︎ \(NouvelleSortieView.horodatage()) PFV APPEAR — sortie supprimée \(sortie.isDeleted)")
+            }
+            .onDisappear {
+                print("◀︎ \(NouvelleSortieView.horodatage()) PFV DISAPPEAR — sortie supprimée \(sortie.isDeleted)")
+            }
         }
     }
 
@@ -180,7 +300,7 @@ struct PriseFormView: View {
                     }
                 }
                 .pickerStyle(.menu)
-                .onChange(of: especeNom) { _ in
+                .onChange(of: especeNom) { _, _ in
                     afficherEspeceLibre = false
                     especeLibre = ""
                 }
@@ -192,7 +312,7 @@ struct PriseFormView: View {
                     .font(.subheadline)
             }
             .tint(Color(hex: "0277BD"))
-            .onChange(of: afficherEspeceLibre) { val in
+            .onChange(of: afficherEspeceLibre) { _, val in
                 if val { especeNom = "" }
             }
 
@@ -243,6 +363,12 @@ struct PriseFormView: View {
 
     // MARK: - Section leurre
 
+    /// Leurre de la boîte correspondant à leurreID, s'il existe encore.
+    private var leurreResolu: Leurre? {
+        guard let id = leurreID else { return nil }
+        return tousLesLeurres.first { $0.id == id }
+    }
+
     private var sectionLeurre: some View {
         VStack(alignment: .leading, spacing: 12) {
 
@@ -262,50 +388,28 @@ struct PriseFormView: View {
                     .foregroundColor(.secondary)
 
             case .boite:
-                // Picker depuis la boîte à leurres
-                VStack(alignment: .leading, spacing: 8) {
-                    Picker("Leurre", selection: $leurreID) {
-                        Text("Sélectionner…").tag(nil as Int?)
-                        ForEach(tousLesLeurres.sorted { $0.nom < $1.nom }) { leurre in
-                            Text("\(leurre.nom) — \(leurre.marque)").tag(leurre.id as Int?)
-                        }
-                    }
-                    .pickerStyle(.menu)
-                    .onChange(of: leurreID) { id in
-                        if let id = id,
-                           let leurre = tousLesLeurres.first(where: { $0.id == id }) {
-                            leurrePhotoData = leurre.photoData
-                        } else {
-                            leurrePhotoData = nil
-                        }
+                VStack(alignment: .leading, spacing: 10) {
+
+                    if let leurre = leurreResolu {
+                        carteLeurre(leurre)
+                    } else if let data = leurrePhotoData, let uiImage = UIImage(data: data) {
+                        // Leurre retiré de la boîte : la photo copiée dans la prise subsiste
+                        carteLeurreOrphelin(image: uiImage)
                     }
 
-                    // Aperçu photo leurre
-                    if let data = leurrePhotoData, let uiImage = UIImage(data: data) {
-                        HStack(spacing: 10) {
-                            Image(uiImage: uiImage)
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 56, height: 56)
-                                .clipShape(RoundedRectangle(cornerRadius: 8))
-
-                            if let id = leurreID,
-                               let leurre = tousLesLeurres.first(where: { $0.id == id }) {
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(leurre.nom)
-                                        .font(.subheadline)
-                                        .fontWeight(.semibold)
-                                    Text(leurre.marque)
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                    Text("\(Int(leurre.longueur)) cm")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                }
-                            }
-                        }
-                        .padding(8)
-                        .background(Color(hex: "F5F5F5"))
+                    Button {
+                        afficherLeurrePicker = true
+                    } label: {
+                        Label(
+                            leurreID == nil ? "Choisir un leurre" : "Changer de leurre",
+                            systemImage: "square.grid.2x2"
+                        )
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                        .background(Color(hex: "0277BD").opacity(0.12))
+                        .foregroundColor(Color(hex: "0277BD"))
                         .cornerRadius(10)
                     }
                 }
@@ -321,6 +425,69 @@ struct PriseFormView: View {
             }
         }
         .carteJournal(titre: "Leurre utilisé", icone: "lasso")
+    }
+
+    // MARK: - Carte du leurre sélectionné
+
+    private func carteLeurre(_ leurre: Leurre) -> some View {
+        HStack(spacing: 12) {
+            if let data = leurre.photoData, let uiImage = UIImage(data: data) {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 60, height: 60)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+            } else {
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color.white)
+                    .frame(width: 60, height: 60)
+                    .overlay(
+                        Image(systemName: "fish")
+                            .foregroundColor(.secondary)
+                    )
+            }
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(leurre.nom)
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                Text(leurre.marque)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                Text("\(leurre.descriptionCouleurs) · \(Int(leurre.longueur)) cm")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+
+            Spacer()
+        }
+        .padding(8)
+        .background(Color(hex: "F5F5F5"))
+        .cornerRadius(10)
+    }
+
+    private func carteLeurreOrphelin(image: UIImage) -> some View {
+        HStack(spacing: 12) {
+            Image(uiImage: image)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 60, height: 60)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text("Leurre n° \(leurreID ?? 0)")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                Text("Retiré de la boîte")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+
+            Spacer()
+        }
+        .padding(8)
+        .background(Color(hex: "F5F5F5"))
+        .cornerRadius(10)
     }
 
     // MARK: - Section conditions
@@ -384,23 +551,35 @@ struct PriseFormView: View {
 
     // MARK: - Section photo poisson
 
+    /// Le geste change de sens selon l'état : sans photo, le bouton ouvre le
+    /// menu de saisie ; avec photo, il ouvre le visualiseur, d'où partent le
+    /// remplacement et la suppression.
     private var sectionPhoto: some View {
         VStack(alignment: .leading, spacing: 8) {
-            PhotosPicker(selection: $photoPoisson, matching: .images) {
-                if let photo = photoAffichee {
-                    photo
-                        .resizable()
-                        .scaledToFill()
-                        .frame(height: 160)
-                        .frame(maxWidth: .infinity)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                } else if let data = prise?.photoData, let uiImage = UIImage(data: data) {
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .scaledToFill()
-                        .frame(height: 160)
-                        .frame(maxWidth: .infinity)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
+            Button {
+                if photoCourante != nil {
+                    presentationPhoto = .visualiseur
+                } else {
+                    afficherChoixPhoto = true
+                }
+            } label: {
+                if let image = photoCourante {
+                    ZStack(alignment: .bottomTrailing) {
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(height: 160)
+                            .frame(maxWidth: .infinity)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+
+                        Image(systemName: "arrow.up.left.and.arrow.down.right")
+                            .font(.caption)
+                            .foregroundColor(.white)
+                            .padding(6)
+                            .background(Color.black.opacity(0.45))
+                            .clipShape(Circle())
+                            .padding(8)
+                    }
                 } else {
                     HStack {
                         Image(systemName: "camera")
@@ -413,19 +592,24 @@ struct PriseFormView: View {
                     .cornerRadius(10)
                 }
             }
-            .onChange(of: photoPoisson) { item in
-                Task {
-                    if let data = try? await item?.loadTransferable(type: Data.self),
-                       let uiImage = UIImage(data: data) {
-                        photoAffichee = Image(uiImage: uiImage)
-                        if let p = prise {
-                            viewModel.sauvegarderPhotoPrise(image: uiImage, pourPrise: p)
-                        }
-                    }
-                }
+
+            if photoCourante != nil {
+                Text("Appuyez sur la photo pour l'agrandir.")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
             }
         }
         .carteJournal(titre: "Photo du poisson", icone: "camera.fill")
+    }
+
+    // MARK: - Actions photo
+
+    /// La suppression n'atteint l'objet persisté qu'à la validation : tant que
+    /// le formulaire n'est pas enregistré, un abandon laisse la photo intacte.
+    private func supprimerPhoto() {
+        photoPoissonImage = nil
+        photoItem         = nil
+        photoSupprimee    = true
     }
 
     // MARK: - Sauvegarde
@@ -434,21 +618,15 @@ struct PriseFormView: View {
         let nomEspece = afficherEspeceLibre ? "" : especeNom
         let libre     = afficherEspeceLibre ? especeLibre : nil
 
-        let taille = Double(tailleCm)
+        let taille = Double(tailleCm.replacingOccurrences(of: ",", with: "."))
         let poids  = Double(poidsKg.replacingOccurrences(of: ",", with: "."))
 
-        let leurreIDFinal    = modeLeurre == .boite ? leurreID : nil
-        let leurreLibreFinal = modeLeurre == .libre ? (leurreLibre.isEmpty ? nil : leurreLibre) : nil
-        let photoDonnees: Data? = {
-            if let item = photoPoisson,
-               let data = try? Data(contentsOf: URL(string: "")!) {
-                return data
-            }
-            return prise?.photoData
-        }()
+        let leurreIDFinal     = modeLeurre == .boite ? leurreID : nil
+        let leurreLibreFinal  = modeLeurre == .libre ? (leurreLibre.isEmpty ? nil : leurreLibre) : nil
+        let leurrePhotoFinale = modeLeurre == .boite ? leurrePhotoData : nil
 
         if modeCreation {
-            viewModel.ajouterPrise(
+            let nouvelle = viewModel.ajouterPrise(
                 a:               sortie,
                 especeNom:       nomEspece,
                 especeLibre:     libre,
@@ -457,11 +635,16 @@ struct PriseFormView: View {
                 relache:         relache,
                 leurreID:        leurreIDFinal,
                 leurreLibre:     leurreLibreFinal,
-                leurrePhotoData: leurrePhotoData,
+                leurrePhotoData: leurrePhotoFinale,
                 latitude:        latitude,
                 longitude:       longitude,
                 photoData:       nil
             )
+
+            if let image = photoPoissonImage, !photoSupprimee {
+                viewModel.sauvegarderPhotoPrise(image: image, pourPrise: nouvelle)
+            }
+
         } else if let p = prise {
             p.especeNom       = nomEspece
             p.especeLibre     = libre
@@ -470,11 +653,22 @@ struct PriseFormView: View {
             p.relache         = relache
             p.leurreID        = leurreIDFinal
             p.leurreLibre     = leurreLibreFinal
-            p.leurrePhotoData = leurrePhotoData
+            p.leurrePhotoData = leurrePhotoFinale
             p.latitude        = latitude
             p.longitude       = longitude
             p.conditions      = conditions
+
+            // La suppression précède l'éventuel remplacement : une photo
+            // supprimée puis reprise ne doit pas laisser l'ancienne en place.
+            if photoSupprimee {
+                p.photoData = nil
+            }
+
             viewModel.modifierPrise(p)
+
+            if let image = photoPoissonImage, !photoSupprimee {
+                viewModel.sauvegarderPhotoPrise(image: image, pourPrise: p)
+            }
         }
 
         dismiss()

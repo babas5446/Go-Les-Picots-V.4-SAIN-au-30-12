@@ -2,15 +2,27 @@
 //  NouvelleSortieView.swift
 //  Go les Picots V.4 — Journal de sorties
 //
-//  Formulaire de création et d'édition d'une sortie de pêche.
+//  Formulaire d'édition d'une sortie de pêche.
 //
-//  Modes :
-//  - Création : init(viewModel:) — crée une Sortie vide pré-remplie
-//  - Édition  : init(viewModel:sortie:) — édite une Sortie existante
-//
-//  Pré-remplissage :
-//  - Conditions depuis UserDefaults (dernière suggestion SuggestionIA)
-//  - Heure de départ = maintenant
+//  V4.2 — refonte du cycle de vie :
+//  - Un seul initialiseur. La Sortie est créée et insérée par
+//    JournalViewModel.creerSortie() avant présentation. L'objet reçu est donc
+//    déjà persisté et son identité ne change plus d'une recomposition à l'autre.
+//    C'est la correction de la cause commune des symptômes des sessions 3 et 4 :
+//    bouton sans effet, saisie impossible, garde-fou inerte, perte de saisie.
+//  - Bandeau à quatre états : non démarrée, en cours, en pause, terminée.
+//  - Chronomètre par TimelineView(.periodic) : le rafraîchissement reste confiné
+//    au bandeau. L'ancien Timer.publish écrivait dans un @State et recomposait
+//    tout le corps de la vue chaque seconde, ce qui aggravait l'instabilité.
+//  - Toggle « Heure de retour » supprimé : l'heure est posée par « Terminer la
+//    sortie ». Elle reste modifiable, mais seulement après clôture.
+//  - Bilan de fin de sortie : horaires, durées, distance, vitesses, consommation,
+//    export GPX vers Boating.
+//  - Photo : menu « Prendre une photo » / « Choisir dans la bibliothèque ».
+//    Requiert NSCameraUsageDescription dans les réglages du projet.
+//  - Les leurres des spreads sont résolus par FetchDescriptor ciblé au lieu d'un
+//    @Query chargeant les 75 leurres de la boîte, qui provoquait l'écran blanc
+//    à l'ouverture.
 //
 
 import SwiftUI
@@ -26,74 +38,64 @@ struct NouvelleSortieView: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
 
-    // MARK: - Sortie en cours d'édition
+    // MARK: - Sortie éditée
 
-    private let sortie: Sortie
-    private let modeCreation: Bool
+    /// Objet déjà inséré dans le contexte par le ViewModel.
+    let sortie: Sortie
 
     // MARK: - Champs du formulaire
 
+    @State private var nomSortie: String
     @State private var nomSpot: String
     @State private var notes: String
     @State private var heureDepart: Date
     @State private var heureRetour: Date
-    @State private var heureRetourActive: Bool
     @State private var conditions: ConditionsPeche?
-    @State private var leurresSessionIDs: [Int]
+    @State private var spreads: [SpreadSnapshot]
+    @State private var carburantTexte: String
 
-    // MARK: - Photos
+    // MARK: - Leurres des spreads (résolution ciblée)
 
-    @State private var photoItem: PhotosPickerItem?
-    @State private var photoSpot: Image?
+    @State private var leurresSpread: [Int: Leurre] = [:]
+
+    
 
     // MARK: - Navigation
 
     @State private var afficherPriseForm: Bool = false
-    @State private var afficherLeurresPicker: Bool = false
     @State private var priseAEditer: Prise?
 
-    // MARK: - Chronomètre
+    // MARK: - Export GPX
 
-    @State private var timerDisplay: String = "00:00:00"
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    @State private var fichierGPX: FichierPartage?
 
-    // MARK: - Init création
+    // MARK: - Alertes
 
-    init(viewModel: JournalViewModel) {
-        self.viewModel    = viewModel
-        self.modeCreation = true
+    @State private var afficherAucunSpread: Bool = false
+    @State private var afficherConfirmationFin: Bool = false
+    @State private var afficherRestauration: Bool = false
 
-        let nouvelleSortie = Sortie(
-            date:       Date(),
-            heureDepart: Date(),
-            nomSpot:    ""
-        )
-        self.sortie = nouvelleSortie
-
-        _nomSpot           = State(initialValue: "")
-        _notes             = State(initialValue: "")
-        _heureDepart       = State(initialValue: Date())
-        _heureRetour       = State(initialValue: Date())
-        _heureRetourActive = State(initialValue: false)
-        _conditions        = State(initialValue: viewModel.dernieresConditions())
-        _leurresSessionIDs = State(initialValue: [])
-    }
-
-    // MARK: - Init édition
+    // MARK: - Initialisation
 
     init(viewModel: JournalViewModel, sortie: Sortie) {
-        self.viewModel    = viewModel
-        self.modeCreation = false
-        self.sortie       = sortie
+        self.viewModel = viewModel
+        self.sortie    = sortie
 
-        _nomSpot           = State(initialValue: sortie.nomSpot)
-        _notes             = State(initialValue: sortie.notes)
-        _heureDepart       = State(initialValue: sortie.heureDepart ?? sortie.date)
-        _heureRetour       = State(initialValue: sortie.heureRetour ?? Date())
-        _heureRetourActive = State(initialValue: sortie.heureRetour != nil)
-        _conditions        = State(initialValue: sortie.conditions)
-        _leurresSessionIDs = State(initialValue: sortie.leurresSessionIDs)
+        _nomSortie      = State(initialValue: sortie.nomSortie)
+        _nomSpot        = State(initialValue: sortie.nomSpot)
+        _notes          = State(initialValue: sortie.notes)
+        _heureDepart    = State(initialValue: sortie.heureDepart ?? sortie.date)
+        _heureRetour    = State(initialValue: sortie.heureRetour ?? Date())
+        _conditions     = State(initialValue: sortie.conditions)
+        _spreads        = State(initialValue: sortie.spreads)
+        _carburantTexte = State(
+            initialValue: sortie.carburantLitres.map { String(format: "%.1f", $0) } ?? ""
+        )
     }
+
+    // MARK: - État courant
+
+    private var etat: EtatSortie { sortie.etat }
 
     // MARK: - Body
 
@@ -102,22 +104,16 @@ struct NouvelleSortieView: View {
             ScrollView {
                 VStack(spacing: 20) {
 
-                    // Bouton démarrer / terminer
                     sectionCycleVie
 
-                    // Informations générales
+                    if etat == .terminee {
+                        sectionBilan
+                    }
+
                     sectionInfos
-
-                    // Conditions de pêche
                     sectionConditions
-
-                    // Leurres de la session
-                    sectionLeurres
-
-                    // Prises
+                    sectionSpreads
                     sectionPrises
-
-                    // Notes
                     sectionNotes
 
                     Spacer(minLength: 40)
@@ -125,20 +121,19 @@ struct NouvelleSortieView: View {
                 .padding()
             }
             .background(Color(hex: "F5F5F5"))
-            .navigationTitle(modeCreation ? "Nouvelle sortie" : "Modifier la sortie")
+            .navigationTitle(etat == .nonDemarree ? "Nouvelle sortie" : "Sortie")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Annuler") { dismiss() }
+                    Button("Fermer") {
+                        sauvegarder(fermer: true)
+                    }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Enregistrer") { sauvegarder() }
-                        .fontWeight(.semibold)
-                }
-            }
-            .onReceive(timer) { _ in
-                if viewModel.sortieEnCours?.id == sortie.id {
-                    mettreAJourChrono()
+                    Button("Enregistrer") {
+                        sauvegarder(fermer: true)
+                    }
+                    .fontWeight(.semibold)
                 }
             }
             .sheet(isPresented: $afficherPriseForm) {
@@ -147,54 +142,337 @@ struct NouvelleSortieView: View {
             .sheet(item: $priseAEditer) { prise in
                 PriseFormView(viewModel: viewModel, sortie: sortie, prise: prise)
             }
+            .sheet(item: $fichierGPX) { fichier in
+                PartageActivite(url: fichier.url)
+            }
+            .alert("Aucun spread disponible", isPresented: $afficherAucunSpread) {
+                Button("Compris", role: .cancel) { }
+            } message: {
+                Text("Lancez d'abord une suggestion dans le module IA : le spread proposé pourra ensuite être reporté ici.")
+            }
+            .alert("Terminer la sortie ?", isPresented: $afficherConfirmationFin) {
+                Button("Terminer", role: .destructive) {
+                    sauvegarderChamps()
+                    viewModel.terminerSortie(sortie)
+                    heureRetour = sortie.heureRetour ?? Date()
+                }
+                Button("Annuler", role: .cancel) { }
+            } message: {
+                Text("La trace GPS sera arrêtée et l'heure de retour enregistrée. La sortie restera modifiable.")
+            }
+            .alert("Sortie interrompue", isPresented: $afficherRestauration) {
+                Button("Compris", role: .cancel) { }
+            } message: {
+                Text("Cette sortie était encore ouverte lors de la dernière fermeture de l'application. Elle a été mise en pause au dernier point enregistré. Appuyez sur « Reprendre » pour continuer.")
+            }
+            .task {
+                await chargerLeurresSpread()
+                if viewModel.sortieRestauree?.id == sortie.id {
+                    afficherRestauration = true
+                    viewModel.sortieRestauree = nil
+                }
+            }
+            .onChange(of: spreads.count) { _, _ in
+                // Report immédiat : un spread ajouté ou retiré ne doit pas
+                // attendre « Enregistrer » pour exister sur l'objet persisté.
+                sortie.spreads = spreads
+                viewModel.modifierSortie(sortie)
+
+                Task { await chargerLeurresSpread() }
+            }
+            .onAppear {
+                print("▶︎ \(Self.horodatage()) NSV APPEAR — supprimée \(sortie.isDeleted)")
+            }
+            .onDisappear {
+                print("◀︎ \(Self.horodatage()) NSV DISAPPEAR — supprimée \(sortie.isDeleted)")
+                // Une sortie créée puis quittée sans la moindre saisie disparaît.
+                viewModel.supprimerSiBrouillonVide(sortie)
+            }
         }
     }
 
     // MARK: - Section cycle de vie
 
     private var sectionCycleVie: some View {
-        let enCours = viewModel.sortieEnCours?.id == sortie.id
+        VStack(spacing: 12) {
 
-        return VStack(spacing: 12) {
-            Button {
-                if enCours {
-                    viewModel.terminerSortie(sortie)
-                } else {
+            bandeauEtat
+
+            switch etat {
+            case .nonDemarree:
+                boutonCycle(
+                    titre: "Démarrer la sortie",
+                    icone: "play.circle.fill",
+                    couleur: .green
+                ) {
+                    sauvegarderChamps()
                     viewModel.demarrerSortie(sortie)
+                    heureDepart = sortie.heureDepart ?? Date()
                 }
-            } label: {
-                HStack(spacing: 12) {
-                    Image(systemName: enCours ? "stop.circle.fill" : "play.circle.fill")
-                        .font(.title2)
-                    Text(enCours ? "Terminer la sortie" : "Démarrer la sortie")
-                        .fontWeight(.bold)
-                }
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(enCours ? Color.red : Color.green)
-                .foregroundColor(.white)
-                .cornerRadius(14)
-            }
 
-            if enCours {
-                HStack(spacing: 8) {
-                    Image(systemName: "timer")
-                        .foregroundColor(.green)
-                    Text(timerDisplay)
-                        .font(.system(.title3, design: .monospaced))
-                        .fontWeight(.semibold)
-                        .foregroundColor(.green)
+            case .enCours:
+                HStack(spacing: 10) {
+                    boutonCycle(
+                        titre: "Pause",
+                        icone: "pause.circle.fill",
+                        couleur: .orange
+                    ) {
+                        viewModel.mettreEnPause(sortie)
+                    }
+                    boutonCycle(
+                        titre: "Terminer",
+                        icone: "stop.circle.fill",
+                        couleur: .red
+                    ) {
+                        afficherConfirmationFin = true
+                    }
                 }
-                .padding(.vertical, 4)
+
+            case .enPause:
+                HStack(spacing: 10) {
+                    boutonCycle(
+                        titre: "Reprendre",
+                        icone: "play.circle.fill",
+                        couleur: .orange
+                    ) {
+                        viewModel.reprendreSortie(sortie)
+                    }
+                    boutonCycle(
+                        titre: "Terminer",
+                        icone: "stop.circle.fill",
+                        couleur: .red
+                    ) {
+                        afficherConfirmationFin = true
+                    }
+                }
+
+            case .terminee:
+                EmptyView()
             }
         }
-        .carteJournal(titre: "Sortie", icone: "boat.fill")
+        .carteJournal(titre: "Sortie", icone: "ferry.fill")
+    }
+
+    private func boutonCycle(
+        titre: String,
+        icone: String,
+        couleur: Color,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            HStack(spacing: 8) {
+                Image(systemName: icone)
+                    .font(.title3)
+                Text(titre)
+                    .fontWeight(.bold)
+                    .lineLimit(1)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 14)
+            .background(couleur)
+            .foregroundColor(.white)
+            .cornerRadius(14)
+        }
+    }
+
+    // MARK: - Bandeau d'état
+
+    /// Le chronomètre est confiné dans un TimelineView : lui seul se rafraîchit
+    /// chaque seconde, le reste du formulaire n'est pas recomposé.
+    private var bandeauEtat: some View {
+        Group {
+            switch etat {
+            case .nonDemarree:
+                bandeau(
+                    couleur: Color(hex: "0277BD"),
+                    icone: "clock",
+                    texte: "Sortie non démarrée"
+                )
+
+            case .enCours:
+                TimelineView(.periodic(from: .now, by: 1)) { _ in
+                    bandeauActif(
+                        couleur: .green,
+                        libelle: "En cours",
+                        chrono: Self.chrono(sortie.dureeNavigation)
+                    )
+                }
+
+            case .enPause:
+                // Figé : en pause, dureeNavigation ne progresse plus.
+                bandeauActif(
+                    couleur: .orange,
+                    libelle: "En pause",
+                    chrono: Self.chrono(sortie.dureeNavigation)
+                )
+
+            case .terminee:
+                bandeau(
+                    couleur: .secondary,
+                    icone: "checkmark.circle.fill",
+                    texte: "Sortie terminée"
+                )
+            }
+        }
+    }
+
+    private func bandeau(couleur: Color, icone: String, texte: String) -> some View {
+        HStack(spacing: 8) {
+            Image(systemName: icone)
+            Text(texte)
+                .font(.subheadline)
+                .fontWeight(.semibold)
+            Spacer()
+        }
+        .foregroundColor(couleur)
+        .padding(10)
+        .frame(maxWidth: .infinity)
+        .background(couleur.opacity(0.12))
+        .cornerRadius(10)
+    }
+
+    private func bandeauActif(couleur: Color, libelle: String, chrono: String) -> some View {
+        VStack(spacing: 6) {
+            HStack(spacing: 8) {
+                Circle()
+                    .fill(couleur)
+                    .frame(width: 10, height: 10)
+                Text(libelle.uppercased())
+                    .font(.caption)
+                    .fontWeight(.bold)
+                Spacer()
+                Text("\(viewModel.traceGPS.nombrePointsSession) pts GPS")
+                    .font(.caption)
+            }
+
+            HStack {
+                Image(systemName: "timer")
+                Text(chrono)
+                    .font(.system(.title2, design: .monospaced))
+                    .fontWeight(.semibold)
+                Spacer()
+            }
+        }
+        .foregroundColor(couleur)
+        .padding(12)
+        .frame(maxWidth: .infinity)
+        .background(couleur.opacity(0.12))
+        .cornerRadius(10)
+    }
+
+    // MARK: - Section bilan (sortie terminée)
+
+    private var sectionBilan: some View {
+        VStack(alignment: .leading, spacing: 14) {
+
+            // Horaires
+            HStack {
+                bilanValeur("Départ", Self.heure(sortie.heureDepart))
+                Spacer()
+                bilanValeur("Retour", Self.heure(sortie.heureRetour))
+            }
+
+            Divider()
+
+            // Durées
+            HStack(alignment: .top) {
+                bilanValeur("Durée totale", sortie.dureeFormatee ?? "—")
+                Spacer()
+                bilanValeur("Navigation", sortie.dureeNavigationFormatee ?? "—")
+                Spacer()
+                bilanValeur("Pauses", sortie.dureePausesFormatee ?? "—")
+            }
+
+            Divider()
+
+            // Trajet
+            HStack(alignment: .top) {
+                bilanValeur("Distance", sortie.distanceFormatee ?? "—")
+                Spacer()
+                bilanValeur("Moyenne", sortie.vitesseMoyenneFormatee ?? "—")
+                Spacer()
+                bilanValeur("Maxi", sortie.vitesseMaxFormatee ?? "—")
+            }
+
+            Divider()
+
+            // Carburant
+            HStack(alignment: .bottom, spacing: 12) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Plein au retour")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    HStack(spacing: 6) {
+                        TextField("0", text: $carburantTexte)
+                            .keyboardType(.decimalPad)
+                            .textFieldStyle(.roundedBorder)
+                            .frame(width: 90)
+                            .onChange(of: carburantTexte) { _, _ in
+                                enregistrerCarburant()
+                            }
+                        Text("L")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
+                }
+
+                Spacer()
+
+                bilanValeur("Consommation", sortie.consommationHoraireFormatee ?? "—")
+                Spacer()
+                bilanValeur("Au mille", sortie.consommationParMilleFormatee ?? "—")
+            }
+
+            // Export
+            if sortie.exportGPXPossible {
+                Button {
+                    if let url = viewModel.exporterGPX(sortie: sortie) {
+                        fichierGPX = FichierPartage(url: url)
+                    }
+                } label: {
+                    Label("Exporter la trace (GPX)", systemImage: "square.and.arrow.up")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                        .background(Color(hex: "0277BD").opacity(0.12))
+                        .foregroundColor(Color(hex: "0277BD"))
+                        .cornerRadius(10)
+                }
+                .padding(.top, 4)
+
+                Text("Ouvrez le fichier dans Boating pour visualiser le tracé et les prises.")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+            }
+        }
+        .carteJournal(titre: "Bilan de la sortie", icone: "chart.bar.fill")
+    }
+
+    private func bilanValeur(_ titre: String, _ valeur: String) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(titre)
+                .font(.caption)
+                .foregroundColor(.secondary)
+            Text(valeur)
+                .font(.subheadline)
+                .fontWeight(.semibold)
+        }
     }
 
     // MARK: - Section informations
 
     private var sectionInfos: some View {
         VStack(spacing: 16) {
+
+            VStack(alignment: .leading, spacing: 6) {
+                Text("Nom de la sortie")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                TextField("Sortie du …", text: $nomSortie)
+                    .textFieldStyle(.roundedBorder)
+            }
+
             VStack(alignment: .leading, spacing: 6) {
                 Text("Nom du spot")
                     .font(.subheadline)
@@ -209,75 +487,31 @@ struct NouvelleSortieView: View {
                     .fontWeight(.semibold)
                 DatePicker("", selection: $heureDepart, displayedComponents: [.date, .hourAndMinute])
                     .labelsHidden()
+                    .environment(\.locale, Locale(identifier: "fr_FR"))
             }
 
-            VStack(alignment: .leading, spacing: 6) {
-                Toggle(isOn: $heureRetourActive) {
+            // L'heure de retour n'est modifiable qu'une fois la sortie close :
+            // avant, elle est posée par « Terminer la sortie ».
+            if etat == .terminee {
+                VStack(alignment: .leading, spacing: 6) {
                     Text("Heure de retour")
                         .font(.subheadline)
                         .fontWeight(.semibold)
-                }
-                .tint(Color(hex: "0277BD"))
-
-                if heureRetourActive {
-                    DatePicker("", selection: $heureRetour, in: heureDepart..., displayedComponents: [.date, .hourAndMinute])
-                        .labelsHidden()
+                    DatePicker(
+                        "",
+                        selection: $heureRetour,
+                        in: heureDepart...,
+                        displayedComponents: [.date, .hourAndMinute]
+                    )
+                    .labelsHidden()
+                    .environment(\.locale, Locale(identifier: "fr_FR"))
                 }
             }
-
-            // Photo du spot
-            sectionPhotoSpot
         }
         .carteJournal(titre: "Informations", icone: "info.circle.fill")
     }
 
-    // MARK: - Photo spot
-
-    private var sectionPhotoSpot: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Photo du spot")
-                .font(.subheadline)
-                .fontWeight(.semibold)
-
-            PhotosPicker(selection: $photoItem, matching: .images) {
-                if let photo = photoSpot {
-                    photo
-                        .resizable()
-                        .scaledToFill()
-                        .frame(height: 140)
-                        .frame(maxWidth: .infinity)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                } else if let data = sortie.photoSpotData,
-                          let uiImage = UIImage(data: data) {
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .scaledToFill()
-                        .frame(height: 140)
-                        .frame(maxWidth: .infinity)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                } else {
-                    HStack {
-                        Image(systemName: "camera")
-                        Text("Ajouter une photo")
-                    }
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 80)
-                    .background(Color(hex: "F5F5F5"))
-                    .foregroundColor(.secondary)
-                    .cornerRadius(10)
-                }
-            }
-            .onChange(of: photoItem) { item in
-                Task {
-                    if let data = try? await item?.loadTransferable(type: Data.self),
-                       let uiImage = UIImage(data: data) {
-                        photoSpot = Image(uiImage: uiImage)
-                        viewModel.sauvegarderPhotoSpot(image: uiImage, pourSortie: sortie)
-                    }
-                }
-            }
-        }
-    }
+    
 
     // MARK: - Section conditions
 
@@ -305,43 +539,112 @@ struct NouvelleSortieView: View {
         .carteJournal(titre: "Conditions", icone: "cloud.sun.fill")
     }
 
-    // MARK: - Section leurres de la session
+    // MARK: - Section spreads
 
-    private var sectionLeurres: some View {
+    private var sectionSpreads: some View {
         VStack(alignment: .leading, spacing: 12) {
-            if leurresSessionIDs.isEmpty {
-                Text("Aucun leurre sélectionné pour cette session.")
+
+            if spreads.isEmpty {
+                Text("Aucune configuration enregistrée pour cette sortie.")
                     .font(.caption)
                     .foregroundColor(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .padding(.vertical, 4)
             } else {
-                ForEach(leurresSessionIDs, id: \.self) { id in
-                    HStack {
-                        Image(systemName: "circle.fill")
-                            .font(.caption2)
-                            .foregroundColor(Color(hex: "0277BD"))
-                        Text("Leurre #\(id)")
-                            .font(.subheadline)
-                        Spacer()
-                        Button {
-                            leurresSessionIDs.removeAll { $0 == id }
-                        } label: {
-                            Image(systemName: "xmark.circle")
-                                .foregroundColor(.secondary)
-                        }
-                    }
+                ForEach(Array(spreads.enumerated()), id: \.element.id) { index, spread in
+                    carteSpread(spread, numero: index + 1)
                 }
             }
 
             Button {
-                afficherLeurresPicker = true
+                ajouterSpreadSuggere()
             } label: {
-                Label("Sélectionner les leurres", systemImage: "plus")
+                Label("Ajouter le spread suggéré", systemImage: "plus")
                     .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 10)
+                    .background(Color(hex: "0277BD").opacity(0.12))
                     .foregroundColor(Color(hex: "0277BD"))
+                    .cornerRadius(10)
             }
         }
-        .carteJournal(titre: "Leurres de la session", icone: "fish")
-        // La vue de sélection des leurres sera implémentée avec BoiteView picker
+        .carteJournal(titre: "Spreads de la sortie", icone: "arrow.triangle.branch")
+    }
+
+    private func carteSpread(_ spread: SpreadSnapshot, numero: Int) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+
+            HStack(spacing: 8) {
+                Text("Spread \(numero)")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(Color(hex: "0277BD"))
+
+                Text("· \(spread.heureFormatee)")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+
+                Spacer()
+
+                Button {
+                    spreads.removeAll { $0.id == spread.id }
+                } label: {
+                    Image(systemName: "trash")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+
+            Text(spread.descriptionCourte)
+                .font(.caption)
+                .foregroundColor(.secondary)
+
+            VStack(spacing: 8) {
+                ForEach(spread.lignes) { ligne in
+                    ligneSpreadView(ligne)
+                }
+            }
+        }
+        .padding(10)
+        .background(Color(hex: "F5F5F5"))
+        .cornerRadius(10)
+    }
+
+    private func ligneSpreadView(_ ligne: LigneSpread) -> some View {
+        HStack(spacing: 10) {
+            if let leurre = leurresSpread[ligne.leurreID],
+               let data = leurre.photoData,
+               let uiImage = UIImage(data: data) {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 40, height: 40)
+                    .clipShape(RoundedRectangle(cornerRadius: 6))
+            } else {
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(Color.white)
+                    .frame(width: 40, height: 40)
+                    .overlay(
+                        Image(systemName: "fish")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    )
+            }
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(ligne.descriptionPosition)
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .foregroundColor(Color(hex: "0277BD"))
+                Text("\(ligne.nom) — \(ligne.marque)")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .lineLimit(1)
+            }
+
+            Spacer()
+        }
     }
 
     // MARK: - Section prises
@@ -392,29 +695,144 @@ struct NouvelleSortieView: View {
 
     // MARK: - Actions
 
-    private func sauvegarder() {
-        sortie.nomSpot          = nomSpot
-        sortie.notes            = notes
-        sortie.heureDepart      = heureDepart
-        sortie.heureRetour      = heureRetourActive ? heureRetour : nil
-        sortie.conditions       = conditions
-        sortie.leurresSessionIDs = leurresSessionIDs
-
-        if modeCreation {
-            context.insert(sortie)
+    /// Reporte dans la sortie le dernier spread produit par le module de suggestion.
+    /// L'heure est celle du report, pas celle du calcul : c'est le moment de la
+    /// mise à l'eau.
+    private func ajouterSpreadSuggere() {
+        guard var snapshot = SpreadSnapshotService.dernierSpread() else {
+            afficherAucunSpread = true
+            return
         }
-
-        viewModel.modifierSortie(sortie)
-        dismiss()
+        snapshot.id   = UUID()
+        snapshot.date = Date()
+        spreads.append(snapshot)
     }
 
-    private func mettreAJourChrono() {
-        guard let depart = sortie.heureDepart else { return }
-        let elapsed = Int(Date().timeIntervalSince(depart))
-        let h = elapsed / 3600
-        let m = (elapsed % 3600) / 60
-        let s = elapsed % 60
-        timerDisplay = String(format: "%02d:%02d:%02d", h, m, s)
+    /// Reporte les champs du formulaire sur l'objet persisté.
+    private func sauvegarderChamps() {
+        sortie.nomSortie = nomSortie
+        sortie.nomSpot   = nomSpot
+        sortie.notes     = notes
+        sortie.conditions = conditions
+        sortie.spreads    = spreads
+
+        // Les horaires ne sont repris du formulaire que là où ils sont saisissables.
+        if sortie.etat == .nonDemarree || sortie.etat == .terminee {
+            sortie.heureDepart = heureDepart
+        }
+        if sortie.etat == .terminee {
+            sortie.heureRetour = heureRetour
+        }
+    }
+
+    private func sauvegarder(fermer: Bool) {
+        sauvegarderChamps()
+        viewModel.modifierSortie(sortie)
+        if fermer { dismiss() }
+    }
+
+    private func enregistrerCarburant() {
+        let normalise = carburantTexte.replacingOccurrences(of: ",", with: ".")
+        viewModel.enregistrerCarburant(Double(normalise), pour: sortie)
+    }
+
+    /// Résout les seuls leurres présents dans les spreads de la sortie.
+    /// Un @Query sur la boîte entière chargeait 75 objets et leurs photos à
+    /// l'ouverture, d'où l'écran blanc.
+    private func chargerLeurresSpread() async {
+        let ids = Array(Set(spreads.flatMap(\.leurreIDs)))
+        guard !ids.isEmpty else {
+            leurresSpread = [:]
+            return
+        }
+
+        var descriptor = FetchDescriptor<Leurre>(
+            predicate: #Predicate { ids.contains($0.id) }
+        )
+        descriptor.fetchLimit = ids.count
+
+        let resultats = (try? context.fetch(descriptor)) ?? []
+        leurresSpread = Dictionary(uniqueKeysWithValues: resultats.map { ($0.id, $0) })
+    }
+
+    // MARK: - Formatage
+
+    private static func chrono(_ intervalle: TimeInterval?) -> String {
+        let total = Int(max(0, intervalle ?? 0))
+        return String(format: "%02d:%02d:%02d", total / 3600, (total % 3600) / 60, total % 60)
+    }
+
+    private static func heure(_ date: Date?) -> String {
+        guard let date else { return "—" }
+        let f = DateFormatter()
+        f.dateFormat = "HH'h'mm"
+        f.locale     = Locale(identifier: "fr_FR")
+        return f.string(from: date)
+    }
+}
+
+// MARK: - Partage de fichier
+
+/// URL rendue identifiable pour la présentation par .sheet(item:).
+struct FichierPartage: Identifiable {
+    let id = UUID()
+    let url: URL
+}
+
+/// Feuille de partage système, pour envoyer le GPX vers Boating.
+struct PartageActivite: UIViewControllerRepresentable {
+    let url: URL
+
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        UIActivityViewController(activityItems: [url], applicationActivities: nil)
+    }
+
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) { }
+}
+
+// MARK: - Appareil photo
+
+/// Prise de vue directe. Requiert NSCameraUsageDescription dans les réglages
+/// du projet, sans quoi l'application est interrompue à l'ouverture.
+struct AppareilPhotoPicker: UIViewControllerRepresentable {
+
+    let completion: (UIImage?) -> Void
+    @Environment(\.dismiss) private var dismiss
+
+    func makeUIViewController(context: Context) -> UIImagePickerController {
+        let picker = UIImagePickerController()
+        picker.sourceType = UIImagePickerController.isSourceTypeAvailable(.camera)
+            ? .camera
+            : .photoLibrary
+        picker.delegate = context.coordinator
+        return picker
+    }
+
+    func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) { }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+
+    final class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+        let parent: AppareilPhotoPicker
+
+        init(_ parent: AppareilPhotoPicker) {
+            self.parent = parent
+        }
+
+        func imagePickerController(
+            _ picker: UIImagePickerController,
+            didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
+        ) {
+            parent.completion(info[.originalImage] as? UIImage)
+            parent.dismiss()
+        }
+
+        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+            parent.completion(nil)
+            parent.dismiss()
+        }
     }
 }
 
@@ -425,12 +843,12 @@ struct ConditionsResumeBadges: View {
 
     var body: some View {
         FlowLayout(spacing: 6) {
-            BadgeCondition(texte: conditions.zone.displayName,       icone: "map")
-            BadgeCondition(texte: conditions.etatMer.displayName,    icone: "water.waves")
-            BadgeCondition(texte: conditions.typeMaree.displayName,  icone: "arrow.up.arrow.down")
-            BadgeCondition(texte: conditions.turbiditeEau.displayName, icone: "eye")
+            BadgeCondition(texte: conditions.zone.displayName,          icone: "map")
+            BadgeCondition(texte: conditions.etatMer.displayName,       icone: "water.waves")
+            BadgeCondition(texte: conditions.typeMaree.displayName,     icone: "arrow.up.arrow.down")
+            BadgeCondition(texte: conditions.turbiditeEau.displayName,  icone: "eye")
             BadgeCondition(texte: conditions.momentJournee.displayName, icone: "sun.max")
-            BadgeCondition(texte: conditions.phaseLunaire.displayName, icone: "moon")
+            BadgeCondition(texte: conditions.phaseLunaire.displayName,  icone: "moon")
         }
     }
 }
@@ -468,7 +886,6 @@ struct PriseCellule: View {
 
     var body: some View {
         HStack(spacing: 10) {
-            // Photo leurre ou placeholder
             if let data = prise.leurrePhotoData, let uiImage = UIImage(data: data) {
                 Image(uiImage: uiImage)
                     .resizable()
@@ -500,10 +917,17 @@ struct PriseCellule: View {
                 Text(heureFormatee)
                     .font(.caption)
                     .foregroundColor(.secondary)
-                if prise.relache {
-                    Text("Relâché")
-                        .font(.caption2)
-                        .foregroundColor(.green)
+                HStack(spacing: 4) {
+                    if prise.estGeolocalisee {
+                        Image(systemName: "mappin.circle.fill")
+                            .font(.caption2)
+                            .foregroundColor(Color(hex: "0277BD"))
+                    }
+                    if prise.relache {
+                        Text("Relâché")
+                            .font(.caption2)
+                            .foregroundColor(.green)
+                    }
                 }
             }
         }
@@ -512,7 +936,6 @@ struct PriseCellule: View {
         .cornerRadius(10)
     }
 }
-
 
 // MARK: - ViewModifier carte journal
 
@@ -541,5 +964,10 @@ struct CarteJournalModifier: ViewModifier {
 extension View {
     func carteJournal(titre: String, icone: String) -> some View {
         modifier(CarteJournalModifier(titre: titre, icone: icone))
+    }
+    static func horodatage() -> String {
+        let f = DateFormatter()
+        f.dateFormat = "HH:mm:ss.SSS"
+        return f.string(from: Date())
     }
 }

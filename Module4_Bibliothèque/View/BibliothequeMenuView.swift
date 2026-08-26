@@ -11,8 +11,12 @@
 import SwiftUI
 
 struct BibliothequeMenuView: View {
-    var body: some View {
-        NavigationView {
+    
+        @Environment(\.dismiss) private var dismiss
+
+        var body: some View {
+    
+            Group {
             ScrollView {
                 VStack(spacing: 16) {
                     // En-tête
@@ -75,6 +79,11 @@ struct BibliothequeMenuView: View {
                 }
             }
             .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Fermer") { dismiss() }
+                }
+            }
         }
     }
 }

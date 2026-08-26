@@ -252,7 +252,6 @@
 				6193EA442EE142F1000BE2F6 /* Helpers */,
 				6193EA462EE142F1000BE2F6 /* Models */,
 				6193EA492EE142F1000BE2F6 /* Resources */,
-				6193EA4B2EE142F1000BE2F6 /* ViewModels */,
 				6193EA502EE142F1000BE2F6 /* Views */,
 				615BBAE82F1213C90064C985 /* Go Les Picots V.4Tests */,
 			);
@@ -270,26 +269,26 @@
 		6193EA462EE142F1000BE2F6 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				61045EBA2F070F320033CD9F /* BibliothequeView.swift */,
-				61045D7D2F06216B0033CD9F /* TypeDeNageSuggestionView.swift */,
-				61045D7B2F05F7E90033CD9F /* FastPitchTechniqueSheet.swift */,
-				61045D792F05F7A40033CD9F /* SlowPitchTechniqueSheet.swift */,
-				613F7A0D2F0397E400DA3053 /* Jiggingchoicesheet.swift */,
-				61045D772F0511FA0033CD9F /* TypeDeNageDescriptionModal.swift */,
-				613F7A072F0238CB00DA3053 /* TypeDeNage.swift */,
-				6193EA452EE142F1000BE2F6 /* Leurre.swift */,
-				617DD0DD2EF4A5EB002C82F1 /* SpreadSchemaView.swift */,
-				617DD1472EF53C4B002C82F1 /* DiagnosticView.swift */,
 				617DD14D2EF54310002C82F1 /* AssetsDiagnosticView.swift */,
-				617DD1512EF56062002C82F1 /* ImageCoordinatePickerView.swift */,
-				61C5FC222EFA87B30030C95D /* NoteAnalysisService.swift */,
-				61C5FC242EFA87F60030C95D /* LeurreIntelligenceService.swift */,
-				617DD0172EF1F74B002C82F1 /* LeurreWebScraperService.swift */,
-				61C5FBDA2EF909E80030C95D /* CreerCouleurView.swift */,
+				61045EBA2F070F320033CD9F /* BibliothequeView.swift */,
 				61C5FBDC2EF90A460030C95D /* CouleurCustom.swift */,
 				61C5FBDE2EF90A7F0030C95D /* CouleurSearchField.swift */,
+				61C5FBDA2EF909E80030C95D /* CreerCouleurView.swift */,
+				617DD1472EF53C4B002C82F1 /* DiagnosticView.swift */,
+				61045D7B2F05F7E90033CD9F /* FastPitchTechniqueSheet.swift */,
 				61C5FBE02EF90AA20030C95D /* GestionCouleursCustomView.swift */,
+				617DD1512EF56062002C82F1 /* ImageCoordinatePickerView.swift */,
+				613F7A0D2F0397E400DA3053 /* Jiggingchoicesheet.swift */,
+				6193EA452EE142F1000BE2F6 /* Leurre.swift */,
+				61C5FC242EFA87F60030C95D /* LeurreIntelligenceService.swift */,
+				617DD0172EF1F74B002C82F1 /* LeurreWebScraperService.swift */,
+				61C5FC222EFA87B30030C95D /* NoteAnalysisService.swift */,
 				6100BCAE2EFE3A560084CFB5 /* RainbowCircle.swift */,
+				61045D792F05F7A40033CD9F /* SlowPitchTechniqueSheet.swift */,
+				617DD0DD2EF4A5EB002C82F1 /* SpreadSchemaView.swift */,
+				613F7A072F0238CB00DA3053 /* TypeDeNage.swift */,
+				61045D772F0511FA0033CD9F /* TypeDeNageDescriptionModal.swift */,
+				61045D7D2F06216B0033CD9F /* TypeDeNageSuggestionView.swift */,
 				61C2A82E2F1F09B0003074F5 /* CORRECTION_ENUMS_TYPES_COMMUNS.md */,
 				61C2A8322F1F0A93003074F5 /* HARMONISATION_FINALE_ENUMS.md */,
 				61C2A8342F1F0C1B003074F5 /* CORRECTION_FINALE_DOUBLONS_LEURRE.md */,
@@ -307,24 +306,16 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
-		6193EA4B2EE142F1000BE2F6 /* ViewModels */ = {
-			isa = PBXGroup;
-			children = (
-				6193EAE42EE6A88F000BE2F6 /* SuggestionEngine.swift */,
-			);
-			path = ViewModels;
-			sourceTree = "<group>";
-		};
 		6193EA502EE142F1000BE2F6 /* Views */ = {
 			isa = PBXGroup;
 			children = (
 				613F7A0B2F0327F300DA3053 /* TypeDeNagePickerSheet.swift */,
 				613F7A092F0291D200DA3053 /* Wobblingchoicesheet.swift */,
 				61263A552EE95DEA00BBF0A8 /* Components */,
-				61263A532EE95DC400BBF0A8 /* LeurreFormView.swift */,
 				6193EA4D2EE142F1000BE2F6 /* BoiteView.swift */,
 				6193EA4E2EE142F1000BE2F6 /* FiltresView.swift */,
 				6193EA4F2EE142F1000BE2F6 /* LeurreDetailView.swift */,
+				61263A532EE95DC400BBF0A8 /* LeurreFormView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -353,6 +344,7 @@
 			children = (
 				6193EA7A2EE252A0000BE2F6 /* ConditionsPeche.swift */,
 				61045F622F07B20F0033CD9F /* RisqueCiguatera.swift */,
+				6193EAE42EE6A88F000BE2F6 /* SuggestionEngine.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -721,7 +713,8 @@
 				INFOPLIST_FILE = "Go-Les-Picots-V-4-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.navigation";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Go les Picots utilise la caméra pour photographier vos leurres";
-				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Go Les Picots peut enregistrer votre trajet pendant les sorties de pêche.";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Go Les Picots peut enregistrer votre trajet pendant les sorties de pêche y compris écran éteint";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Go Les Picots utilise votre position pour afficher les spots et enregistrer vos sorties de pêche.</string>\nGo Les Picots utilise votre position pour afficher les spots et enregistrer vos sorties de pêche.</string>\nGo Les Picots utilise votre position pour afficher les spots et enregistrer vos sorties de pêche.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "o les Picots accède à votre galerie pour importer des photos de leurres";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -759,7 +752,8 @@
 				INFOPLIST_FILE = "Go-Les-Picots-V-4-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.navigation";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Go les Picots utilise la caméra pour photographier vos leurres";
-				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Go Les Picots peut enregistrer votre trajet pendant les sorties de pêche.";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Go Les Picots peut enregistrer votre trajet pendant les sorties de pêche y compris écran éteint";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Go Les Picots utilise votre position pour afficher les spots et enregistrer vos sorties de pêche.</string>\nGo Les Picots utilise votre position pour afficher les spots et enregistrer vos sorties de pêche.</string>\nGo Les Picots utilise votre position pour afficher les spots et enregistrer vos sorties de pêche.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "o les Picots accède à votre galerie pour importer des photos de leurres";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

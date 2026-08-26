@@ -9,6 +9,25 @@
 //  - @Query var leurres pour passer la liste à ExportImportView
 //  - chargerLeurres() supprimé → alert OK suffit
 //
+//  Session 8 — les résultats de suggestion ne sont plus présentés d'ici.
+//
+//  Le fullScreenCover posé sur ContentView présentait les résultats depuis une
+//  branche plus haute que la feuille du module. Deux présentations ne peuvent
+//  pas coexister sur cette branche : iOS retirait la feuille de saisie avant
+//  d'afficher les résultats. Au moment où l'on appuyait sur « Modifier », le
+//  formulaire n'existait plus — les deux boutons ramenaient donc à l'accueil,
+//  non par erreur de câblage mais faute de destination.
+//
+//  La présentation migre dans SuggestionInputView. Les résultats s'empilent
+//  alors sur le formulaire, qui survit, et la barre de navigation se rend
+//  correctement puisqu'elle appartient au NavigationStack du module.
+//
+//  Le .onChange de débogage sur showResults part avec le cover : il n'a plus
+//  d'objet ici.
+//
+//  Le NavigationView racine reste en place — son rendu en colonnes sur iPad
+//  sera traité séparément, une fois ce correctif validé.
+//
 
 import SwiftUI
 import SwiftData
@@ -33,7 +52,7 @@ struct ContentView: View {
     }
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: 0) {
                 HomeBannerView()
 
@@ -70,29 +89,6 @@ struct ContentView: View {
                 }
             }
         }
-        .fullScreenCover(isPresented: $navigationCoordinator.showResults) {
-            NavigationStack {
-                if !navigationCoordinator.suggestions.isEmpty {
-                    SuggestionResultView(
-                        suggestions: navigationCoordinator.suggestions,
-                        configuration: navigationCoordinator.configuration
-                    )
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbar {
-                        ToolbarItem(placement: .navigationBarLeading) {
-                            Button("Fermer") {
-                                navigationCoordinator.dismissResults()
-                            }
-                        }
-                    }
-                } else {
-                    VStack {
-                        ProgressView()
-                        Text("Chargement des résultats...").padding()
-                    }
-                }
-            }
-        }
         // ✅ V4 : chargerLeurres() supprimé — bouton OK suffit
         .alert("Erreur", isPresented: $boiteVM.showError) {
             Button("OK", role: .cancel) {
@@ -107,10 +103,6 @@ struct ContentView: View {
         .sheet(isPresented: $showExportImport) {
             // ✅ V4 : leurres passé depuis @Query
             ExportImportView(viewModel: boiteVM, leurres: leurres)
-        }
-        .onChange(of: navigationCoordinator.showResults) { oldValue, newValue in
-            print("🔄 ContentView - showResults: \(oldValue) → \(newValue)")
-            print("📊 Suggestions: \(navigationCoordinator.suggestions.count)")
         }
     }
 }
@@ -130,7 +122,7 @@ struct HomeBannerView: View {
 // MARK: - Modèle de données
 
 struct ModuleItem: Identifiable {
-    let id    = UUID()
+    var id: String { title }
     let title:    String
     let iconName: String
     let color:    Color
@@ -146,10 +138,10 @@ struct ModuleGridView: View {
     let modules: [ModuleItem] = [
         ModuleItem(title: "Ma Boîte",         iconName: "BoitePhysique",  color: Color(hex: "0277BD")),
         ModuleItem(title: "Suggestion IA",    iconName: "BoiteIA",        color: Color(hex: "FFBC42")),
-        ModuleItem(title: "Navigation",       iconName: "Navigation",     color: Color(hex: "0277BD")),
+        ModuleItem(title: "Statistiques",       iconName: "Statistiques",     color: Color(hex: "0277BD")),
         ModuleItem(title: "Marée·Solunaire",  iconName: "Meteo",          color: Color(hex: "FFBC42")),
         ModuleItem(title: "Bibliothèque",     iconName: "Bibliotheque",   color: Color(hex: "0277BD")),
-        ModuleItem(title: "Journal Sorties",     iconName: "Statistiques",   color: Color(hex: "FFBC42"))
+        ModuleItem(title: "Journal Sorties",     iconName: "Journal_icon",   color: Color(hex: "FFBC42"))
     ]
 
     var body: some View {
@@ -202,7 +194,7 @@ struct ModuleButton: View {
             .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 4)
         }
         .buttonStyle(PlainButtonStyle())
-        .sheet(isPresented: $showingModule) {
+        .fullScreenCover(isPresented: $showingModule) {
             if module.title == "Ma Boîte" {
                 NavigationStack {
                     BoiteView()
@@ -215,8 +207,8 @@ struct ModuleButton: View {
                         navigationCoordinator: navigationCoordinator
                     )
                 }
-            } else if module.title == "Navigation" {
-                NavigationStack { NavigationMapView() }
+            } else if module.title == "Statistiques" {
+                NavigationStack { StatistiquesView() }
             } else if module.title == "Marée·Solunaire" {
                 NavigationStack { SolunarView() }
             } else if module.title == "Bibliothèque" {

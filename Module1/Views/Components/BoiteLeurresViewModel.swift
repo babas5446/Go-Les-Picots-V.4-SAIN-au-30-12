@@ -379,21 +379,42 @@ class BoiteLeurresViewModel: ObservableObject {
         }
     }
 
-    /// Importe depuis un fichier ZIP — doublons ignorés par id.
-    func importerBaseDeDonnees(depuis url: URL) {
+    /// Importe depuis un fichier ZIP ou JSON — doublons ignorés par id.
+    ///
+    /// L'URL attendue est **locale** : la vue appelante a déjà copié le fichier
+    /// choisi par l'utilisateur dans le bac à sable de l'app. L'accès
+    /// security-scoped est donc clos avant l'appel, et l'import ne peut plus
+    /// échouer par expiration de permission.
+    ///
+    /// Le fichier temporaire est supprimé en fin de course, succès ou échec.
+    /// Retourne le nombre de leurres créés, ou l'erreur rencontrée.
+    func importerBaseDeDonnees(depuis url: URL) async -> Result<Int, Error> {
+
         isLoading = true
-        Task {
-            do {
-                let nb = try LeurreExportService.importerZIP(depuis: url, dans: context)
-                await MainActor.run {
-                    isLoading = false
-                }
-            } catch {
-                await MainActor.run {
-                    isLoading = false
-                    signalerErreur("Import échoué : \(error.localizedDescription)")
-                }
+        defer {
+            isLoading = false
+            try? FileManager.default.removeItem(at: url)
+        }
+
+        do {
+            // Aiguillage sur l'extension — le fileImporter accepte .zip et .json
+            let extensionFichier = url.pathExtension.lowercased()
+
+            let nb: Int
+            switch extensionFichier {
+            case "zip":
+                nb = try LeurreExportService.importerZIP(depuis: url, dans: context)
+            case "json":
+                nb = try LeurreExportService.importerJSON(depuis: url, dans: context)
+            default:
+                throw ImportError.formatInvalide
             }
+
+            return .success(nb)
+
+        } catch {
+            print("❌ BoiteLeurresViewModel : Import échoué : \(error.localizedDescription)")
+            return .failure(error)
         }
     }
 

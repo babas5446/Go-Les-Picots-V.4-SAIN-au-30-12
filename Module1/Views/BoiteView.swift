@@ -18,7 +18,7 @@ struct BoiteView: View {
 
     // ✅ V4 : @Query fournit la liste depuis SwiftData — mise à jour automatique
     @Query(sort: \Leurre.nom) private var leurres: [Leurre]
-
+    @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel = BoiteLeurresViewModel()
 
     @State private var modeAffichage: ModeAffichage = .liste
@@ -84,6 +84,9 @@ struct BoiteView: View {
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
+                Button("Fermer") { dismiss() }
+            }
+            ToolbarItem(placement: .navigationBarLeading) {
                 Button { showingParametres = true } label: {
                     Image(systemName: "gearshape")
                 }
@@ -118,7 +121,7 @@ struct BoiteView: View {
         .sheet(isPresented: $showingParametres) {
             ParametresAppView()
         }
-        .sheet(isPresented: $showingAjouterLeurre) {
+        .fullScreenCover(isPresented: $showingAjouterLeurre) {
             LeurreFormView(viewModel: viewModel, mode: .creation)
         }
     }
