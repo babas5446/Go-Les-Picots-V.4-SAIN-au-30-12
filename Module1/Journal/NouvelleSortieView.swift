@@ -62,12 +62,14 @@ struct NouvelleSortieView: View {
 
     // MARK: - Navigation
 
-    @State private var afficherPriseForm: Bool = false
-    @State private var priseAEditer: Prise?
+    /// Feuille unique, arbitrée par une seule énumération : plusieurs
+    /// .sheet sur un même nœud de vue peuvent se neutraliser, la seconde
+    /// refermant aussitôt la première (symptôme : fiche de prise qui s'ouvre
+    /// et se referme immédiatement).
+    @State private var feuille: FeuilleSortie?
 
     // MARK: - Export GPX
 
-    @State private var fichierGPX: FichierPartage?
 
     // MARK: - Alertes
 
@@ -100,6 +102,9 @@ struct NouvelleSortieView: View {
     // MARK: - Body
 
     var body: some View {
+        #if DEBUG
+        let _ = Self._printChanges()
+        #endif
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
@@ -136,14 +141,15 @@ struct NouvelleSortieView: View {
                     .fontWeight(.semibold)
                 }
             }
-            .sheet(isPresented: $afficherPriseForm) {
-                PriseFormView(viewModel: viewModel, sortie: sortie)
-            }
-            .sheet(item: $priseAEditer) { prise in
-                PriseFormView(viewModel: viewModel, sortie: sortie, prise: prise)
-            }
-            .sheet(item: $fichierGPX) { fichier in
-                PartageActivite(url: fichier.url)
+            .sheet(item: $feuille) { feuille in
+                switch feuille {
+                case .nouvellePrise:
+                    PriseFormView(viewModel: viewModel, sortie: sortie)
+                case .editionPrise(let prise):
+                    PriseFormView(viewModel: viewModel, sortie: sortie, prise: prise)
+                case .partage(let fichier):
+                    PartageActivite(url: fichier.url)
+                }
             }
             .alert("Aucun spread disponible", isPresented: $afficherAucunSpread) {
                 Button("Compris", role: .cancel) { }
@@ -184,9 +190,11 @@ struct NouvelleSortieView: View {
                 print("▶︎ \(Self.horodatage()) NSV APPEAR — supprimée \(sortie.isDeleted)")
             }
             .onDisappear {
+                // Plus aucune suppression ici : onDisappear se déclenche aussi
+                // à l'ouverture d'une feuille ou de l'appareil photo, alors que
+                // la saisie en cours n'est pas encore reportée sur l'objet.
+                // Le test du brouillon vide est fait à la fermeture explicite.
                 print("◀︎ \(Self.horodatage()) NSV DISAPPEAR — supprimée \(sortie.isDeleted)")
-                // Une sortie créée puis quittée sans la moindre saisie disparaît.
-                viewModel.supprimerSiBrouillonVide(sortie)
             }
         }
     }
@@ -427,7 +435,7 @@ struct NouvelleSortieView: View {
             if sortie.exportGPXPossible {
                 Button {
                     if let url = viewModel.exporterGPX(sortie: sortie) {
-                        fichierGPX = FichierPartage(url: url)
+                        feuille = .partage(FichierPartage(url: url))
                     }
                 } label: {
                     Label("Exporter la trace (GPX)", systemImage: "square.and.arrow.up")
@@ -660,12 +668,12 @@ struct NouvelleSortieView: View {
             } else {
                 ForEach(sortie.prises.sorted { $0.heure < $1.heure }) { prise in
                     PriseCellule(prise: prise)
-                        .onTapGesture { priseAEditer = prise }
+                        .onTapGesture { feuille = .editionPrise(prise) }
                 }
             }
 
             Button {
-                afficherPriseForm = true
+                feuille = .nouvellePrise
             } label: {
                 Label("Ajouter une prise", systemImage: "plus")
                     .fontWeight(.semibold)
@@ -726,7 +734,19 @@ struct NouvelleSortieView: View {
     }
 
     private func sauvegarder(fermer: Bool) {
+        // Les champs du formulaire sont d'abord reportés : le test du brouillon
+        // vide porte ainsi sur ce que l'utilisateur a réellement saisi.
         sauvegarderChamps()
+        // Brouillon vide : on ferme d'abord, on supprime ensuite, pour que la
+        // vue ne relise pas une sortie déjà détruite pendant l'animation.
+        if fermer, viewModel.estBrouillonVide(sortie) {
+            let brouillon = sortie
+            dismiss()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                viewModel.supprimerSiBrouillonVide(brouillon)
+            }
+            return
+        }
         viewModel.modifierSortie(sortie)
         if fermer { dismiss() }
     }
@@ -772,6 +792,21 @@ struct NouvelleSortieView: View {
 }
 
 // MARK: - Partage de fichier
+
+/// Les trois feuilles que présente le formulaire de sortie.
+enum FeuilleSortie: Identifiable {
+    case nouvellePrise
+    case editionPrise(Prise)
+    case partage(FichierPartage)
+
+    var id: String {
+        switch self {
+        case .nouvellePrise:          return "nouvelle-prise"
+        case .editionPrise(let p):    return "prise-\(p.id.uuidString)"
+        case .partage(let f):         return "partage-\(f.id.uuidString)"
+        }
+    }
+}
 
 /// URL rendue identifiable pour la présentation par .sheet(item:).
 struct FichierPartage: Identifiable {

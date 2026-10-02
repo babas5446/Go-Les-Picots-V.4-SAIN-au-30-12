@@ -119,16 +119,17 @@ struct TideCurveView: View {
             Rectangle()
                 .fill(Color.blue.opacity(0.08))
                 .frame(width: dayWidth, height: h)
-                .offset(x: x1 - w / 2)
+                // Le ZStack centre la bande : on décale son CENTRE en x1 + largeur/2.
+                .offset(x: x1 + dayWidth / 2 - w / 2)
 
             // Marqueurs lever/coucher soleil
-            solarMarker(x: x1, height: h, isRise: true)
-            solarMarker(x: x2, height: h, isRise: false)
+            solarMarker(x: x1, width: w, height: h, isRise: true)
+            solarMarker(x: x2, width: w, height: h, isRise: false)
         }
     }
 
     @ViewBuilder
-    private func solarMarker(x: CGFloat, height: CGFloat, isRise: Bool) -> some View {
+    private func solarMarker(x: CGFloat, width: CGFloat, height: CGFloat, isRise: Bool) -> some View {
         VStack(spacing: 0) {
             Image(systemName: isRise ? "sunrise.fill" : "sunset.fill")
                 .font(.system(size: 10))
@@ -138,7 +139,7 @@ struct TideCurveView: View {
                 .frame(width: 1, height: height - 14)
         }
         .frame(height: height)
-        .offset(x: x - UIScreen.main.bounds.width / 2)   // approximation — GeometryReader corrige en prod
+        .offset(x: x - width / 2)   // largeur réelle du graphique, et non celle de l'écran
     }
 
     // MARK: - Courbe de marée

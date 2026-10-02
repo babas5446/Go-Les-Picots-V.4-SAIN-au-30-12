@@ -264,15 +264,6 @@ struct PriseFormView: View {
                     }
                 }
             }
-            .onChange(of: photoItem) { _, item in
-                Task {
-                    if let data = try? await item?.loadTransferable(type: Data.self),
-                       let uiImage = UIImage(data: data) {
-                        photoPoissonImage = uiImage
-                        photoSupprimee    = false
-                    }
-                }
-            }
             .onAppear {
                 print("▶︎ \(NouvelleSortieView.horodatage()) PFV APPEAR — sortie supprimée \(sortie.isDeleted)")
             }

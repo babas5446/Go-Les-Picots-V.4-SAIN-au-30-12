@@ -340,7 +340,7 @@ struct LeurreCellule: View {
                 RoundedRectangle(cornerRadius: 8)
                     .fill(Color(hex: "E0E0E0"))
                     .frame(width: 70, height: 70)
-                Text(leurre.typeLeurre.icon)
+                Image(systemName: leurre.typeLeurre.icon)
                     .font(.system(size: 32))
             }
         }
@@ -407,7 +407,7 @@ struct LeurreCarteGrille: View {
         } else {
             ZStack {
                 Rectangle().fill(Color(hex: "E0E0E0")).frame(height: 140)
-                Text(leurre.typeLeurre.icon).font(.system(size: 50))
+                Image(systemName: leurre.typeLeurre.icon).font(.system(size: 50))
             }
         }
     }

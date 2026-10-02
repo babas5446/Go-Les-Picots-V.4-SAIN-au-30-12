@@ -132,13 +132,12 @@ class BoiteLeurresViewModel: ObservableObject {
         }
 
         if let zone = filtreZone {
-            resultats = resultats.filter { leurre in
-                leurre.zonesAdaptees?.contains(zone) ?? false
-            }
+            // Même source que le moteur : zones stockées, sinon déduites.
+            resultats = resultats.filter { $0.zonesAdapteesFinales.contains(zone) }
         }
 
         if let contraste = filtreContraste {
-            resultats = resultats.filter { $0.contraste == contraste }
+            resultats = resultats.filter { ($0.contraste ?? $0.profilVisuel) == contraste }
         }
 
         leurresFiltres = resultats
@@ -198,7 +197,10 @@ class BoiteLeurresViewModel: ObservableObject {
     /// Supprime un leurre de SwiftData.
     /// photoData est gérée automatiquement via @Attribute(.externalStorage).
     func supprimerLeurre(_ leurre: Leurre) {
-        let nom = leurre.nom
+        // Retrait immédiat de la liste affichée : la List ne doit plus
+        // rendre une instance détruite entre delete() et le prochain @Query.
+        let cible = leurre.persistentModelID
+        leurresFiltres.removeAll { $0.persistentModelID == cible }
         context.delete(leurre)
         sauvegarder()
     }
@@ -206,9 +208,11 @@ class BoiteLeurresViewModel: ObservableObject {
     /// Supprime les leurres aux indices fournis dans leurresFiltres.
     /// Appelé par .onDelete dans BoiteView.
     func supprimerLeurres(_ indices: IndexSet) {
-        for index in indices {
-            guard index < leurresFiltres.count else { continue }
-            supprimerLeurre(leurresFiltres[index])
+        // Les cibles sont figées AVANT toute suppression : supprimerLeurre
+        // modifie leurresFiltres, ce qui décalerait les indices suivants.
+        let cibles = indices.compactMap { $0 < leurresFiltres.count ? leurresFiltres[$0] : nil }
+        for leurre in cibles {
+            supprimerLeurre(leurre)
         }
     }
 
@@ -249,6 +253,22 @@ class BoiteLeurresViewModel: ObservableObject {
         for leurre in tous { calculerChampsDeduits(leurre) }
         sauvegarder()
         isLoading = false
+    }
+
+    /// Complète les leurres dont les champs déduits manquent
+    /// (migration, import ZIP/JSON, ancienne version). Sans effet si tout est à jour.
+    /// Retourne le nombre de leurres recalculés.
+    @discardableResult
+    func completerChampsDeduitsManquants() -> Int {
+        let tous = (try? context.fetch(FetchDescriptor<Leurre>())) ?? []
+        let aCompleter = tous.filter {
+            !$0.isComputed || $0.zonesAdaptees == nil || $0.contraste == nil || $0.positionsSpread == nil
+        }
+        guard !aCompleter.isEmpty else { return 0 }
+        for leurre in aCompleter { calculerChampsDeduits(leurre) }
+        sauvegarder()
+        print("🧮 Champs déduits complétés pour \(aCompleter.count) leurre(s)")
+        return aCompleter.count
     }
 
     // MARK: - Calcul des champs déduits
@@ -410,6 +430,10 @@ class BoiteLeurresViewModel: ObservableObject {
                 throw ImportError.formatInvalide
             }
 
+            // Les leurres importés sans champs déduits doivent être
+            // immédiatement filtrables et utilisables par le moteur.
+            completerChampsDeduitsManquants()
+
             return .success(nb)
 
         } catch {
@@ -427,8 +451,12 @@ class BoiteLeurresViewModel: ObservableObject {
         return (try? context.fetch(descriptor)) ?? []
     }
     
+    /// Recherche dans toute la boîte, pas seulement dans la liste filtrée :
+    /// un filtre actif ne doit pas masquer un leurre au moteur ou au journal.
     func leurre(parID id: Int) -> Leurre? {
-        leurresFiltres.first { $0.id == id }
+        var descriptor = FetchDescriptor<Leurre>(predicate: #Predicate { $0.id == id })
+        descriptor.fetchLimit = 1
+        return (try? context.fetch(descriptor))?.first
     }
 
     var nombreLeuresDeTraine: Int {

@@ -214,7 +214,10 @@ struct ModuleButton: View {
             } else if module.title == "Bibliothèque" {
                 NavigationStack { BibliothequeMenuView() }
             } else if module.title == "Journal Sorties" {
-                NavigationStack { JournalView() }
+                // JournalView porte déjà sa propre NavigationStack : l'imbriquer
+                // dans une seconde pile reconstruisait la vue de sortie et
+                // refermait aussitôt la fiche de prise.
+                JournalView()
             }
         }
     }

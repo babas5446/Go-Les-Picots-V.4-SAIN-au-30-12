@@ -801,7 +801,7 @@ private struct LeurreDetailSheet: View {
                         .frame(height: 180)
                     
                     VStack(spacing: 12) {
-                        Text(suggestion.leurre.typeLeurre.icon)
+                        Image(systemName: suggestion.leurre.typeLeurre.icon)
                             .font(.system(size: 64))
                         
                         Text("Aucune photo")

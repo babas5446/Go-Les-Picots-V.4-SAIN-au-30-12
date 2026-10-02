@@ -94,8 +94,13 @@ struct LeurreDetailView: View {
         .alert("Supprimer ce leurre ?", isPresented: $showingSupprimer) {
             Button("Annuler", role: .cancel) { }
             Button("Supprimer", role: .destructive) {
-                viewModel.supprimerLeurre(leurre)
+                // Fermer d'abord, supprimer ensuite : la vue ne doit pas
+                // relire une instance SwiftData déjà détruite.
+                let aSupprimer = leurre
                 dismiss()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                    viewModel.supprimerLeurre(aSupprimer)
+                }
             }
         } message: {
             Text("Cette action est irréversible.")
@@ -120,7 +125,7 @@ struct LeurreDetailView: View {
                         .fill(Color(hex: "E0E0E0"))
                         .frame(height: 200)
                     VStack(spacing: 12) {
-                        Text(leurre.typeLeurre.icon)
+                        Image(systemName: leurre.typeLeurre.icon)
                             .font(.system(size: 80))
                         Text("Aucune photo")
                             .font(.caption)
@@ -377,7 +382,7 @@ struct LeurreDetailView: View {
             FlowLayout(spacing: 8) {
                 ForEach(leurre.zonesAdapteesFinales, id: \.self) { zone in
                     HStack(spacing: 4) {
-                        Text(zone.icon)
+                        Image(systemName: zone.icon)
                         Text(zone.displayName)
                     }
                     .font(.subheadline).fontWeight(.medium)

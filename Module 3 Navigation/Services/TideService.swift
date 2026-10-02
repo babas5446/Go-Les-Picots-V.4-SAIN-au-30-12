@@ -129,8 +129,11 @@ final class TideService: ObservableObject {
         errorMessage = nil
         do {
             let days = try await fetchAndParse(commune: commune)
-            tideDays = days
             saveCache(CabaigneCache(commune: commune.id, fetchedAt: Date(), days: days))
+            // Réponse tardive d'une commune qu'on a quittée entre-temps : on la
+            // garde en cache mais on ne l'affiche pas.
+            guard commune.id == selectedCommune.id else { isLoading = false; return }
+            tideDays = days
             errorMessage = nil
         } catch {
             if let cached = loadCache(for: commune) {
@@ -323,9 +326,12 @@ final class TideService: ObservableObject {
         Self.cacheKeyPrefix + commune.id
     }
 
+    /// La clé suit la commune DU CACHE, pas la commune sélectionnée :
+    /// un changement de commune pendant le téléchargement rangeait sinon
+    /// les marées de l'une sous le nom de l'autre.
     private func saveCache(_ cache: CabaigneCache) {
         guard let data = try? JSONEncoder().encode(cache) else { return }
-        UserDefaults.standard.set(data, forKey: cacheKey(for: selectedCommune))
+        UserDefaults.standard.set(data, forKey: Self.cacheKeyPrefix + cache.commune)
     }
 
     private func loadCache(for commune: CabaigneCommune) -> CabaigneCache? {

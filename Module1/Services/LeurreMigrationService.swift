@@ -24,19 +24,36 @@ enum LeurreMigrationService {
     private static let nomFichierJSON = "leurres.json"
     private static let nomFichierBackup = "leurres.json.bak"
     private static let nomDossierPhotos = "photos"
+    private static let cleTentatives = "migration_v4_tentatives"
+    private static let tentativesMax = 3
+
+    /// Dernière erreur de migration, consultable par l'interface (nil si aucune).
+    static let cleDerniereErreur = "migration_v4_derniere_erreur"
 
     // MARK: - Point d'entrée public
 
     /// Déclenche la migration si elle n'a jamais été effectuée.
     /// Appelé depuis Go_Les_Picots_V_4App.init() — silencieux en cas d'erreur.
     static func migrerSiNecessaire(dans context: ModelContext) {
-        guard !UserDefaults.standard.bool(forKey: flagMigration) else {
+        let defaults = UserDefaults.standard
+        guard !defaults.bool(forKey: flagMigration) else {
             print("✅ Migration V4 déjà effectuée — aucune action")
             return
         }
 
+        // Garde-fou : une migration qui échoue à chaque lancement ne doit pas
+        // ralentir indéfiniment le démarrage. Après 3 échecs, on s'arrête ;
+        // le fichier d'origine reste intact et l'import ZIP reste possible.
+        let tentatives = defaults.integer(forKey: cleTentatives)
+        guard tentatives < tentativesMax else {
+            print("⚠️ Migration V4 abandonnée après \(tentatives) échecs — import ZIP manuel requis")
+            return
+        }
+        defaults.set(tentatives + 1, forKey: cleTentatives)
+
         do {
             try effectuerMigration(dans: context)
+            defaults.removeObject(forKey: cleDerniereErreur)
         } catch StorageError.fichierIntrouvable {
             // App neuve — aucun JSON à migrer, on pose le flag et on continue
             print("ℹ️ Aucun leurres.json trouvé — app neuve, migration inutile")
@@ -44,6 +61,7 @@ enum LeurreMigrationService {
         } catch {
             // Échec non bloquant — l'utilisateur repart avec une boîte vide
             // Il peut réimporter via ZIP
+            defaults.set(error.localizedDescription, forKey: cleDerniereErreur)
             print("⚠️ Migration V4 échouée : \(error.localizedDescription)")
             print("⚠️ L'utilisateur peut réimporter ses leurres via le ZIP de sauvegarde")
         }
@@ -76,6 +94,9 @@ enum LeurreMigrationService {
         print("🗂️ \(idsExistants.count) leurres déjà présents dans SwiftData")
 
         // 4. Insérer les leurres absents
+        // Les chemins photo sont lus une seule fois (et non un reparsing
+        // complet du JSON pour chaque leurre).
+        let cheminsPhotos = extraireCheminsPhotos(depuis: data)
         var compteurCrees  = 0
         var compteurIgnores = 0
 
@@ -88,11 +109,15 @@ enum LeurreMigrationService {
             // Créer l'entité SwiftData
             let leurre = dto.toLeurre()
 
-            // Charger la photo depuis le disque si disponible
-            leurre.photoData = chargerPhoto(
-                dtoPhotoPath: extrairePhotoPath(depuis: data, pourID: dto.id),
-                photosURL: photosURL
-            )
+            // Photo : Base64 (format V4) en priorité, sinon fichier sur disque
+            if let b64 = dto.photoBase64, let photo = Data(base64Encoded: b64) {
+                leurre.photoData = photo
+            } else {
+                leurre.photoData = chargerPhoto(
+                    dtoPhotoPath: cheminsPhotos[dto.id],
+                    photosURL: photosURL
+                )
+            }
 
             context.insert(leurre)
             compteurCrees += 1
@@ -142,18 +167,26 @@ enum LeurreMigrationService {
 
     // MARK: - Extraction photoPath depuis le JSON brut
 
-    /// Extrait le champ photoPath depuis le JSON brut pour un id donné.
-    /// On reparse le JSON brut pour récupérer ce champ ignoré par LeurreDTO.
-    private static func extrairePhotoPath(depuis data: Data, pourID id: Int) -> String? {
-        guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-              let leurresArray = json["leurres"] as? [[String: Any]] else {
-            // Tentative format legacy (array direct)
-            guard let array = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]] else {
-                return nil
-            }
-            return array.first { $0["id"] as? Int == id }?["photoPath"] as? String
+    /// Extrait en une passe la table id → photoPath depuis le JSON brut
+    /// (champ ignoré par LeurreDTO). Gère le format V2 et le format legacy.
+    private static func extraireCheminsPhotos(depuis data: Data) -> [Int: String] {
+        let racine = try? JSONSerialization.jsonObject(with: data)
+        let elements: [[String: Any]]
+        if let objet = racine as? [String: Any], let liste = objet["leurres"] as? [[String: Any]] {
+            elements = liste
+        } else if let liste = racine as? [[String: Any]] {
+            elements = liste
+        } else {
+            return [:]
         }
-        return leurresArray.first { $0["id"] as? Int == id }?["photoPath"] as? String
+        var table: [Int: String] = [:]
+        for element in elements {
+            if let id = element["id"] as? Int,
+               let chemin = element["photoPath"] as? String, !chemin.isEmpty {
+                table[id] = chemin
+            }
+        }
+        return table
     }
 
     // MARK: - Chargement photo
@@ -170,8 +203,10 @@ enum LeurreMigrationService {
             return nil
         }
 
-        guard let image = UIImage(contentsOfFile: fileURL.path),
-              let data = image.jpegData(compressionQuality: 0.8) else {
+        // Fichier d'origine conservé tel quel : pas de recompression JPEG
+        // (perte de qualité et temps de démarrage inutiles).
+        guard let data = try? Data(contentsOf: fileURL),
+              UIImage(data: data) != nil else {
             print("⚠️ Photo illisible : \(chemin)")
             return nil
         }

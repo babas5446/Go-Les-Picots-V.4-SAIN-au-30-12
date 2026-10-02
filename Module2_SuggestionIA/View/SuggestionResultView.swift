@@ -386,7 +386,7 @@ struct ToutesSuggestionsContent: View {
             if isSpreadPosition {
                 // Header pour position du spread final
                 HStack(spacing: 8) {
-                    Text(position.emoji)
+                    Image(systemName: "\(position.numero.lowercased()).circle.fill")
                         .font(.title)
                     VStack(alignment: .leading, spacing: 2) {
                         HStack {
@@ -413,7 +413,7 @@ struct ToutesSuggestionsContent: View {
             } else {
                 // Header pour position recommandée
                 HStack(spacing: 8) {
-                    Text(position.emoji)
+                    Image(systemName: "\(position.numero.lowercased()).circle.fill")
                         .font(.title)
                     VStack(alignment: .leading, spacing: 2) {
                         Text(position.displayName.uppercased())
@@ -797,7 +797,7 @@ struct SuggestionCardCompact: View {
                 .cornerRadius(10)
             
             if let pos = position {
-                Text(pos.emoji)
+                Image(systemName: "\(pos.numero.lowercased()).circle.fill")
                     .font(.system(size: 14))
                     .offset(x: 4, y: -4)
             }

@@ -93,7 +93,10 @@ enum SolunarCalculator {
         let midDay = dayStart.addingTimeInterval(12 * 3600)
         let jdeMid = julianEphemerisDay(from: midDay)
         let (illumination, ageInDays, phaseAngle) = moonPhaseData(jde: jdeMid)
-        let phase = moonPhaseFromAngle(phaseAngle)
+        // moonPhaseFromAngle attend une position dans le cycle (0° = nouvelle
+        // lune, 180° = pleine lune). L'angle de phase de Meeus suit la
+        // convention inverse (i = 0° à la pleine lune) : 180° − i ≈ élongation.
+        let phase = moonPhaseFromAngle(normalizeDeg(180.0 - phaseAngle))
 
         // --- Lever / coucher / transit de la lune ---
         // On cherche dans une fenêtre ±36h pour être sûr de couvrir les cas limites.
@@ -101,9 +104,9 @@ enum SolunarCalculator {
         let moonSet    = findMoonEvent(.set,      near: midDay, lat: latitude, lon: longitude, timeZone: timeZone, dayStart: dayStart, dayEnd: dayEnd)
         let moonTransit = findMoonEvent(.transit, near: midDay, lat: latitude, lon: longitude, timeZone: timeZone, dayStart: dayStart, dayEnd: dayEnd)
 
-        // Anti-transit : cherché dans les 48h à partir du début du jour,
-        // retenu dans le jour calendaire où il tombe réellement (peut être J+1).
-        let moonAntiTransit = findAntiTransit(near: midDay, lat: latitude, lon: longitude)
+        // Anti-transit : passage au méridien inférieur tombant dans le jour
+        // calendaire demandé (nil les rares jours qui n'en comptent pas).
+        let moonAntiTransit = findAntiTransit(lat: latitude, lon: longitude, dayStart: dayStart, dayEnd: dayEnd)
 
         // --- Périodes solunaires ---
         let majorPeriods = buildMajorPeriods(transit: moonTransit, antiTransit: moonAntiTransit)
@@ -577,7 +580,7 @@ enum SolunarCalculator {
         }
     }
 
-    /// Cherche le transit (maximum d'altitude) dans la fenêtre du jour.
+    /// Cherche le transit (maximum local d'altitude) dans le jour calendaire.
     private static func findTransitTime(
         near date: Date,
         lat: Double,
@@ -585,69 +588,63 @@ enum SolunarCalculator {
         dayStart: Date,
         dayEnd: Date
     ) -> Date? {
-        let windowStart = dayStart.addingTimeInterval(-7200)
-        let windowEnd   = dayEnd.addingTimeInterval(7200)
-        let step: TimeInterval = 300
-
-        var bestAlt  = -Double.infinity
-        var bestTime = windowStart
-
-        var t = windowStart
-        while t <= windowEnd {
-            let alt = moonAltitude(jde: julianEphemerisDay(from: t), latitude: lat, longitude: lon)
-            if alt > bestAlt { bestAlt = alt; bestTime = t }
-            t = t.addingTimeInterval(step)
-        }
-
-        // Affinage par ternary search autour du maximum trouvé
-        var lo = bestTime.addingTimeInterval(-600)
-        var hi = bestTime.addingTimeInterval(600)
-        for _ in 0..<10 {
-            let m1 = lo.addingTimeInterval(hi.timeIntervalSince(lo) / 3)
-            let m2 = lo.addingTimeInterval(2 * hi.timeIntervalSince(lo) / 3)
-            let a1 = moonAltitude(jde: julianEphemerisDay(from: m1), latitude: lat, longitude: lon)
-            let a2 = moonAltitude(jde: julianEphemerisDay(from: m2), latitude: lat, longitude: lon)
-            if a1 < a2 { lo = m1 } else { hi = m2 }
-        }
-        let transitTime = lo.addingTimeInterval(hi.timeIntervalSince(lo) / 2)
-
-        // Retenir seulement si le transit tombe dans la fenêtre du jour
-        guard transitTime >= dayStart && transitTime < dayEnd else { return nil }
-        return transitTime
+        extremumLocal(maximum: true, lat: lat, lon: lon, dayStart: dayStart, dayEnd: dayEnd)
     }
 
     // MARK: - Anti-transit
 
-    /// Cherche l'anti-transit (minimum d'altitude = passage au nadir).
-    /// Peut tomber dans un autre jour calendaire — on le retourne tel quel.
-    private static func findAntiTransit(near date: Date, lat: Double, lon: Double) -> Date? {
-        // Fenêtre : 48h à partir de minuit du jour demandé
-        let windowStart = date.addingTimeInterval(-24 * 3600)
-        let windowEnd   = date.addingTimeInterval(48 * 3600)
+    /// Cherche l'anti-transit (minimum local d'altitude, passage au méridien
+    /// inférieur) dans le jour calendaire. L'ancienne version retenait le
+    /// minimum absolu sur 72 h, donc souvent celui d'un autre jour.
+    private static func findAntiTransit(lat: Double, lon: Double, dayStart: Date, dayEnd: Date) -> Date? {
+        extremumLocal(maximum: false, lat: lat, lon: lon, dayStart: dayStart, dayEnd: dayEnd)
+    }
+
+    /// Premier extremum LOCAL d'altitude lunaire tombant dans [dayStart, dayEnd[.
+    ///
+    /// Un extremum absolu sur une fenêtre de 26 h peut se trouver au bord de la
+    /// fenêtre (ce n'est alors pas un passage au méridien) ou appartenir au jour
+    /// voisin : seul un vrai changement de sens de variation est retenu.
+    private static func extremumLocal(
+        maximum: Bool,
+        lat: Double,
+        lon: Double,
+        dayStart: Date,
+        dayEnd: Date
+    ) -> Date? {
+        let windowStart = dayStart.addingTimeInterval(-3600)
+        let windowEnd   = dayEnd.addingTimeInterval(3600)
         let step: TimeInterval = 300
 
-        var bestAlt  = Double.infinity
-        var bestTime = windowStart
-
+        var temps: [Date] = []
+        var altitudes: [Double] = []
         var t = windowStart
         while t <= windowEnd {
-            let alt = moonAltitude(jde: julianEphemerisDay(from: t), latitude: lat, longitude: lon)
-            if alt < bestAlt { bestAlt = alt; bestTime = t }
+            temps.append(t)
+            altitudes.append(moonAltitude(jde: julianEphemerisDay(from: t), latitude: lat, longitude: lon))
             t = t.addingTimeInterval(step)
         }
+        guard altitudes.count >= 3 else { return nil }
 
-        // Affinage
-        var lo = bestTime.addingTimeInterval(-600)
-        var hi = bestTime.addingTimeInterval(600)
-        for _ in 0..<10 {
-            let m1 = lo.addingTimeInterval(hi.timeIntervalSince(lo) / 3)
-            let m2 = lo.addingTimeInterval(2 * hi.timeIntervalSince(lo) / 3)
-            let a1 = moonAltitude(jde: julianEphemerisDay(from: m1), latitude: lat, longitude: lon)
-            let a2 = moonAltitude(jde: julianEphemerisDay(from: m2), latitude: lat, longitude: lon)
-            if a1 > a2 { lo = m1 } else { hi = m2 }
+        for k in 1..<(altitudes.count - 1) {
+            let a0 = altitudes[k - 1], a1 = altitudes[k], a2 = altitudes[k + 1]
+            let estExtremum = maximum ? (a1 >= a0 && a1 > a2) : (a1 <= a0 && a1 < a2)
+            guard estExtremum else { continue }
+
+            // Affinage par recherche ternaire entre les deux échantillons voisins
+            var lo = temps[k - 1]
+            var hi = temps[k + 1]
+            for _ in 0..<20 {
+                let m1 = lo.addingTimeInterval(hi.timeIntervalSince(lo) / 3)
+                let m2 = lo.addingTimeInterval(2 * hi.timeIntervalSince(lo) / 3)
+                let b1 = moonAltitude(jde: julianEphemerisDay(from: m1), latitude: lat, longitude: lon)
+                let b2 = moonAltitude(jde: julianEphemerisDay(from: m2), latitude: lat, longitude: lon)
+                if maximum ? (b1 < b2) : (b1 > b2) { lo = m1 } else { hi = m2 }
+            }
+            let instant = lo.addingTimeInterval(hi.timeIntervalSince(lo) / 2)
+            if instant >= dayStart && instant < dayEnd { return instant }
         }
-
-        return lo.addingTimeInterval(hi.timeIntervalSince(lo) / 2)
+        return nil
     }
 
     // MARK: - Construction des périodes solunaires

@@ -23,18 +23,40 @@ enum LeurreStorageService {
 
     /// Container SwiftData partagé — injecté dans l'environnement depuis Go_Les_Picots_V_4App.
     /// Contient le schema complet de l'app (Leurre, Sortie, Prise, PointGPS).
+    ///
+    /// Si la base sur disque ne s'ouvre pas (migration de schéma refusée,
+    /// fichier endommagé), l'app ne plante plus : elle démarre sur une base
+    /// temporaire en mémoire, signale le problème, et NE TOUCHE PAS au fichier
+    /// d'origine — qui reste récupérable après correction.
     static let shared: ModelContainer = {
+        let schema = Schema([Leurre.self, Sortie.self, Prise.self, PointGPS.self])
         do {
-            let schema = Schema([Leurre.self, Sortie.self, Prise.self, PointGPS.self])
             let config = ModelConfiguration(
                 schema: schema,
                 isStoredInMemoryOnly: false
             )
             return try ModelContainer(for: schema, configurations: [config])
         } catch {
-            fatalError("❌ LeurreStorageService — Impossible de créer le ModelContainer : \(error)")
+            erreurOuverture = error.localizedDescription
+            print("❌ LeurreStorageService — base sur disque illisible, mode dégradé : \(error)")
+            do {
+                let secours = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
+                return try ModelContainer(for: schema, configurations: [secours])
+            } catch {
+                fatalError("❌ LeurreStorageService — Impossible de créer le ModelContainer : \(error)")
+            }
         }
     }()
+
+    /// Renseigné si la base sur disque n'a pas pu être ouverte.
+    /// Dans ce cas, rien de ce qui est saisi pendant la session n'est conservé.
+    private(set) static var erreurOuverture: String?
+
+    /// Vrai si l'app tourne sur la base temporaire de secours.
+    static var estEnModeDegrade: Bool {
+        _ = shared
+        return erreurOuverture != nil
+    }
 }
 
 // MARK: - StorageError

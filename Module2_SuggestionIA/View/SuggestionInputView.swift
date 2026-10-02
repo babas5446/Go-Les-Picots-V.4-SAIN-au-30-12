@@ -16,20 +16,29 @@ struct SuggestionInputView: View {
     @ObservedObject var navigationCoordinator: NavigationCoordinator
     @Environment(\.dismiss) var dismiss
     
-    // Conditions de pêche
-    @State private var conditions = ConditionsPeche(
-        zone: .lagon,
-        profondeurZone: 15.0,  // Profondeur du fond (lagon profond)
-        vitesseBateau: 5.0,
-        momentJournee: .matinee,
-        luminosite: .forte,
-        turbiditeEau: .claire,
-        etatMer: .calme,
-        typeMaree: .montante,
-        phaseLunaire: .pleineLune,
-        especePrioritaire: nil,
-        nombreLignes: 3
-    )
+    // Conditions de pêche : reprises de la dernière saisie si elle existe,
+    // pour ne pas tout ressaisir d'une suggestion à l'autre dans la même sortie.
+    @State private var conditions = SuggestionInputView.conditionsInitiales()
+
+    private static func conditionsInitiales() -> ConditionsPeche {
+        if let data = UserDefaults.standard.data(forKey: "dernieresConditionsPeche"),
+           let dernieres = try? JSONDecoder().decode(ConditionsPeche.self, from: data) {
+            return dernieres
+        }
+        return ConditionsPeche(
+            zone: .lagon,
+            profondeurZone: 15.0,  // Profondeur du fond (lagon profond)
+            vitesseBateau: 5.0,
+            momentJournee: .matinee,
+            luminosite: .forte,
+            turbiditeEau: .claire,
+            etatMer: .calme,
+            typeMaree: .montante,
+            phaseLunaire: .pleineLune,
+            especePrioritaire: nil,
+            nombreLignes: 3
+        )
+    }
     
     @State private var showingValidationAlert = false
     @State private var validationMessage = ""
@@ -697,6 +706,20 @@ struct SuggestionInputView: View {
             validationMessage = erreur ?? "Erreur de validation"
             showingValidationAlert = true
             return
+        }
+
+        // La vitesse suggérée n'était écrite dans les conditions qu'au
+        // basculement du bouton : avec le réglage par défaut, le moteur
+        // recevait 5 nœuds quelle que soit la vitesse affichée.
+        if useSuggestedSpeed {
+            conditions.vitesseBateau = SuggestionEngine.calculerVitesseRecommandee(
+                especePrioritaire: conditions.especePrioritaire,
+                profilBateau: conditions.profilBateau,
+                zone: conditions.zone,
+                etatMer: conditions.etatMer,
+                turbidite: conditions.turbiditeEau,
+                momentJournee: conditions.momentJournee
+            ).vitesseRecommandee
         }
         
         // Pont vers le Journal de sorties : mémorise les conditions saisies

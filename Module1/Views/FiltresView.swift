@@ -24,7 +24,7 @@ struct FiltresView: View {
                     Picker("Type", selection: $viewModel.filtreTypeLeurre) {
                         Text("Tous").tag(nil as TypeLeurre?)
                         ForEach(TypeLeurre.allCases, id: \.self) { type in
-                            Text("\(type.icon) \(type.displayName)").tag(type as TypeLeurre?)
+                            Label(type.displayName, systemImage: type.icon).tag(type as TypeLeurre?)
                         }
                     }
                 }
@@ -42,7 +42,7 @@ struct FiltresView: View {
                     Picker("Zone", selection: $viewModel.filtreZone) {
                         Text("Toutes").tag(nil as Zone?)
                         ForEach(Zone.allCases, id: \.self) { zone in
-                            Text("\(zone.icon) \(zone.displayName)").tag(zone as Zone?)
+                            Label(zone.displayName, systemImage: zone.icon).tag(zone as Zone?)
                         }
                     }
                 }

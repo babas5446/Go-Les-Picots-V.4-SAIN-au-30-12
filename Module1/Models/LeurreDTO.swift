@@ -305,7 +305,7 @@ struct LeurreDTO: Codable {
     /// photoData est nil par défaut — peuplé séparément par LeurreMigrationService
     /// (depuis le disque pour l'ancien format, depuis photoBase64 pour le format V4).
     func toLeurre() -> Leurre {
-        Leurre(
+        let leurre = Leurre(
             id: id,
             nom: nom,
             marque: marque,
@@ -331,6 +331,20 @@ struct LeurreDTO: Codable {
             notesMotsCles: notesMotsCles ?? [],
             qualiteDataScore: qualiteDataScore ?? 0
         )
+
+        // Champs déduits et date d'ajout : transmis tels quels.
+        // L'init de Leurre les remet à nil / Date() ; sans cette recopie,
+        // une boîte migrée ou importée perdait zones, contraste et positions
+        // jusqu'à la prochaine modification manuelle de chaque leurre.
+        leurre.contraste           = contraste
+        leurre.zonesAdaptees       = zonesAdaptees
+        leurre.especesCibles       = especesCibles
+        leurre.positionsSpread     = positionsSpread
+        leurre.conditionsOptimales = conditionsOptimales
+        leurre.isComputed          = isComputed ?? false
+        if let dateAjout { leurre.dateAjout = dateAjout }
+
+        return leurre
     }
 }
 

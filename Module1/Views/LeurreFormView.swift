@@ -398,7 +398,7 @@ struct LeurreFormView: View {
             }
             Picker("Type de leurre", selection: $typeLeurre) {
                 ForEach(TypeLeurre.allCases, id: \.self) { type in
-                    Text("\(type.icon) \(type.displayName)").tag(type)
+                    Label(type.displayName, systemImage: type.icon).tag(type)
                 }
             }
         } header: { Text("Classification") }

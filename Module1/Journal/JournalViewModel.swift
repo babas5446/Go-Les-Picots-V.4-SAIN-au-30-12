@@ -166,6 +166,10 @@ final class JournalViewModel: ObservableObject {
             conditions:  dernieresConditions()
         )
         context.insert(sortie)
+        // Enregistrée tout de suite : une insertion en attente est validée
+        // au premier fetch venu (ouverture de la fiche de prise), ce qui
+        // déclenchait une recomposition de toute la pile du journal.
+        sauvegarder()
         return sortie
     }
 
@@ -373,6 +377,8 @@ final class JournalViewModel: ObservableObject {
         Task { [weak self] in
             guard let self else { return }
             guard let coordonnee = await self.traceGPS.relevePositionPonctuelle() else { return }
+            // La prise (ou sa sortie) a pu être supprimée pendant le relevé.
+            guard !prise.isDeleted, prise.modelContext != nil else { return }
             prise.latitude  = coordonnee.latitude
             prise.longitude = coordonnee.longitude
             self.sauvegarder()

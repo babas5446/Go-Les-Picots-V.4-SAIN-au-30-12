@@ -121,6 +121,18 @@ final class TraceGPSService: NSObject, ObservableObject {
 
     private var timer: Timer?
 
+    /// Maintient la trace active écran éteint avec la seule autorisation
+    /// « Lorsque l'app est active » (iOS 17+). Sans elle, la trace s'arrêtait
+    /// dès le verrouillage de l'iPhone si l'utilisateur n'avait pas choisi « Toujours ».
+    private var sessionArrierePlan: CLBackgroundActivitySession?
+
+    /// Le mode d'arrière-plan « location » est-il déclaré dans l'Info.plist ?
+    /// Sans lui, activer allowsBackgroundLocationUpdates lève une exception.
+    private var modeArrierePlanDeclare: Bool {
+        (Bundle.main.object(forInfoDictionaryKey: "UIBackgroundModes") as? [String])?
+            .contains("location") ?? false
+    }
+
     /// Demandes de position ponctuelle en attente de réponse du récepteur.
     private var attentesPosition: [CheckedContinuation<CLLocationCoordinate2D?, Never>] = []
 
@@ -198,6 +210,8 @@ final class TraceGPSService: NSObject, ObservableObject {
         timer?.invalidate()
         timer = nil
         locationManager.stopUpdatingLocation()
+        sessionArrierePlan?.invalidate()
+        sessionArrierePlan = nil
         enregistrement = false
         enPause        = true
 
@@ -223,6 +237,8 @@ final class TraceGPSService: NSObject, ObservableObject {
         surveillanceAutorisation = nil
         locationManager.stopUpdatingLocation()
         locationManager.allowsBackgroundLocationUpdates = false
+        sessionArrierePlan?.invalidate()
+        sessionArrierePlan = nil
         enregistrement = false
         enPause        = false
         sortieCible    = nil
@@ -428,8 +444,12 @@ final class TraceGPSService: NSObject, ObservableObject {
         // N'est accordé que si le mode d'arrière-plan « Location updates » est
         // activé dans les capacités du projet. L'affectation lève une exception
         // dans le cas contraire, d'où la vérification préalable.
-        if locationManager.authorizationStatus == .authorizedAlways {
+        let statut = locationManager.authorizationStatus
+        if (statut == .authorizedAlways || statut == .authorizedWhenInUse) && modeArrierePlanDeclare {
             locationManager.allowsBackgroundLocationUpdates = true
+            locationManager.showsBackgroundLocationIndicator = true
+            sessionArrierePlan?.invalidate()
+            sessionArrierePlan = CLBackgroundActivitySession()
         }
 
         surveillanceAutorisation?.cancel()

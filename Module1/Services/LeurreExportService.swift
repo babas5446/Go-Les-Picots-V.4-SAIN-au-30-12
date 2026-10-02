@@ -131,8 +131,16 @@ enum LeurreExportService {
         let data = try Data(contentsOf: jsonURL)
         let dtos  = try decoderJSON(data: data)
 
-        // 4. Insérer les nouveaux leurres (doublons ignorés par id)
-        let compteur = try insererDTOs(dtos, dans: context)
+        // 4. Insérer les nouveaux leurres (vrais doublons ignorés)
+        //    Les ZIP antérieurs à la V4 rangent les photos dans photos/ et
+        //    référencent le fichier par photoPath : on les récupère aussi.
+        let dossierPhotos = jsonURL.deletingLastPathComponent().appendingPathComponent("photos")
+        let compteur = try insererDTOs(
+            dtos,
+            dans: context,
+            cheminsPhotos: extraireCheminsPhotos(depuis: data),
+            dossierPhotos: dossierPhotos
+        )
 
         print("✅ Import ZIP : \(compteur) leurres créés, \(dtos.count - compteur) ignorés (doublons)")
         return compteur
@@ -162,32 +170,71 @@ enum LeurreExportService {
     /// Partagé par importerZIP et importerJSON — déduplication par id.
     private static func insererDTOs(
         _ dtos: [LeurreDTO],
-        dans context: ModelContext
+        dans context: ModelContext,
+        cheminsPhotos: [Int: String] = [:],
+        dossierPhotos: URL? = nil
     ) throws -> Int {
 
-        // IDs déjà présents
-        let descriptor   = FetchDescriptor<Leurre>()
-        let existants    = try context.fetch(descriptor)
-        let idsExistants = Set(existants.map { $0.id })
+        // Leurres déjà présents, indexés par id
+        let descriptor = FetchDescriptor<Leurre>()
+        let existants  = try context.fetch(descriptor)
+        var parID: [Int: Leurre] = [:]
+        for leurre in existants { parID[leurre.id] = leurre }
+        var prochainID = (existants.map { $0.id }.max() ?? 0) + 1
 
         var compteur = 0
         for dto in dtos {
-            guard !idsExistants.contains(dto.id) else { continue }
-
             let leurre = dto.toLeurre()
 
-            // Décoder la photo Base64 si présente
+            if let present = parID[dto.id] {
+                // Même id, même leurre : vrai doublon, ignoré.
+                let memeLeurre = present.nom.caseInsensitiveCompare(dto.nom) == .orderedSame
+                    && present.marque.caseInsensitiveCompare(dto.marque) == .orderedSame
+                if memeLeurre { continue }
+                // Même id, leurre différent (boîte d'un autre appareil) :
+                // renuméroté plutôt que perdu.
+                leurre.id = prochainID
+                prochainID += 1
+            }
+
+            // Photo : Base64 (format V4), sinon fichier photos/ (ancien ZIP)
             if let b64 = dto.photoBase64,
                let photoData = Data(base64Encoded: b64) {
+                leurre.photoData = photoData
+            } else if let dossier = dossierPhotos,
+                      let chemin = cheminsPhotos[dto.id],
+                      let photoData = try? Data(contentsOf: dossier.appendingPathComponent(chemin)) {
                 leurre.photoData = photoData
             }
 
             context.insert(leurre)
+            parID[leurre.id] = leurre
             compteur += 1
         }
 
         try context.save()
         return compteur
+    }
+
+    /// Table id → photoPath lue dans le JSON brut (champ ignoré par LeurreDTO).
+    private static func extraireCheminsPhotos(depuis data: Data) -> [Int: String] {
+        let racine = try? JSONSerialization.jsonObject(with: data)
+        let elements: [[String: Any]]
+        if let objet = racine as? [String: Any], let liste = objet["leurres"] as? [[String: Any]] {
+            elements = liste
+        } else if let liste = racine as? [[String: Any]] {
+            elements = liste
+        } else {
+            return [:]
+        }
+        var table: [Int: String] = [:]
+        for element in elements {
+            if let id = element["id"] as? Int,
+               let chemin = element["photoPath"] as? String, !chemin.isEmpty {
+                table[id] = chemin
+            }
+        }
+        return table
     }
 
     // MARK: - Conversion Leurre → LeurreDTO

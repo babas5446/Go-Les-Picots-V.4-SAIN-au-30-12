@@ -241,7 +241,7 @@ struct BadgeZone: View {
     let zone: Zone
     
     var body: some View {
-        Text(zone.icon)
+        Label(zone.displayName, systemImage: zone.icon)
             .font(.caption2)
             .padding(.horizontal, 6)
             .padding(.vertical, 2)
@@ -256,7 +256,7 @@ struct BadgeTechnique: View {
     let technique: TypePeche
     
     var body: some View {
-        Text(technique.icon)
+        Label(technique.displayName, systemImage: technique.icon)
             .font(.caption2)
             .padding(.horizontal, 6)
             .padding(.vertical, 2)

@@ -714,8 +714,8 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.navigation";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Go les Picots utilise la caméra pour photographier vos leurres";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Go Les Picots peut enregistrer votre trajet pendant les sorties de pêche y compris écran éteint";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Go Les Picots utilise votre position pour afficher les spots et enregistrer vos sorties de pêche.</string>\nGo Les Picots utilise votre position pour afficher les spots et enregistrer vos sorties de pêche.</string>\nGo Les Picots utilise votre position pour afficher les spots et enregistrer vos sorties de pêche.";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "o les Picots accède à votre galerie pour importer des photos de leurres";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Go Les Picots utilise votre position pour afficher les spots et enregistrer la trace de vos sorties de pêche, y compris écran verrouillé.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Go Les Picots accède à votre galerie pour importer des photos de leurres et de prises";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -753,8 +753,8 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.navigation";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Go les Picots utilise la caméra pour photographier vos leurres";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Go Les Picots peut enregistrer votre trajet pendant les sorties de pêche y compris écran éteint";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Go Les Picots utilise votre position pour afficher les spots et enregistrer vos sorties de pêche.</string>\nGo Les Picots utilise votre position pour afficher les spots et enregistrer vos sorties de pêche.</string>\nGo Les Picots utilise votre position pour afficher les spots et enregistrer vos sorties de pêche.";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "o les Picots accède à votre galerie pour importer des photos de leurres";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Go Les Picots utilise votre position pour afficher les spots et enregistrer la trace de vos sorties de pêche, y compris écran verrouillé.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Go Les Picots accède à votre galerie pour importer des photos de leurres et de prises";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

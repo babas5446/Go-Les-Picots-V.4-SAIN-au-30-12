@@ -22,16 +22,31 @@ struct Go_Les_Picots_V_4App: App {
     /// Déclenche la migration JSON → SwiftData au premier lancement.
     /// Sans effet les lancements suivants (flag UserDefaults).
     init() {
-        LeurreMigrationService.migrerSiNecessaire(
-            dans: LeurreStorageService.shared.mainContext
-        )
+        // En mode dégradé (base sur disque illisible), aucune migration :
+        // elle poserait son flag sur une base temporaire et serait perdue.
+        guard !LeurreStorageService.estEnModeDegrade else { return }
+
+        let context = LeurreStorageService.shared.mainContext
+        LeurreMigrationService.migrerSiNecessaire(dans: context)
+
+        // Leurres migrés, importés ou issus d'une version antérieure :
+        // on complète les champs déduits (zones, contraste, positions)
+        // dont dépendent les filtres et le moteur de suggestion.
+        BoiteLeurresViewModel(context: context).completerChampsDeduitsManquants()
     }
 
     // MARK: - Scene
 
+    @State private var alerteModeDegrade = LeurreStorageService.estEnModeDegrade
+
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .alert("Base de données inaccessible", isPresented: $alerteModeDegrade) {
+                    Button("Compris", role: .cancel) { }
+                } message: {
+                    Text("L'application fonctionne sur une base temporaire : rien de ce que vous saisirez ne sera conservé. Vos données d'origine n'ont pas été modifiées.\n\nDétail : \(LeurreStorageService.erreurOuverture ?? "inconnu")")
+                }
         }
         .modelContainer(LeurreStorageService.shared)
     }

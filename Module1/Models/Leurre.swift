@@ -64,20 +64,20 @@ import SwiftData
     var especesCibles: [String]?
     var positionsSpread: [PositionSpread]?
     var conditionsOptimales: ConditionsOptimales?
-    var isComputed: Bool
+    var isComputed: Bool = false
 
     // ═══════════════════════════════════════════════════════════════
     // CHAMPS V4
     // ═══════════════════════════════════════════════════════════════
 
-    var notesMotsCles: [String]
-    var qualiteDataScore: Int
+    var notesMotsCles: [String] = []
+    var qualiteDataScore: Int = 0
 
     // ═══════════════════════════════════════════════════════════════
     // GESTION
     // ═══════════════════════════════════════════════════════════════
 
-    var quantite: Int
+    var quantite: Int = 1
     var dateAjout: Date?
 
     // MARK: - Initialisation
@@ -459,15 +459,15 @@ enum TypeLeurre: String, Codable, CaseIterable, Hashable {
         switch self {
         case .poissonNageur, .poissonNageurPlongeant,
              .poissonNageurCoulant, .poissonNageurVibrant: return "fish"
-        case .leurreAJupe:                                return "squid"
+        case .leurreAJupe:                                return "tornado"
         case .popper, .stickbait,
              .stickbaitFlottant, .stickbaitCoulant:       return "wind"
         case .jigMetallique, .jigStickbait,
              .jigStickbaitCoulant, .jigVibrant,
              .vibeLipless:                                return "bolt"
         case .leurreDeTrainePoissonVolant:                return "bird"
-        case .cuiller:                                    return "spoon"
-        case .leurreSouple, .squid:                       return "worm"
+        case .cuiller:                                    return "drop.fill"
+        case .leurreSouple, .squid:                       return "scribble.variable"
         case .madai, .inchiku:                            return "fish.fill"
         }
     }
@@ -784,7 +784,7 @@ enum Zone: String, Codable, CaseIterable, Hashable {
         case .tombant: return "mountain.2"
         case .large:   return "ferry"
         case .profond: return "moon.fill"
-        case .dcp:     return "anchor"
+        case .dcp:     return "dot.radiowaves.left.and.right"
         }
     }
 
