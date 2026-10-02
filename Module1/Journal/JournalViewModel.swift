@@ -88,7 +88,30 @@ final class JournalViewModel: ObservableObject {
     init(context: ModelContext) {
         self.context  = context
         self.traceGPS = TraceGPSService.shared
+        reprendreSortiesAnciennes()
         restaurerSortieOuverte()
+    }
+
+    /// Donne un état réel aux sorties antérieures à la V4.2 (voir
+    /// Sortie.normaliserEtatAncien). Sans effet une fois la reprise faite.
+    private func reprendreSortiesAnciennes() {
+        guard let toutes = try? context.fetch(FetchDescriptor<Sortie>()) else { return }
+        let corrigees = toutes.filter { $0.normaliserEtatAncien() }.count
+        if corrigees > 0 {
+            sauvegarder()
+            print("🗂️ \(corrigees) sortie(s) antérieure(s) à la V4.2 reprises")
+        }
+    }
+
+    // MARK: - Une seule sortie active
+
+    /// Autre sortie en cours ou en pause que celle-ci, s'il en existe une.
+    /// Deux sorties actives se disputeraient la trace GPS.
+    func autreSortieActive(que sortie: Sortie) -> Sortie? {
+        let toutes = (try? context.fetch(FetchDescriptor<Sortie>())) ?? []
+        return toutes.first {
+            ($0.etat == .enCours || $0.etat == .enPause) && $0.id != sortie.id
+        }
     }
 
     @MainActor
@@ -200,6 +223,10 @@ final class JournalViewModel: ObservableObject {
     /// Démarre la sortie : heure de départ, état actif, trace GPS armée.
     func demarrerSortie(_ sortie: Sortie) {
         guard sortie.etat == .nonDemarree else { return }
+        if let autre = autreSortieActive(que: sortie) {
+            signalerErreur("« \(autre.titreAffiche) » est encore ouverte. Terminez-la avant d'en démarrer une autre.")
+            return
+        }
 
         sortie.heureDepart         = Date()
         sortie.heureRetour         = nil
@@ -231,6 +258,10 @@ final class JournalViewModel: ObservableObject {
     /// l'application a redémarré entre-temps et il faut réarmer la trace.
     func reprendreSortie(_ sortie: Sortie) {
         guard sortie.etat == .enPause else { return }
+        if let autre = autreSortieActive(que: sortie) {
+            signalerErreur("« \(autre.titreAffiche) » est encore ouverte. Terminez-la avant de reprendre celle-ci.")
+            return
+        }
 
         if let debut = sortie.debutPauseCourante {
             sortie.cumulPausesSecondes += max(0, Date().timeIntervalSince(debut))

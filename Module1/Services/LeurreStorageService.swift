@@ -29,6 +29,21 @@ enum LeurreStorageService {
     /// temporaire en mémoire, signale le problème, et NE TOUCHE PAS au fichier
     /// d'origine — qui reste récupérable après correction.
     static let shared: ModelContainer = {
+        // 1. Base versionnée, avec plan de migration (cas normal).
+        let schemaVersionne = Schema(versionedSchema: GLPSchemaV1.self)
+        do {
+            let config = ModelConfiguration(schema: schemaVersionne, isStoredInMemoryOnly: false)
+            return try ModelContainer(
+                for: schemaVersionne,
+                migrationPlan: GLPMigrationPlan.self,
+                configurations: [config]
+            )
+        } catch {
+            print("⚠️ LeurreStorageService — ouverture versionnée impossible, essai sans plan : \(error)")
+        }
+
+        // 2. Repli : base créée par une version antérieure dont le schéma ne
+        //    figure pas dans le plan. SwiftData tente alors une migration légère.
         let schema = Schema([Leurre.self, Sortie.self, Prise.self, PointGPS.self])
         do {
             let config = ModelConfiguration(

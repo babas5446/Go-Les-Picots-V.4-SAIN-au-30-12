@@ -102,9 +102,6 @@ struct NouvelleSortieView: View {
     // MARK: - Body
 
     var body: some View {
-        #if DEBUG
-        let _ = Self._printChanges()
-        #endif
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
@@ -165,6 +162,11 @@ struct NouvelleSortieView: View {
                 Button("Annuler", role: .cancel) { }
             } message: {
                 Text("La trace GPS sera arrêtée et l'heure de retour enregistrée. La sortie restera modifiable.")
+            }
+            .alert("Action impossible", isPresented: $viewModel.showError) {
+                Button("Compris", role: .cancel) { }
+            } message: {
+                Text(viewModel.errorMessage ?? "")
             }
             .alert("Sortie interrompue", isPresented: $afficherRestauration) {
                 Button("Compris", role: .cancel) { }

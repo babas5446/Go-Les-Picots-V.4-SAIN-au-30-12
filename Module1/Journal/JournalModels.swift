@@ -190,6 +190,23 @@ final class Sortie {
     /// La trace GPS doit-elle écrire pour cette sortie ?
     var traceActive: Bool { etat.traceActive }
 
+    /// Sorties créées avant la V4.2 : le champ d'état est vide et la sortie
+    /// passait pour « non démarrée », même avec un retour, des prises ou une
+    /// trace. On lui donne un état réel, une fois pour toutes.
+    /// Retourne true si l'état a été corrigé.
+    @discardableResult
+    func normaliserEtatAncien() -> Bool {
+        guard EtatSortie(rawValue: etatRaw) == nil else { return false }
+        let aEuLieu = heureRetour != nil || heureDepart != nil
+            || !prises.isEmpty || !pointsGPS.isEmpty
+        etatRaw = (aEuLieu ? EtatSortie.terminee : EtatSortie.nonDemarree).rawValue
+        if aEuLieu, heureRetour == nil {
+            // Heure de retour inconnue : dernier point de trace, sinon dernière prise.
+            heureRetour = pointsGPS.map(\.timestamp).max() ?? prises.map(\.heure).max()
+        }
+        return true
+    }
+
     // MARK: - Propriétés calculées publiques
 
     /// Conditions de pêche de la session, décodées depuis conditionsData.
