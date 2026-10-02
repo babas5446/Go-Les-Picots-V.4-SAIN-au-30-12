@@ -40,6 +40,7 @@
 		6193EA842EE25312000BE2F6 /* SuggestionResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6193EA822EE25312000BE2F6 /* SuggestionResultView.swift */; };
 		6193EA852EE25312000BE2F6 /* SpreadVisualizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6193EA802EE25312000BE2F6 /* SpreadVisualizationView.swift */; };
 		6193EAE52EE6A88F000BE2F6 /* SuggestionEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6193EAE42EE6A88F000BE2F6 /* SuggestionEngine.swift */; };
+		7A1A60012F60000100A1A601 /* MoteurLagon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A1A60022F60000100A1A601 /* MoteurLagon.swift */; };
 		61941ACE2EEA0B170019B66B /* EspecesDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61941ACD2EEA0B170019B66B /* EspecesDatabase.swift */; };
 		61C2A82F2F1F09B0003074F5 /* CORRECTION_ENUMS_TYPES_COMMUNS.md in Resources */ = {isa = PBXBuildFile; fileRef = 61C2A82E2F1F09B0003074F5 /* CORRECTION_ENUMS_TYPES_COMMUNS.md */; };
 		61C2A8332F1F0A93003074F5 /* HARMONISATION_FINALE_ENUMS.md in Resources */ = {isa = PBXBuildFile; fileRef = 61C2A8322F1F0A93003074F5 /* HARMONISATION_FINALE_ENUMS.md */; };
@@ -107,6 +108,7 @@
 		6193EA812EE25312000BE2F6 /* SuggestionInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuggestionInputView.swift; sourceTree = "<group>"; };
 		6193EA822EE25312000BE2F6 /* SuggestionResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuggestionResultView.swift; sourceTree = "<group>"; };
 		6193EAE42EE6A88F000BE2F6 /* SuggestionEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuggestionEngine.swift; sourceTree = "<group>"; };
+		7A1A60022F60000100A1A601 /* MoteurLagon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoteurLagon.swift; sourceTree = "<group>"; };
 		61941ACD2EEA0B170019B66B /* EspecesDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EspecesDatabase.swift; sourceTree = "<group>"; };
 		61C2A82E2F1F09B0003074F5 /* CORRECTION_ENUMS_TYPES_COMMUNS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CORRECTION_ENUMS_TYPES_COMMUNS.md; sourceTree = "<group>"; };
 		61C2A8322F1F0A93003074F5 /* HARMONISATION_FINALE_ENUMS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = HARMONISATION_FINALE_ENUMS.md; sourceTree = "<group>"; };
@@ -345,6 +347,7 @@
 				6193EA7A2EE252A0000BE2F6 /* ConditionsPeche.swift */,
 				61045F622F07B20F0033CD9F /* RisqueCiguatera.swift */,
 				6193EAE42EE6A88F000BE2F6 /* SuggestionEngine.swift */,
+				7A1A60022F60000100A1A601 /* MoteurLagon.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -510,6 +513,7 @@
 				613F7A102F03D73400DA3053 /* Typedenagedetector.swift in Sources */,
 				6193EA512EE142F1000BE2F6 /* Leurre.swift in Sources */,
 				6193EAE52EE6A88F000BE2F6 /* SuggestionEngine.swift in Sources */,
+				7A1A60012F60000100A1A601 /* MoteurLagon.swift in Sources */,
 				613F7A0E2F0397FD00DA3053 /* Jiggingchoicesheet.swift in Sources */,
 				6193EA522EE142F1000BE2F6 /* ColorExtension.swift in Sources */,
 				61C5FBDF2EF90A7F0030C95D /* CouleurSearchField.swift in Sources */,

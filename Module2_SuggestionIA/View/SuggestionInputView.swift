@@ -711,6 +711,7 @@ struct SuggestionInputView: View {
         // La vitesse suggérée n'était écrite dans les conditions qu'au
         // basculement du bouton : avec le réglage par défaut, le moteur
         // recevait 5 nœuds quelle que soit la vitesse affichée.
+        conditions.vitesseLibre = useSuggestedSpeed
         if useSuggestedSpeed {
             conditions.vitesseBateau = SuggestionEngine.calculerVitesseRecommandee(
                 especePrioritaire: conditions.especePrioritaire,

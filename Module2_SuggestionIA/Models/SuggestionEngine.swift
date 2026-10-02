@@ -31,7 +31,7 @@ class SuggestionEngine: ObservableObject {
     @Published var analyseGlobale: String = ""
 
     // MARK: - Dependencies
-    private let BoiteLeurresViewModel: BoiteLeurresViewModel
+    let BoiteLeurresViewModel: BoiteLeurresViewModel
     var nombreLeurres: Int { BoiteLeurresViewModel.tousLesLeurres.count }
 
     nonisolated init(BoiteLeurresViewModel: BoiteLeurresViewModel) {
@@ -330,6 +330,15 @@ class SuggestionEngine: ObservableObject {
         Task { @MainActor in
 
             await Task.yield()
+
+            // Lagon, platier et pâtés, passes : moteur dédié (MoteurLagon.swift).
+            if SuggestionEngine.moteurLagonApplicable(conditions) {
+                self.progressMessage = "Moteur lagon : vitesse, étages et postes..."
+                await Task.yield()
+                self.executerMoteurLagon(conditions: conditions)
+                return
+            }
+
             self.progressMessage = "Phase 1 : Filtrage technique..."
             await Task.yield()
 

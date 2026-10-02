@@ -33,6 +33,10 @@ struct ConditionsPeche: Codable, Hashable {
     var especePrioritaire: Espece?
     var nombreLignes: Int = 3                // 1-5 lignes
     var profilBateau: ProfilBateau = .classique  // Profil bateau (classique ou Clark 4,29 m)
+
+    /// true : le moteur choisit la vitesse ; false : vitesse fixée à la main.
+    /// Optionnel pour rester lisible par les conditions déjà enregistrées.
+    var vitesseLibre: Bool? = nil
     
     // MARK: - Initialisation par défaut (Scénario 1 - Lagon aube)
     static var scenario1LagunAube: ConditionsPeche {

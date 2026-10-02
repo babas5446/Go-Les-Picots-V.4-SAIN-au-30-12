@@ -254,6 +254,11 @@ struct SuggestionResultView: View {
                     .font(.headline)
                     .foregroundColor(Color(hex: "0277BD"))
                     .padding(.top)
+
+                // Plan de traîne : vitesse, alertes, consignes, à acheter.
+                if let config = configuration, !config.analyseSpread.isEmpty {
+                    PlanTraineCard(texte: config.analyseSpread)
+                }
                 
                 ForEach(suggestions.prefix(10)) { suggestion in
                     SuggestionCard(
@@ -1079,5 +1084,37 @@ private func couleurPourAffichage(_ couleur: Couleur) -> Color {
     case .blow: return Color(red: 0.5, green: 0.8, blue: 1.0)
     case .rouge: return .red
     case .or: return Color(red: 1.0, green: 0.84, blue: 0.0)
+    }
+}
+
+// MARK: - Plan de traîne (moteur lagon)
+
+/// Affiche le plan produit par le moteur : une ligne de titre par section
+/// (en capitales), puis les puces.
+private struct PlanTraineCard: View {
+    let texte: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            ForEach(Array(texte.components(separatedBy: "\n").enumerated()), id: \.offset) { _, ligne in
+                if ligne.isEmpty {
+                    Spacer().frame(height: 4)
+                } else if ligne == ligne.uppercased() && !ligne.hasPrefix("•") {
+                    Text(ligne)
+                        .font(.subheadline)
+                        .fontWeight(.bold)
+                        .foregroundColor(Color(hex: "0277BD"))
+                } else {
+                    Text(ligne)
+                        .font(.caption)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding()
+        .background(Color.white)
+        .cornerRadius(12)
+        .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
     }
 }
