@@ -233,7 +233,7 @@ struct LignePecheView: View {
             // ➕ Info détaillée enrichie (si sélectionné)
             if isSelected {
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(position.displayName)
+                    Text(suggestion.libellePoste ?? position.displayName)
                         .font(.caption)
                         .fontWeight(.bold)
                         .foregroundColor(.primary)
@@ -255,7 +255,7 @@ struct LignePecheView: View {
                         }
                     }
                     
-                    Text(position.caracteristiques)
+                    Text(suggestion.rolePoste ?? position.caracteristiques)
                         .font(.caption2)
                         .foregroundColor(.secondary)
                         .italic()
@@ -445,7 +445,7 @@ struct LegendRow: View {
             )
             
             VStack(alignment: .leading, spacing: 4) {
-                Text(position.displayName)
+                Text(suggestion.libellePoste ?? position.displayName)
                     .font(.subheadline)
                     .fontWeight(.semibold)
                 
@@ -513,7 +513,7 @@ struct PositionDetailCard: View {
                         .frame(width: 12, height: 12)
                     
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(position.displayName)
+                        Text(suggestion.libellePoste ?? position.displayName)
                             .font(.subheadline)
                             .fontWeight(.bold)
                             .foregroundColor(.primary)
@@ -539,7 +539,7 @@ struct PositionDetailCard: View {
                             }
                         }
                         
-                        Text(position.caracteristiques)
+                        Text(suggestion.rolePoste ?? position.caracteristiques)
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }

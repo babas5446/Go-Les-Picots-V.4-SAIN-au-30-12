@@ -60,6 +60,11 @@ class SuggestionEngine: ObservableObject {
 
         let detailsScoring: ScoringDetails
 
+        // Moteur lagon : libellé réel du poste (Clark), rôle et étage atteint.
+        var libellePoste: String? = nil
+        var rolePoste: String? = nil
+        var etagePoste: String? = nil
+
         var niveauQualite: String {
             switch scoreTotal {
             case 90...100: return "Exceptionnel"
@@ -91,6 +96,8 @@ class SuggestionEngine: ObservableObject {
         let vitessePlageMax: Double
         let justificationVitesse: String
         let ajustementsVitesse: [String]  // Facteurs contextuels d'ajustement
+        /// true : spread produit par le moteur lagon (postes du Clark, sans tangons).
+        var modeLagon: Bool = false
     }
 
     struct ScoringDetails {

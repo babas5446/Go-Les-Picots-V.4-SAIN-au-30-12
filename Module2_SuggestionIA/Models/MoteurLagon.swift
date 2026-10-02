@@ -42,7 +42,7 @@ enum Lagon {
             switch self {
             case .shortCorner:    return "Short corner"
             case .longCorner:     return "Long corner"
-            case .centre:         return "Centre (shotgun lagon)"
+            case .centre:         return "Centre"
             case .lateralTribord: return "Latéral tribord"
             case .lateralBabord:  return "Latéral bâbord"
             }
@@ -91,9 +91,13 @@ enum Lagon {
         }
 
         static func postes(pour nombreLignes: Int) -> [Poste] {
-            Array(allCases.prefix(max(1, min(5, nombreLignes))))
+            Array(allCases.prefix(max(1, min(Lagon.postesInstalles, nombreLignes))))
         }
     }
+
+    /// Postes réellement équipés sur le Clark : deux corners et le centre.
+    /// Les latéraux restent décrits ci-dessus pour un équipement futur.
+    static let postesInstalles = 3
 
     // MARK: Variables dérivées
 
@@ -667,6 +671,10 @@ extension SuggestionEngine {
                 r.positionSpread = poste.positionSpread
                 r.distanceSpread = Lagon.distance(e, vitesse: v)
                 r.justificationPosition = justificationPoste(e, poste: poste, vitesse: v, ctx: ctx)
+                r.libellePoste = poste.nom
+                r.rolePoste = poste.role.prefix(1).uppercased() + poste.role.dropFirst()
+                r.etagePoste = "≈ \(Lagon.nb(e.profondeur.arrondi(1))) m"
+
             }
             resultatsSpread.append(r)
         }
@@ -691,7 +699,8 @@ extension SuggestionEngine {
             justificationVitesse: vitesseImposee
                 ? "Vitesse fixée à la main : \(Lagon.nbVitesse(v)) nœuds."
                 : "Vitesse qui fait le mieux nager l'ensemble du spread (plage \(ctx.preset.nom) : \(Lagon.nbVitesse(ctx.preset.vitesseMin)) à \(Lagon.nbVitesse(ctx.preset.vitesseMax)) nœuds).",
-            ajustementsVitesse: ajustementsVitesse(ctx)
+            ajustementsVitesse: ajustementsVitesse(ctx),
+            modeLagon: true
         )
 
         self.suggestions = resultatsSpread + autres
@@ -806,16 +815,19 @@ extension SuggestionEngine {
         if Lagon.penalites(spread.lignes) >= 25 {
             alertes.append("Deux lignes nagent au même étage : spread dégradé, la boîte manque de leurres à d'autres profondeurs.")
         }
+        if c.nombreLignes > Lagon.postesInstalles {
+            alertes.append("Le Clark ne compte que \(Lagon.postesInstalles) postes (deux corners et le centre) : spread limité à \(Lagon.postesInstalles) lignes.")
+        }
         if c.nombreLignes >= 3 {
             alertes.append("Trois lignes et plus : seul à bord, à la touche, remontez les autres lignes avant de combattre.")
         }
-        if c.nombreLignes >= 4 {
+        if min(c.nombreLignes, Lagon.postesInstalles) >= 4 {
             alertes.append("Quatre lignes et plus : deux personnes à bord indispensables, virages larges.")
         }
-        if c.nombreLignes == 5 {
+        if min(c.nombreLignes, Lagon.postesInstalles) == 5 {
             alertes.append("Cinq lignes : exceptionnel sur 4,29 m ; risque d'emmêlement en cas de prise multiple.")
         }
-        if c.zone == .recif && c.nombreLignes >= 4 {
+        if c.zone == .recif && min(c.nombreLignes, Lagon.postesInstalles) >= 4 {
             alertes.append("Platier et pâtés : passez à 2 ou 3 lignes.")
         }
         if ctx.preset.horsLagon == nil && ctx.preset.nom != "mixte lagon" && c.nombreLignes != ctx.preset.modeConseille {

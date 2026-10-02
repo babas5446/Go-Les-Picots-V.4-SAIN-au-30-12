@@ -54,6 +54,19 @@ struct SpreadSchemaView: View {
               notes: "Discret, contrasté, teaser éventuel, etc.")
     ]
     
+    // Lagon : fond dessiné à l'échelle (spread_lagon_fond) — Clark sans
+    // tangons, strike zone (bouillon, couloirs d'eau claire, eau blanche)
+    // et échelle de longueur de ligne. Lignes, leurres et bulles sont posés
+    // par le code à la distance réelle : 30 px de gabarit par mètre.
+    private var bubblesLagon: [BubbleSpec] {
+        configuration.suggestions.compactMap { s in
+            guard let pos = s.positionSpread, let d = s.distanceSpread else { return nil }
+            let g = GeometrieLagon(position: pos, distance: d)
+            return BubbleSpec(id: pos.rawValue, position: pos, center: g.bulle, diameter: 140,
+                              numeroAffiche: GeometrieLagon.numero(pos))
+        }
+    }
+
     @State private var selectedSuggestion: SuggestionEngine.SuggestionResult? = nil
     @State private var animationProgress: CGFloat = 0
     
@@ -68,7 +81,7 @@ struct SpreadSchemaView: View {
             ZStack {
                 // Fond (le schéma)
                 Group {
-                    if let uiImage = UIImage(named: "spread_template_ok") {
+                    if let uiImage = UIImage(named: configuration.modeLagon ? "spread_lagon_fond" : "spread_template_ok") {
                         Image(uiImage: uiImage)
                             .resizable()
                             .interpolation(.high)
@@ -96,7 +109,27 @@ struct SpreadSchemaView: View {
                 // Bulles tappables — conteneur calé sur l'image rendue,
                 // pour que .position se résolve dans le repère du gabarit
                 ZStack {
-                    ForEach(bubbles) { bubble in
+                    // Lagon : lignes et leurres à l'échelle de la longueur de ligne
+                    if configuration.modeLagon {
+                        ForEach(configuration.suggestions) { s in
+                            if let pos = s.positionSpread, let d = s.distanceSpread {
+                                let g = GeometrieLagon(position: pos, distance: d)
+                                Path { p in
+                                    p.move(to: CGPoint(x: g.depart.x * scale, y: g.depart.y * scale))
+                                    p.addLine(to: CGPoint(x: g.leurre.x * scale, y: g.leurre.y * scale))
+                                }
+                                .trim(from: 0, to: animationProgress)
+                                .stroke(Color(red: 0.62, green: 0.08, blue: 0.15), lineWidth: max(1.5, 3 * scale))
+
+                                LeurreSilhouette(couleur: s.leurre.couleurPrincipaleAffichage.color)
+                                    .frame(width: 18 * scale, height: 50 * scale)
+                                    .position(x: g.leurre.x * scale, y: (g.leurre.y + 25) * scale)
+                                    .opacity(animationProgress)
+                            }
+                        }
+                    }
+
+                    ForEach(configuration.modeLagon ? bubblesLagon : bubbles) { bubble in
                         if let suggestion = suggestionPourPosition(bubble.position) {
                             BubbleSlot(
                                 spec: bubble,
@@ -435,10 +468,13 @@ private struct BubbleSpec: Identifiable {
     let title: String?       // Titre personnalisé (optionnel)
     let subtitle: String?    // Sous-titre (optionnel)
     let notes: String?       // Notes additionnelles (optionnel)
+    let numeroAffiche: String?  // Numéro affiché s'il diffère de celui du poste (lagon)
     
     // Initializer avec valeurs par défaut pour rétrocompatibilité
     init(id: String, position: PositionSpread, center: CGPoint, diameter: CGFloat,
-         imageName: String? = nil, title: String? = nil, subtitle: String? = nil, notes: String? = nil) {
+         imageName: String? = nil, title: String? = nil, subtitle: String? = nil, notes: String? = nil,
+         numeroAffiche: String? = nil) {
+        self.numeroAffiche = numeroAffiche
         self.id = id
         self.position = position
         self.center = center
@@ -490,10 +526,10 @@ private struct BubbleSlot: View {
                 
                 // Contenu
                 VStack(spacing: d * 0.03) {
-                    Text(spec.position.numero)
+                    Text(spec.numeroAffiche ?? spec.position.numero)
                         .font(.system(size: d * 0.30, weight: .heavy, design: .rounded))
                     
-                    Text(spec.position.displayName)
+                    Text(suggestion.libellePoste ?? spec.position.displayName)
                         .font(.system(size: d * 0.09, weight: .bold, design: .rounded))
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
@@ -549,7 +585,7 @@ private struct LeurreDetailSheet: View {
                                     couleurPosition: couleurPourPosition(position),
                                     diametre: 34
                                 )
-                                Text(position.displayName)
+                                Text(suggestion.libellePoste ?? position.displayName)
                                     .font(.title3)
                                     .fontWeight(.bold)
                             }
@@ -1052,4 +1088,86 @@ private struct SpreadWave: Shape {
     }
 }
 
+// MARK: - Géométrie du schéma lagon
+
+/// Positions, dans le repère du fond lagon (1024 × 1536), des attaches de
+/// ligne, des leurres et des bulles. Échelle : 30 px par mètre de ligne,
+/// zéro au tableau arrière (y = 400).
+private struct GeometrieLagon {
+    static let tableau: CGFloat = 400
+    static let pixelsParMetre: CGFloat = 30
+
+    let depart: CGPoint
+    let leurre: CGPoint
+    let bulle: CGPoint
+
+    init(position: PositionSpread, distance: Int) {
+        let y = min(1450, Self.tableau + CGFloat(distance) * Self.pixelsParMetre)
+        switch position {
+        case .shortCorner:          // tableau tribord
+            depart = CGPoint(x: 633, y: 420)
+            leurre = CGPoint(x: 633, y: y)
+            bulle  = CGPoint(x: 633 + 118, y: y + 25)
+        case .longCorner:           // tableau bâbord
+            depart = CGPoint(x: 386, y: 420)
+            leurre = CGPoint(x: 386, y: y)
+            bulle  = CGPoint(x: 386 - 118, y: y + 25)
+        case .shotgun:              // console, centre
+            depart = CGPoint(x: 513, y: 292)
+            leurre = CGPoint(x: 513, y: y)
+            bulle  = CGPoint(x: 513 + 128, y: y + 25)
+        case .shortRigger:
+            depart = CGPoint(x: 610, y: 300)
+            leurre = CGPoint(x: 820, y: y)
+            bulle  = CGPoint(x: 820 + 100, y: y + 25)
+        case .longRigger:
+            depart = CGPoint(x: 414, y: 300)
+            leurre = CGPoint(x: 204, y: y)
+            bulle  = CGPoint(x: 204 + 110, y: y + 25)
+        case .libre:
+            depart = CGPoint(x: 513, y: 400)
+            leurre = CGPoint(x: 513, y: y)
+            bulle  = CGPoint(x: 513 + 128, y: y + 25)
+        }
+    }
+
+    /// Numérotation du lagon : 1 short corner, 2 long corner, 3 centre.
+    static func numero(_ p: PositionSpread) -> String {
+        switch p {
+        case .shortCorner: return "1"
+        case .longCorner:  return "2"
+        case .shotgun:     return "3"
+        case .shortRigger: return "4"
+        case .longRigger:  return "5"
+        case .libre:       return "L"
+        }
+    }
+}
+
+/// Silhouette d'un poisson nageur vu de dessus, bavette vers le bateau.
+private struct LeurreSilhouette: View {
+    let couleur: Color
+
+    var body: some View {
+        GeometryReader { g in
+            let w = g.size.width, h = g.size.height
+            ZStack {
+                // Bavette
+                Path { p in
+                    p.move(to: CGPoint(x: w * 0.2, y: h * 0.12))
+                    p.addLine(to: CGPoint(x: w * 0.8, y: h * 0.12))
+                    p.addLine(to: CGPoint(x: w * 0.5, y: 0))
+                    p.closeSubpath()
+                }
+                .fill(Color.white.opacity(0.85))
+                // Corps
+                Capsule()
+                    .fill(couleur)
+                    .overlay(Capsule().stroke(Color.black.opacity(0.45), lineWidth: 1))
+                    .frame(width: w, height: h * 0.82)
+                    .position(x: w / 2, y: h * 0.53)
+            }
+        }
+    }
+}
 

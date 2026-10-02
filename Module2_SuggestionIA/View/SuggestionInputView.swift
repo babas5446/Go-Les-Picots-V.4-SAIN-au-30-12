@@ -533,7 +533,8 @@ struct SuggestionInputView: View {
                     }
                     
                     HStack(spacing: 12) {
-                        ForEach(1...5, id: \.self) { nb in
+                        // Le Clark n'a que trois postes : deux corners et le centre.
+                        ForEach(1...(conditions.profilBateau == .clark429 ? 3 : 5), id: \.self) { nb in
                             Button(action: {
                                 withAnimation {
                                     conditions.nombreLignes = nb
@@ -574,8 +575,8 @@ struct SuggestionInputView: View {
                                 withAnimation {
                                     conditions.profilBateau = profil
                                     // Ajustement automatique si Clark et trop de lignes
-                                    if profil == .clark429 && conditions.nombreLignes > 4 {
-                                        conditions.nombreLignes = 4
+                                    if profil == .clark429 && conditions.nombreLignes > 3 {
+                                        conditions.nombreLignes = 3
                                     }
                                 }
                             }) {

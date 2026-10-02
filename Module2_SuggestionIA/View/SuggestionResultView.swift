@@ -395,14 +395,14 @@ struct ToutesSuggestionsContent: View {
                         .font(.title)
                     VStack(alignment: .leading, spacing: 2) {
                         HStack {
-                            Text(position.displayName.uppercased())
+                            Text((suggestion.libellePoste ?? position.displayName).uppercased())
                                 .font(.headline)
                                 .fontWeight(.bold)
                                 .foregroundColor(Color(hex: "FFBC42"))
                             Image(systemName: "trophy.fill")
                                 .foregroundColor(Color(hex: "FFBC42"))
                         }
-                        Text(position.caracteristiques)
+                        Text(suggestion.rolePoste ?? position.caracteristiques)
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -425,7 +425,7 @@ struct ToutesSuggestionsContent: View {
                             .font(.headline)
                             .fontWeight(.bold)
                             .foregroundColor(Color(hex: "0277BD"))
-                        Text(position.caracteristiques)
+                        Text(suggestion.rolePoste ?? position.caracteristiques)
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -614,10 +614,10 @@ struct SuggestionCard: View {
             HStack {
                 Image(systemName: "location.fill")
                     .foregroundColor(Color(hex: "FFBC42"))
-                Text(position.displayName)
+                Text(suggestion.libellePoste ?? position.displayName)
                     .font(.subheadline)
                     .fontWeight(.semibold)
-                Text("(\(distance)m)")
+                Text("(\(distance) m\(suggestion.etagePoste.map { ", nage \($0)" } ?? ""))")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -754,7 +754,7 @@ struct SuggestionCardCompact: View {
             VStack(alignment: .leading, spacing: 4) {
                 // ✅ Badge spread SI dans le spread final
                 if let position = suggestion.positionSpread {
-                    spreadBadge(position: position, isInSpread: true)
+                    spreadBadge(position: position, isInSpread: true, libelle: suggestion.libellePoste)
                 } else if showPositionBadge {
                     // Badge position recommandée (pas dans le spread)
                     spreadBadge(position: positionRecommandee, isInSpread: false)
@@ -809,12 +809,12 @@ struct SuggestionCardCompact: View {
         }
     }
     
-    private func spreadBadge(position: PositionSpread, isInSpread: Bool) -> some View {
+    private func spreadBadge(position: PositionSpread, isInSpread: Bool, libelle: String? = nil) -> some View {
         HStack(spacing: 4) {
             Image(systemName: isInSpread ? "trophy.fill" : "target")
                 .font(.caption2)
                 .foregroundColor(.white)
-            Text(position.displayName)
+            Text(libelle ?? position.displayName)
                 .font(.caption2)
                 .fontWeight(.bold)
                 .foregroundColor(.white)
