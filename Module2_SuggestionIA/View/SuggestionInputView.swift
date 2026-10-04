@@ -43,6 +43,10 @@ struct SuggestionInputView: View {
     @State private var showingValidationAlert = false
     @State private var validationMessage = ""
     @State private var useSuggestedSpeed = true  // Utiliser la vitesse suggérée par défaut
+
+    // Moment, luminosité, marée et lune proposés à l'ouverture, modifiables ensuite.
+    @State private var propositionAuto: PropositionConditions?
+    @State private var propositionFaite = false
     
     var body: some View {
         ZStack {
@@ -93,6 +97,10 @@ struct SuggestionInputView: View {
         }
         .navigationTitle("Suggestion IA")
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            // Une seule fois : un retour depuis les résultats garde les choix faits à la main.
+            if !propositionFaite { appliquerPropositionAuto() }
+        }
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button("Fermer") {
@@ -421,6 +429,20 @@ struct SuggestionInputView: View {
     private var sectionMomentLuminosite: some View {
         CarteFormulaire(titre: "Moment et luminosité", icone: "sun.max.fill") {
             VStack(spacing: 16) {
+                if let p = propositionAuto {
+                    HStack(alignment: .top, spacing: 8) {
+                        Image(systemName: "wand.and.stars")
+                            .foregroundColor(Color(hex: "0277BD"))
+                        Text(p.explication)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                        Spacer(minLength: 4)
+                        Button("Actualiser") { appliquerPropositionAuto() }
+                            .font(.caption)
+                    }
+                }
+
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Moment de la journée")
                         .font(.subheadline)
@@ -701,6 +723,18 @@ struct SuggestionInputView: View {
     
     // MARK: - Actions
     
+    /// Moment, luminosité, marée et lune proposés d'après l'heure, le soleil,
+    /// les marées en cache et la lune. Chaque valeur reste modifiable à la main.
+    private func appliquerPropositionAuto() {
+        let p = PropositionConditions.proposer(joursMaree: TideService.joursEnCache())
+        conditions.momentJournee = p.moment
+        conditions.luminosite = p.luminosite
+        if let m = p.maree { conditions.typeMaree = m }
+        conditions.phaseLunaire = p.lune
+        propositionAuto = p
+        propositionFaite = true
+    }
+
     private func genererSuggestions() {
         let (valide, erreur) = conditions.estValide()
         guard valide else {

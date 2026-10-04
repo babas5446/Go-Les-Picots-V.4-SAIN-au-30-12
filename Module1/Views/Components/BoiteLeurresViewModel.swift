@@ -519,6 +519,25 @@ class BoiteLeurresViewModel: ObservableObject {
         return (nbPrises, nbSorties)
     }
 
+    // MARK: - Journal : prises par leurre
+
+    /// Prises du journal regroupées par numéro de leurre, avec leur secteur et
+    /// le contraste du jour : base du bonus appris du moteur (jamais négatif).
+    func historiquePrises() -> [Int: [Lagon.PriseResumee]] {
+        let prises = (try? context.fetch(FetchDescriptor<Prise>())) ?? []
+        var r: [Int: [Lagon.PriseResumee]] = [:]
+        for p in prises {
+            guard let id = p.leurreID else { continue }
+            let c = p.conditions ?? p.sortie?.conditions
+            r[id, default: []].append(Lagon.PriseResumee(
+                zone: c?.zone,
+                niveau: c.map { SuggestionEngine.niveauContraste($0) },
+                espece: p.especeNom
+            ))
+        }
+        return r
+    }
+
     // MARK: - Utilitaires
 
     /// Retourne tous les leurres depuis SwiftData.

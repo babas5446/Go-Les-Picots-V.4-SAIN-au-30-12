@@ -2,8 +2,9 @@
 //  MoteurLagon.swift
 //  Go les Picots - Module 2 : Suggestion IA
 //
-//  Moteur de traîne propre au lagon (lagon, platier et pâtés, passes) et,
-//  depuis octobre 2026, au tombant externe (lignes allongées de 4 m),
+//  Moteur de traîne du Clark (trois postes, sans tangons) pour toutes les
+//  zones depuis octobre 2026 : lagon, platier et pâtés, passes, tombant
+//  externe, large et DCP (lignes allongées de 4 m hors lagon et passe),
 //  pensé pour le Clark 4,29 m sans tangons et une boîte de poissons nageurs.
 //  Il remplace, pour ces zones, la logique héritée de la pêche au large.
 //  Référence : audit « Moteur de suggestion — lagon » (octobre 2026).
@@ -242,8 +243,12 @@ enum Lagon {
 
     static func preset(pour c: ConditionsPeche) -> Preset {
         let tombant = c.zone == .tombant
+        let large = c.zone == .large || c.zone == .dcp || c.zone == .profond
         let tailleMixte: (Double, Double)
-        if tombant {
+        if large {
+            // Proies du large : bonites, maquereaux, poissons volants (« Critères » : 15–22 cm).
+            tailleMixte = (14, 22)
+        } else if tombant {
             // Proies du tombant plus grosses (CPS 93 ; « Critères de choix » : 14–20 cm hors lagon).
             tailleMixte = (14, 20)
         } else if c.zone == .passe {
@@ -254,19 +259,29 @@ enum Lagon {
             tailleMixte = (10, 15)
         }
 
-        let mixte = tombant
-            ? Preset(
+        let mixte: Preset
+        if large {
+            mixte = Preset(
+                nom: "mixte large", vitesseMin: 6.0, vitesseMax: 7.5, vitesseCible: 6.75,
+                bandeProfondeur: nil, taille: tailleMixte, nage: nil,
+                basDeLigne: "câble ou acier 60 à 90 lb (wahoo) ; fluorocarbone 100 à 130 lb (thons, mahi-mahi)",
+                alerteCiguatera: nil, modeConseille: 3, margeFond: nil, horsLagon: nil
+            )
+        } else if tombant {
+            mixte = Preset(
                 nom: "mixte tombant", vitesseMin: 5.0, vitesseMax: 7.0, vitesseCible: 6.0,
                 bandeProfondeur: nil, taille: tailleMixte, nage: nil,
                 basDeLigne: "acier ou câble 60 à 90 lb (wahoo, thazards) ; fluorocarbone 100 lb sinon",
                 alerteCiguatera: nil, modeConseille: 3, margeFond: nil, horsLagon: nil
             )
-            : Preset(
+        } else {
+            mixte = Preset(
                 nom: "mixte lagon", vitesseMin: 4.5, vitesseMax: 6.5, vitesseCible: 5.5,
                 bandeProfondeur: nil, taille: tailleMixte, nage: nil,
                 basDeLigne: "fluorocarbone 60 à 80 lb ; acier si les thazards sont là",
                 alerteCiguatera: nil, modeConseille: 2, margeFond: nil, horsLagon: nil
             )
+        }
 
         func horsZone(_ e: Espece) -> Preset {
             Preset(
@@ -278,26 +293,31 @@ enum Lagon {
         }
 
         guard let espece = c.especePrioritaire else { return mixte }
-        let exterieur = tombant || c.zone == .passe
+        let horsLagonExterieur = tombant || large
+        let exterieur = horsLagonExterieur || c.zone == .passe
 
         switch espece {
         case .thazard, .thazardBatard:
-            // Sur le tombant, thazards plus gros que dans le lagon (CPS 93).
+            // Sur le tombant et au large, thazards plus gros que dans le lagon (CPS 93).
             return Preset(
-                nom: "thazard", vitesseMin: 6.0, vitesseMax: tombant ? 7.0 : 6.5,
-                vitesseCible: tombant ? 6.5 : 6.25,
-                bandeProfondeur: tombant ? (1, 8) : (1, 5), taille: tombant ? (14, 20) : (12, 18),
+                nom: "thazard", vitesseMin: 6.0, vitesseMax: horsLagonExterieur ? 7.0 : 6.5,
+                vitesseCible: horsLagonExterieur ? 6.5 : 6.25,
+                bandeProfondeur: horsLagonExterieur ? (1, 8) : (1, 5),
+                taille: horsLagonExterieur ? (14, 20) : (12, 18),
                 nage: .serree,
                 basDeLigne: "acier 30 à 60 lb sur toutes les lignes",
                 alerteCiguatera: nil, modeConseille: 3, margeFond: nil, horsLagon: nil
             )
         case .carangue, .carangueBleue, .carangueGT:
+            // Au large, seule la GT a sa place (zones typiques).
+            if large && espece != .carangueGT { return horsZone(espece) }
             // Tombant : traîne en zigzag ou en huit le long de la paroi, 5 à 7 nœuds (« Consignes »).
             return Preset(
                 nom: espece == .carangueGT ? "carangue GT" : "carangue",
-                vitesseMin: tombant ? 5.0 : 4.5, vitesseMax: tombant ? 7.0 : 5.5,
-                vitesseCible: tombant ? 6.0 : 5.0,
-                bandeProfondeur: tombant ? (0, 6) : (0, 3), taille: tombant ? (12, 18) : (10, 15),
+                vitesseMin: horsLagonExterieur ? 5.0 : 4.5, vitesseMax: horsLagonExterieur ? 7.0 : 5.5,
+                vitesseCible: horsLagonExterieur ? 6.0 : 5.0,
+                bandeProfondeur: horsLagonExterieur ? (0, 6) : (0, 3),
+                taille: horsLagonExterieur ? (12, 18) : (10, 15),
                 nage: nil,
                 basDeLigne: "fluorocarbone épais (80 à 130 lb)",
                 alerteCiguatera: espece == .carangueGT
@@ -306,8 +326,8 @@ enum Lagon {
                 modeConseille: 2, margeFond: nil, horsLagon: nil
             )
         case .loche, .lochePintade:
-            // Sur le tombant, la loche se pêche au jig, pas à la traîne.
-            if tombant { return horsZone(espece) }
+            // Sur le tombant et au large, la loche se pêche au jig, pas à la traîne.
+            if horsLagonExterieur { return horsZone(espece) }
             return Preset(
                 nom: "loche", vitesseMin: 4.25, vitesseMax: 5.25, vitesseCible: 4.75,
                 bandeProfondeur: nil, taille: (10, 15), nage: nil,
@@ -316,17 +336,17 @@ enum Lagon {
             )
         case .bonite, .coureurArcEnCiel:
             return Preset(
-                nom: "bonite", vitesseMin: 5.5, vitesseMax: 6.5, vitesseCible: 6.0,
-                bandeProfondeur: (0, 2), taille: (8, 12), nage: .serree,
+                nom: "bonite", vitesseMin: 5.5, vitesseMax: large ? 7.5 : 6.5, vitesseCible: large ? 6.75 : 6.0,
+                bandeProfondeur: (0, 2), taille: large ? (10, 14) : (8, 12), nage: .serree,
                 basDeLigne: "nylon 40 à 60 lb",
                 alerteCiguatera: nil, modeConseille: 3, margeFond: nil, horsLagon: nil
             )
         case .barracuda, .becune:
-            if tombant && espece == .becune { return horsZone(espece) }
+            if horsLagonExterieur && espece == .becune { return horsZone(espece) }
             return Preset(
                 nom: espece == .becune ? "bécune" : "barracuda",
                 vitesseMin: 4.5, vitesseMax: 6.5, vitesseCible: 5.5,
-                bandeProfondeur: tombant ? (1, 6) : (1, 3), taille: (12, 18), nage: nil,
+                bandeProfondeur: horsLagonExterieur ? (1, 6) : (1, 3), taille: (12, 18), nage: nil,
                 basDeLigne: "acier 30 à 60 lb",
                 alerteCiguatera: "Barracuda et grosses bécunes : ciguatera fréquente au-delà de 3 à 5 kg.",
                 modeConseille: 2, margeFond: nil, horsLagon: nil
@@ -342,29 +362,88 @@ enum Lagon {
         case .thonJaune where exterieur, .thonObese where exterieur:
             // Thons en subsurface ou en profondeur près du tombant, avant l'aube et après le coucher (CPS 93).
             return Preset(
-                nom: "thon", vitesseMin: 5.5, vitesseMax: 7.0, vitesseCible: 6.25,
-                bandeProfondeur: (3, 12), taille: (14, 20), nage: nil,
+                nom: "thon", vitesseMin: 5.5, vitesseMax: large ? 7.5 : 7.0, vitesseCible: large ? 6.75 : 6.25,
+                bandeProfondeur: (3, 12), taille: large ? (15, 22) : (14, 20), nage: nil,
                 basDeLigne: "fluorocarbone 80 à 130 lb",
                 alerteCiguatera: nil, modeConseille: 3, margeFond: nil, horsLagon: nil
             )
         case .thonDentsDeChien:
-            // Passes et tombant, à l'aube et au crépuscule (CPS 93) ; plongeants Magnum.
+            // Ne s'aventure pas en pleine mer (CPS 93) : passes et tombant seulement.
+            if large { return horsZone(espece) }
             return Preset(
                 nom: "thon dents de chien", vitesseMin: 5.0, vitesseMax: 6.5, vitesseCible: 5.75,
                 bandeProfondeur: (4, 12), taille: (14, 22), nage: nil,
                 basDeLigne: "fluorocarbone 100 à 150 lb (dents et rochers)",
                 alerteCiguatera: nil, modeConseille: 2, margeFond: nil, horsLagon: nil
             )
+        case .mahiMahi where large || c.zone == .passe:
+            // Large et DCP, souvent les premiers à mordre sous les DCP ; attaque de côté (CPS 93).
+            return Preset(
+                nom: "mahi-mahi", vitesseMin: 6.5, vitesseMax: 7.5, vitesseCible: 7.0,
+                bandeProfondeur: (0, 3), taille: (15, 25), nage: nil,
+                basDeLigne: "fluorocarbone 80 à 100 lb",
+                alerteCiguatera: nil, modeConseille: 3, margeFond: nil, horsLagon: nil
+            )
+        case .marlin where large, .voilier where large:
+            // Grands leurres de surface (25 cm et plus, « Consignes ») ; le Clark plafonne vers 7,5 nœuds.
+            return Preset(
+                nom: "rostres", vitesseMin: 6.5, vitesseMax: 7.5, vitesseCible: 7.25,
+                bandeProfondeur: (0, 1), taille: (20, 30), nage: nil,
+                basDeLigne: "fluorocarbone 200 à 300 lb",
+                alerteCiguatera: nil, modeConseille: 3, margeFond: nil, horsLagon: nil
+            )
         default:
             return horsZone(espece)
         }
     }
 
-    /// Espèces de fond : sur le tombant, jig ou ligne profonde, jamais la traîne.
+    /// Espèces de fond : sur le tombant et au large, jig ou ligne profonde, jamais la traîne.
     static let especesDeFond: Set<Espece> = [
         .loche, .lochePintade, .merou, .seriole, .empereur,
         .vivaneauRouge, .vivaneauChienRouge, .vivaneauQueueNoire, .becDeCane
     ]
+
+    // MARK: Journal : bonus appris
+
+    /// Prise du journal, réduite à ce qui sert au bonus.
+    struct PriseResumee {
+        let zone: Zone?
+        let niveau: NiveauContraste?
+        /// rawValue de l'énumération Espece.
+        let espece: String
+    }
+
+    /// Secteurs comparables pour le journal : lagon et récif ensemble,
+    /// large, DCP et profond ensemble.
+    static func memeSecteur(_ a: Zone, _ b: Zone) -> Bool {
+        func secteur(_ z: Zone) -> Int {
+            switch z {
+            case .lagon, .recif:          return 0
+            case .passe:                  return 1
+            case .tombant:                return 2
+            case .large, .dcp, .profond:  return 3
+            }
+        }
+        return secteur(a) == secteur(b)
+    }
+
+    /// Bonus appris du journal, de 0 à 15 points, jamais négatif : un leurre
+    /// sans prise garde 0. Chaque prise compte de 0,4 à 1 selon la ressemblance
+    /// avec la sortie (même secteur +0,3, même contraste du jour +0,3), moitié
+    /// moins si l'espèce prise n'est pas l'espèce visée ; 5 points par prise
+    /// équivalente, plafonnés à 15.
+    static func bonusJournal(_ l: Leurre, ctx: Contexte) -> (points: Double, prises: Int) {
+        guard let prises = ctx.historique[l.id], !prises.isEmpty else { return (0, 0) }
+        var somme = 0.0
+        for p in prises {
+            var s = 0.4
+            if let z = p.zone, memeSecteur(z, ctx.conditions.zone) { s += 0.3 }
+            if let n = p.niveau, n == ctx.niveau { s += 0.3 }
+            if let e = ctx.conditions.especePrioritaire, p.espece != e.rawValue { s *= 0.5 }
+            somme += s
+        }
+        return (min(15, 5 * somme), prises.count)
+    }
 
     // MARK: Contexte de calcul
 
@@ -382,10 +461,19 @@ enum Lagon {
         let allongementArriere: Double
         /// Tombant externe : lignes allongées (CPS 93).
         let tombant: Bool
+        /// Large, DCP et profond : lignes allongées (CPS 2025 : 30 à 50 m en eaux côtières).
+        let large: Bool
+        /// Zones que doit porter un leurre (nil : pas de filtre, lagon et passe).
+        let zonesCibles: Set<Zone>?
+        /// Prises du journal par numéro de leurre (bonus appris).
+        let historique: [Int: [PriseResumee]]
 
-        init(_ c: ConditionsPeche) {
+        init(_ c: ConditionsPeche, historique: [Int: [PriseResumee]] = [:]) {
             conditions = c
             tombant = c.zone == .tombant
+            large = c.zone == .large || c.zone == .dcp || c.zone == .profond
+            zonesCibles = tombant ? [.tombant] : (large ? [.large, .dcp] : nil)
+            self.historique = historique
             preset = Lagon.preset(pour: c)
             lumiere = Lagon.lumiere(c.luminosite)
             eau = Lagon.eau(c.turbiditeEau)
@@ -428,7 +516,7 @@ enum Lagon {
         func longueurLigne(_ poste: Poste) -> Double {
             var l = poste.longueurLigne + ajustementDistance
             if poste == .longCorner || poste == .centre { l += allongementArriere }
-            if tombant { l += 4 }
+            if tombant || large { l += 4 }
             // 35 m au plus : limite du schéma du Clark.
             return min(35, max(12, l))
         }
@@ -507,11 +595,14 @@ enum Lagon {
         let sTaille: Double
         let sNage: Double
         let sEspece: Double
-        /// Tombant : leurre de passe ou du large pris en repli (−8).
+        /// Tombant et large : leurre d'une autre zone pris en repli (−8).
         let sZone: Double
+        /// Bonus appris du journal (0 à 15, jamais négatif).
+        let sJournal: Double
+        let prisesJournal: Int
         let donneesIncompletes: Bool
 
-        var total: Double { sProfondeur + sCouleur + sTaille + sNage + sEspece + sZone }
+        var total: Double { sProfondeur + sCouleur + sTaille + sNage + sEspece + sZone + sJournal }
     }
 
     static func evaluer(_ l: Leurre, poste: Poste?, vitesse v: Double, ctx: Contexte) -> Evaluation? {
@@ -553,13 +644,17 @@ enum Lagon {
         // Espèce (15)
         let sEsp = scoreEspece(l, profondeur: prof.valeur, amplitude: amp, ctx: ctx)
 
+        // Journal : bonus appris (0 à 15)
+        let journal = bonusJournal(l, ctx: ctx)
+
         return Evaluation(
             leurre: l, poste: poste, longueurLigne: longueur,
             profondeur: prof.valeur, profondeurEstimee: prof.estimee,
             couleurVisee: cib.familles.first ?? .naturel, famille: coul.famille, teinte: coul.teinte,
             amplitude: amp,
             sProfondeur: sProf, sCouleur: sCoul, sTaille: sTaille, sNage: sNage, sEspece: sEsp,
-            sZone: (ctx.tombant && !l.zonesAdapteesFinales.contains(.tombant)) ? -8 : 0,
+            sZone: ctx.zonesCibles.map { zc in zc.isDisjoint(with: l.zonesAdapteesFinales) ? -8 : 0 } ?? 0,
+            sJournal: journal.points, prisesJournal: journal.prises,
             donneesIncompletes: !plage.complete || l.profondeurNageMax == nil
         )
     }
@@ -619,6 +714,12 @@ enum Lagon {
             let plonge = profondeur >= 3
             let taille = l.longueur >= 14
             return plonge && taille ? 15 : (plonge || taille ? 10 : 5)
+        case "mahi-mahi":
+            let surface = profondeur <= 3
+            let taille = l.longueur >= 15
+            return surface && taille ? 15 : (surface || taille ? 9 : 4)
+        case "rostres":
+            return (estJupe(l) || l.typeLeurre == .leurreDeTrainePoissonVolant) && l.longueur >= 20 ? 15 : 4
         case "thon dents de chien":
             let plonge = profondeur >= 4 && !estJupe(l)
             let taille = l.longueur >= 14
@@ -779,27 +880,26 @@ enum Lagon {
 
 extension SuggestionEngine {
 
-    /// Le moteur lagon traite le lagon, le platier et les pâtés, les passes
-    /// et le tombant externe (trois postes du Clark).
+    /// Le moteur du Clark traite toutes les zones depuis octobre 2026 : le
+    /// bateau n'a pas de tangons, le spread compétiteurs à cinq lignes ne
+    /// s'applique pas.
     static func moteurLagonApplicable(_ c: ConditionsPeche) -> Bool {
-        c.zone == .lagon || c.zone == .recif || c.zone == .passe || c.zone == .tombant
+        true
     }
 
     func executerMoteurLagon(conditions c: ConditionsPeche) {
-        let ctx = Lagon.Contexte(c)
+        let ctx = Lagon.Contexte(c, historique: self.BoiteLeurresViewModel.historiquePrises())
         var candidats = self.BoiteLeurresViewModel.tousLesLeurres.filter { Lagon.estLeurreDeTraine($0) }
 
-        // Tombant : leurres marqués « tombant » ; ceux de la passe ou du large
-        // seulement en repli, quand la boîte n'en compte pas assez.
-        if c.zone == .tombant {
-            let duTombant = candidats.filter { $0.zonesAdapteesFinales.contains(.tombant) }
-            if duTombant.count >= min(c.nombreLignes, Lagon.postesInstalles) {
-                candidats = duTombant
+        // Tombant, large et DCP : leurres marqués pour la zone ; ceux des zones
+        // voisines seulement en repli, quand la boîte n'en compte pas assez.
+        if let zc = ctx.zonesCibles {
+            let deLaZone = candidats.filter { !zc.isDisjoint(with: $0.zonesAdapteesFinales) }
+            if deLaZone.count >= min(c.nombreLignes, Lagon.postesInstalles) {
+                candidats = deLaZone
             } else {
-                candidats = candidats.filter { l in
-                    let z = l.zonesAdapteesFinales
-                    return z.contains(.tombant) || z.contains(.passe) || z.contains(.large)
-                }
+                let voisines: Set<Zone> = ctx.tombant ? [.tombant, .passe, .large] : [.large, .dcp, .tombant, .passe]
+                candidats = candidats.filter { !voisines.isDisjoint(with: $0.zonesAdapteesFinales) }
             }
         }
 
@@ -851,8 +951,22 @@ extension SuggestionEngine {
             resultatsSpread.append(r)
         }
         let idsSpread = Set(spread.lignes.map { $0.leurre.id })
+        // « Tous » : seulement les leurres compatibles avec la zone et, si elle
+        // est renseignée, l'espèce visée.
+        func zoneCompatible(_ l: Leurre) -> Bool {
+            let z = Set(l.zonesAdapteesFinales)
+            switch c.zone {
+            case .lagon, .recif:          return z.contains(.lagon) || z.contains(.recif)
+            case .large, .dcp, .profond:  return z.contains(.large) || z.contains(.dcp)
+            default:                      return z.contains(c.zone)
+            }
+        }
+        func especeCompatible(_ l: Leurre) -> Bool {
+            guard let e = c.especePrioritaire else { return true }
+            return l.especesCiblesFinales.contains(e.displayName)
+        }
         let autres = candidats
-            .filter { !idsSpread.contains($0.id) }
+            .filter { !idsSpread.contains($0.id) && zoneCompatible($0) && especeCompatible($0) }
             .compactMap { Lagon.evaluer($0, poste: nil, vitesse: v, ctx: ctx) }
             .sorted { $0.total > $1.total }
             .map { construireResultat($0, ctx: ctx) }
@@ -896,8 +1010,8 @@ extension SuggestionEngine {
         let l = e.leurre
         let technique = (e.sProfondeur + e.sTaille) / 45 * 40
         let couleur = e.sCouleur / 25 * 30
-        let conditions = e.sNage + e.sEspece
-        let total = ((technique + couleur + conditions) * 10).rounded() / 10
+        let conditions = e.sNage + e.sEspece + e.sJournal
+        let total = min(100, ((technique + couleur + conditions) * 10).rounded() / 10)
 
         let plage = Lagon.plageVitesse(l)
         var jTech = "Nage vers \(Lagon.nb(e.profondeur.arrondi(1))) m à \(Lagon.nb(e.longueurLigne)) m de ligne"
@@ -918,6 +1032,11 @@ extension SuggestionEngine {
 
         var jCond = "Nage visée \(ctx.nageVisee.rawValue) ; ce leurre : \(e.amplitude?.rawValue ?? "non renseignée")."
         jCond += " Cible : \(ctx.preset.nom). La lune n'entre pas dans le choix."
+        if e.prisesJournal > 0 {
+            jCond += " Journal : \(e.prisesJournal) prise\(e.prisesJournal > 1 ? "s" : "") avec ce leurre, bonus +\(Int(e.sJournal.rounded())) points."
+        } else {
+            jCond += " Journal : aucune prise avec ce leurre (bonus 0)."
+        }
 
         let details = ScoringDetails(
             compatibiliteZone: 1,
@@ -961,6 +1080,9 @@ extension SuggestionEngine {
         var a: [String] = []
         if ctx.ajustementDistance < 0 { a.append("Mer agitée : toutes les lignes raccourcies de 3 m.") }
         if ctx.allongementArriere > 0 { a.append("Eau très claire et plein soleil : lignes arrière allongées de 3 m.") }
+        if ctx.large {
+            a.append("Large : lignes allongées de 4 m (CPS 2025 : 30 à 50 m en eaux côtières ; 35 m au plus sur le schéma du Clark).")
+        }
         if ctx.tombant {
             a.append("Tombant : lignes allongées de 4 m (CPS 93 : à l'aplomb du tombant, on peut allonger et lester les lignes).")
         }
@@ -992,7 +1114,11 @@ extension SuggestionEngine {
         // Alertes
         var alertes: [String] = []
         if let hors = ctx.preset.horsLagon {
-            if c.zone == .tombant {
+            if ctx.large {
+                alertes.append(Lagon.especesDeFond.contains(hors)
+                    ? "« \(hors.displayName) » se pêche au jig ou à la ligne profonde, pas à la traîne au large : suggestion faite en mode mixte large."
+                    : "« \(hors.displayName) » se cherche plutôt dans le lagon, en passe ou sur le tombant qu'au large : suggestion faite en mode mixte large.")
+            } else if c.zone == .tombant {
                 alertes.append(Lagon.especesDeFond.contains(hors)
                     ? "« \(hors.displayName) » se pêche au jig ou à la ligne profonde sur le tombant, pas à la traîne : suggestion faite en mode mixte tombant."
                     : "« \(hors.displayName) » se cherche plutôt au large ou sous DCP qu'au tombant : suggestion faite en mode mixte tombant.")
@@ -1000,8 +1126,14 @@ extension SuggestionEngine {
                 alertes.append("« \(hors.displayName) » ne se pêche pas à la traîne en lagon : suggestion faite en mode mixte lagon.")
             }
         }
-        if c.zone == .tombant && spread.lignes.contains(where: { !$0.leurre.zonesAdapteesFinales.contains(.tombant) }) {
-            alertes.append("Boîte courte en leurres de tombant : un leurre de passe ou du large complète le spread.")
+        if spread.lignes.contains(where: { $0.sZone < 0 }) {
+            alertes.append("Boîte courte en leurres pour cette zone : un leurre d'une zone voisine complète le spread.")
+        }
+        if ctx.preset.nom == "rostres" {
+            alertes.append("Marlin et voilier sur un 4,29 m : combat long et risqué ; ligne et frein réglés à l'avance, tout le monde en gilet.")
+        }
+        if spread.lignes.contains(where: { $0.prisesJournal > 0 }) {
+            alertes.append("Journal : les leurres déjà gagnants dans des conditions proches reçoivent un bonus (jusqu'à +15).")
         }
         if c.especePrioritaire == .thonDentsDeChien {
             alertes.append("Thon à dents de chien : aube et crépuscule, passes et tombant ; après une prise, tournez au même endroit, d'autres suivent souvent (CPS 93).")
@@ -1066,9 +1198,11 @@ extension SuggestionEngine {
             "• Mettre à l'eau les lignes longues d'abord, remonter les courtes d'abord.",
             "• Vitesse constante, virages larges : un virage serré écrase la nage des lignes intérieures.",
             "• Après une touche : cercle pour repasser sur le lieu ; ramener les autres lignes excite les suiveurs.",
-            c.zone == .tombant
-                ? "• Suivre le tombant à la limite eau verte (au-dessus du récif) et eau bleue (au large), une couleur de chaque bord ; zigzags ou huits le long de la paroi."
-                : "• Le pâté se travaille côté au vent, d'assez près.",
+            ctx.large
+                ? "• DCP : tourner autour à bonne distance, sans accrocher la bouée ni son câble ; les mahi-mahi y mordent souvent les premiers (CPS 93)."
+                : (c.zone == .tombant
+                    ? "• Suivre le tombant à la limite eau verte (au-dessus du récif) et eau bleue (au large), une couleur de chaque bord ; zigzags ou huits le long de la paroi."
+                    : "• Le pâté se travaille côté au vent, d'assez près."),
             "• Rien après 30 minutes : changer la profondeur, puis la nage, la couleur en dernier."
         ])
 

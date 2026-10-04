@@ -106,12 +106,23 @@ final class TideService: ObservableObject {
     @Published var selectedCommune: CabaigneCommune = .defaultCommune {
         didSet {
             guard oldValue.id != selectedCommune.id else { return }
+            UserDefaults.standard.set(selectedCommune.id, forKey: Self.cleDerniereCommune)
             Task { await load(for: selectedCommune, forceRefresh: false) }
         }
     }
 
     private let timeZone = TimeZone(identifier: "Pacific/Noumea")!
     private static let cacheKeyPrefix = "cabaigneCache_"
+    static let cleDerniereCommune = "derniereCommuneMarees"
+
+    /// Jours de marée en cache, sans réseau, pour la dernière commune choisie
+    /// (Nouméa par défaut). Sert à la proposition automatique des conditions.
+    static func joursEnCache() -> [CabaigneDay] {
+        let id = UserDefaults.standard.string(forKey: cleDerniereCommune) ?? CabaigneCommune.defaultCommune.id
+        guard let data = UserDefaults.standard.data(forKey: cacheKeyPrefix + id),
+              let cache = try? JSONDecoder().decode(CabaigneCache.self, from: data) else { return [] }
+        return cache.days
+    }
 
     init() {
         Task { await load(for: selectedCommune, forceRefresh: false) }

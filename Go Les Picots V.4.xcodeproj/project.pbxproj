@@ -52,7 +52,6 @@
 		61C5FBE32EF90AAD0030C95D /* ParametresAppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C5FBE22EF90AAD0030C95D /* ParametresAppView.swift */; };
 		61C5FC232EFA87B30030C95D /* NoteAnalysisService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C5FC222EFA87B30030C95D /* NoteAnalysisService.swift */; };
 		61C5FC252EFA87F60030C95D /* LeurreIntelligenceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C5FC242EFA87F60030C95D /* LeurreIntelligenceService.swift */; };
-		61EB66F32F1C2A6600EDB9AF /* APIConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61EB66F22F1C2A6600EDB9AF /* APIConfig.swift */; };
 		61EB66F52F1C2A8200EDB9AF /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 61EB66F42F1C2A8200EDB9AF /* .gitignore */; };
 /* End PBXBuildFile section */
 
@@ -120,7 +119,6 @@
 		61C5FBE22EF90AAD0030C95D /* ParametresAppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParametresAppView.swift; sourceTree = "<group>"; };
 		61C5FC222EFA87B30030C95D /* NoteAnalysisService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteAnalysisService.swift; sourceTree = "<group>"; };
 		61C5FC242EFA87F60030C95D /* LeurreIntelligenceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeurreIntelligenceService.swift; sourceTree = "<group>"; };
-		61EB66F22F1C2A6600EDB9AF /* APIConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIConfig.swift; sourceTree = "<group>"; };
 		61EB66F42F1C2A8200EDB9AF /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -230,7 +228,6 @@
 				61045D762F04EBDE0033CD9F /* DOC */,
 				61EB66F42F1C2A8200EDB9AF /* .gitignore */,
 				61C5FBE22EF90AAD0030C95D /* ParametresAppView.swift */,
-				61EB66F22F1C2A6600EDB9AF /* APIConfig.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -544,7 +541,6 @@
 				61C5FBDD2EF90A460030C95D /* CouleurCustom.swift in Sources */,
 				6100BCAF2EFE3A560084CFB5 /* RainbowCircle.swift in Sources */,
 				617DD1482EF53C4B002C82F1 /* DiagnosticView.swift in Sources */,
-				61EB66F32F1C2A6600EDB9AF /* APIConfig.swift in Sources */,
 				61045EBB2F070F420033CD9F /* BibliothequeView.swift in Sources */,
 				617DD0182EF1F74B002C82F1 /* LeurreWebScraperService.swift in Sources */,
 				6193EA562EE142F1000BE2F6 /* FiltresView.swift in Sources */,

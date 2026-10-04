@@ -242,7 +242,7 @@ class EspecesDatabase {
             momentsFavorables: [.aube, .nuit],
             
             photoNom: nil,
-            illustrationNom: nil,
+            illustrationNom: "ThonObese_illustration",
             signesDistinctifs: "PINNULES DORSALES ET ANALES JAUNE VIF BORDÉES DE NOIR = signature visuelle ! Corps fusiforme typique thonidés. Haut du corps noir métallique à bleu très foncé, ventre jaune à blanc argenté. YEUX TRÈS GRANDS (d'où le nom 'bigeye' = gros yeux) - plus gros proportionnellement que thon jaune. Nageoires pectorales TRÈS LONGUES atteignant seconde dorsale (différence majeure avec thon jaune : pectorales courtes). Juvénile : barres verticales LARGES et IRRÉGULIÈREMENT ESPACÉES sur bas du corps (différent thon jaune : barres rapprochées régulières). Première dorsale jaune, seconde dorsale et anale jaune vif avec liseré noir caractéristique. Caudale en croissant de lune. Ligne latérale ondulée. Peau lisse avec corselet d'écailles.",
             
             tailleMinLegale: nil,
@@ -327,7 +327,7 @@ class EspecesDatabase {
             
             // Identification visuelle
             photoNom: nil,  // À ajouter plus tard
-            illustrationNom: nil,  // À ajouter plus tard
+            illustrationNom: "Bonite_illustration",  // À ajouter plus tard
             signesDistinctifs: "Corps fusiforme robuste typique des thonidés. Haut du corps violet argenté foncé à bleu-noir métallique, ventre argenté clair. CARACTÉRISTIQUE DISTINCTIVE MAJEURE : 3 à 6 bandes longitudinales foncées (brun-noir) EXCLUSIVEMENT SUR LE VENTRE, parallèles entre elles. Ces bandes constituent le signe d'identification le plus fiable. Absence de bandes dorsales. Nageoires pectorales courtes. Caudale en croissant de lune prononcé. Corps sans écailles sauf sur la ligne latérale et le corselet. Peau lisse et hydrodynamique.",
             
             // Biologie
@@ -421,7 +421,7 @@ class EspecesDatabase {
             
             // Identification visuelle
             photoNom: nil,  // À ajouter plus tard
-            illustrationNom: nil,  // À ajouter plus tard
+            illustrationNom: "Wahoo_illustration",  // À ajouter plus tard
             signesDistinctifs: "Corps TRÈS ALLONGÉ et fusiforme = silhouette de torpille ! Dos bleu acier métallique foncé, flancs argentés brillants avec 25-30 BARRES VERTICALES ONDULÉES bleu foncé caractéristiques (zigzag). Ventre blanc argenté. Tête longue et effilée. BOUCHE IMMENSE avec MÂCHOIRES PUISSANTES garnies de DENTS TRIANGULAIRES ACÉRÉES COMME RASOIRS disposées sur UNE SEULE RANGÉE = signature dangereuse ! Ligne latérale ondulée descendant progressivement. Première dorsale longue et basse. Caudale en croissant de lune très large et puissante. Nageoires pectorales petites. Absence de corselet écailles (différent thons). Peau lisse argentée. Corps comprimé latéralement. Pédoncule caudal très fin avec carènes latérales prononcées.",
             
             // Biologie
@@ -931,7 +931,7 @@ class EspecesDatabase {
             momentsFavorables: [.aube, .matinee, .apresMidi, .crepuscule],
             
             photoNom: nil,
-            illustrationNom: nil,
+            illustrationNom: "CarangueBleue_illustration",
             signesDistinctifs: "Corps argenté à reflets VERT BLEUTÉ caractéristiques. NOMBREUX POINTS BLEUS ET NOIRS sur deux tiers supérieurs du corps = signature visuelle ABSOLUE ! Dorsales, anale et caudale BLEU VIF éclatant = magnifique ! Ligne latérale arquée avec scutelles. Caudale en croissant puissante. Taille moyenne : 40-80 cm. Corps comprimé latéralement élégant. Plus élancé que GT. Coloration spectaculaire quand excité : bleu électrique intensifié ! Tache noire sur opercule variable. Taille max 100 cm (rare, 70-80 cm typique).",
             
             tailleMinLegale: nil,
@@ -1011,7 +1011,7 @@ class EspecesDatabase {
             momentsFavorables: [.aube, .matinee, .apresMidi, .crepuscule],
             
             photoNom: "CaranguePointsJaunes_photo",
-            illustrationNom: nil,
+            illustrationNom: "CaranguePailletee_illustration",
             signesDistinctifs: "Livrée argentée PARSEMÉE de NOMBREUX PETITS POINTS CUIVRÉS/ORANGE sur flancs = signature visuelle magnifique et unique ! Chez ADULTES de grande taille (> 80 cm), apparition de 3 à 4 TACHES NOIRES caractéristiques sur flancs (absentes juvéniles). Barres sombres fugaces parfois visibles sur flancs. Corps comprimé latéralement modéré, élégant. Ligne latérale arquée avec scutelles. Caudale en croissant. Taille moyenne : 50-90 cm. Juvéniles : corps argenté brillant avec points cuivrés déjà présents mais pas de taches noires. Nageoires teintées orange/jaunâtre. Tache noire sur opercule. Taille max 120 cm !",
             
             tailleMinLegale: nil,
@@ -1174,7 +1174,7 @@ class EspecesDatabase {
             momentsFavorables: [.crepuscule, .nuit, .aube],
             
             photoNom: nil,
-            illustrationNom: nil,
+            illustrationNom: "Barracuda_illustration",
             signesDistinctifs: "LE GÉANT de la famille Sphyraenidae ! CORPS CYLINDRIQUE MASSIF ALLONGÉ en torpille IMPOSANTE = taille jusqu'à 170 cm ! MÂCHOIRE INFÉRIEURE PROÉMINENTE massive. GRANDE BOUCHE garnie de DENTS ACÉRÉES IMPRESSIONNANTES canines puissantes. Livrée argentée brillante. BARRES FUGACES sur flancs surtout vers CAUDALE = signature diagnostic barracuda géant ! TACHES NOIRES ÉPARSES généralement présentes sur BAS DU CORPS. POINTE BLANCHE caractéristique sur UNE OU PLUSIEURS NAGEOIRES = signe distinctif important ! Corps beaucoup plus MASSIF et IMPOSANT que bécunes (différence taille majeure). Caudale fourchue très puissante. Silhouette PRÉDATEUR APEX intimidante ! Aspect général : TORPEDO GÉANT REDOUTABLE.",
             
             tailleMinLegale: nil,
@@ -1258,7 +1258,7 @@ class EspecesDatabase {
             momentsFavorables: [.crepuscule, .nuit, .aube],
             
             photoNom: nil,
-            illustrationNom: nil,
+            illustrationNom: "Becune_illustration",
             signesDistinctifs: "CORPS CYLINDRIQUE TRÈS ALLONGÉ en forme de TORPILLE = signature absolue famille ! MÂCHOIRE INFÉRIEURE PROÉMINENTE caractéristique dépassant supérieure. GRANDE BOUCHE garnie de DENTS ACÉRÉES impressionnantes visibles même bouche fermée ! Livrée argentée brillante. Identification espèces par motifs : S. forsteri (20 barres verticales courtes + reflets jaunes nageoires), S. jello (tache noire base pectorales + dorsale/anale sombres extrémités blanches), S. putnamae (barres CHEVRON prononcées + caudale sombre), S. qenie (18-22 barres rectilignes + caudale bordée noir), S. obtusata (2 bandes longitudinales brunes + reflets jaunes caudale). Tailles : 55-160 cm selon espèces. Corps hydrodynamique parfait. Caudale fourchue puissante. Yeux moyens. Silhouette prédateur pur !",
             
             tailleMinLegale: nil,
@@ -1388,7 +1388,7 @@ class EspecesDatabase {
             // 🆕 IDENTIFICATION VISUELLE
             // ═══════════════════════════════════════════
             
-            photoNom: "LocheSaumonee_photo",
+            photoNom: nil,  // pas de photo dans les Assets
             illustrationNom: "LocheSaumonee_illustration",
             
             signesDistinctifs: """
@@ -1932,7 +1932,7 @@ class EspecesDatabase {
             nomCommun: "Coureur arc-en-ciel",
             nomScientifique: "Elagatis bipinnulata",
             famille: "Carangidae",
-            zones: [.large, .passe, .dcp],
+            zones: [.large, .passe, .dcp, .tombant],
             profondeurMin: 0,
             profondeurMax: 50,
             typesPecheCompatibles: [.traine],
@@ -1951,29 +1951,36 @@ class EspecesDatabase {
             comportement: "Nage en banc autour des structures flottantes",
             momentsFavorables: [.matinee, .apresMidi],
             photoNom: nil,
-                illustrationNom: nil,
-                signesDistinctifs: nil,  // À compléter plus tard
-                tailleMinLegale: 60.0,
-                tailleMaxObservee: 200.0,
-                poidsMaxObserve: 200.0,
-                descriptionPhysique: nil,  // À compléter plus tard
-                habitatDescription: nil,
-                comportementDetail: nil,
-                techniquesDetail: nil,
-                leuresSpecifiques: nil,
-                appatsNaturels: nil,
-                meilleursHoraires: nil,
-                conditionsOptimales: nil,
-                qualiteCulinaire: nil,
-                risqueCiguatera: .aucun,  // ⚠️ Adapter selon l'espèce
-                ciguateraDetail: nil,
-                reglementationNC: nil,
-                quotas: nil,
-                zonesInterdites: nil,
-                statutConservation: nil,
-                leSaviezVous: nil,
-                nePasPecher: false,  // false par défaut
-                raisonProtection: nil
+            illustrationNom: "CoureurArcEnCiel_illustration",
+            signesDistinctifs: "Corps fuselé de carangue sans scutelles. Deux bandes bleu clair le long du flanc, encadrant une bande jaune-olive ; dos bleu-vert, ventre blanc à jaunâtre. Derrière la dorsale et l'anale, une petite pinnule isolée à deux rayons (d'où son nom, bipinnulata). Caudale profondément fourchue, jaunâtre.",
+            tailleMinLegale: nil,
+            tailleMaxObservee: 180.0,
+            poidsMaxObserve: 46.0,
+            descriptionPhysique: "Carangue élancée et hydrodynamique, à petite tête pointue. Les sujets pris à la traîne pèsent le plus souvent quelques kilos. Tailles maximales d'après FishBase (à vérifier).",
+            habitatDescription: "Pélagique côtier : bordure externe des récifs, passes, tombants et DCP, où il accompagne souvent les thons. Nage en bancs de surface à mi-eau. La CPS le range parmi les carangues fréquemment prises à la traîne (CPS 93, chap. 7 M).",
+            comportementDetail: "Se déplace en bancs, souvent associé aux objets flottants et aux DCP. Chasse de petits poissons et du zooplancton près de la surface ; mord volontiers sur des leurres de taille moyenne.",
+            techniquesDetail: "Traîne de surface ou de subsurface : la traîne sous la surface, jusqu'à 20 m environ, vise les mêmes espèces que la surface, dont le coureur arc-en-ciel ; réduire alors la vitesse pour que la ligne ne remonte pas (« Consignes », d'après le manuel CPS). Petites jupes et bavettes de 12 à 18 cm autour des DCP, en bordure de récif et au tombant.",
+            leuresSpecifiques: [
+                "Petites jupes 12-15 cm",
+                "Bavettes 12-18 cm (subsurface)",
+                "Cuillers et petits jigs (lancer sur les bancs)"
+            ],
+            appatsNaturels: [
+                "Lanières de bonite",
+                "Petits poissons fourrage (sardine, sélar)"
+            ],
+            meilleursHoraires: "Matinée et après-midi, autour des DCP et en bordure de récif.",
+            conditionsOptimales: "DCP et objets flottants, bordure externe des récifs et tombant ; eau claire, vitesse modérée en subsurface.",
+            qualiteCulinaire: "Chair blanche à rosée, ferme et goûteuse ; excellente crue (sashimi) et grillée. Saigner et glacer rapidement.",
+            risqueCiguatera: .faible,
+            ciguateraDetail: "Pélagique qui fréquente peu le récif lui-même : risque jugé faible, mais des cas ont été signalés pour des carangues de récif. Prudence avec les gros sujets là où la gratte est connue ; à confirmer localement.",
+            reglementationNC: "Pas de règle spécifique relevée dans les documents du Projet. Vérifier la réglementation de la province avant de garder un poisson.",
+            quotas: nil,
+            zonesInterdites: "Respecter les aires marines protégées et les réserves.",
+            statutConservation: nil,
+            leSaviezVous: "Malgré son nom, ce n'est pas un thon : c'est une carangue, mais sans la rangée d'écailles dures le long de la queue. Ses deux pinnules isolées lui ont donné son nom scientifique.",
+            nePasPecher: false,
+            raisonProtection: nil
         ),
         // ─────────────────────────────────────────────────────────────────────
         // BEC DE CANE
@@ -2496,8 +2503,8 @@ class EspecesDatabase {
             ),
             comportement: "Petites bandes le long des récifs barrière et des passes ; très curieux",
             momentsFavorables: [.aube, .crepuscule],
-            photoNom: nil,
-            illustrationNom: nil,
+            photoNom: "ThonDentsDeChien_photo",
+            illustrationNom: "ThonDentsDeChien_illustration",
             signesDistinctifs: "Thon élancé à grande bouche garnie de fortes dents coniques bien visibles, absentes chez les autres thons. Dos bleu-noir, flancs argentés sans rayures ni taches. Ligne latérale nettement ondulée. Extrémités de la seconde dorsale et de l'anale blanches.",
             tailleMinLegale: nil,
             tailleMaxObservee: 248.0,
@@ -2551,7 +2558,7 @@ class EspecesDatabase {
             comportement: "Bancs ou petits groupes sur le tombant profond, les monts sous-marins et les épaves ; chasse entre deux eaux et près du fond",
             momentsFavorables: [.aube, .matinee, .crepuscule],
             photoNom: nil,
-            illustrationNom: nil,
+            illustrationNom: "Seriole_illustration",
             signesDistinctifs: "Corps allongé et fuselé, dos bleu-olive à brun, flancs argentés. Bande sombre oblique de l'œil à la nuque, nette chez la sériole couronnée (S. dumerili) et la sériole limon (S. rivoliana). Bande longitudinale jaune-bronze sur le flanc, très marquée chez S. lalandi. Caudale fourchue, sans scutelles.",
             tailleMinLegale: nil,
             tailleMaxObservee: 190.0,
