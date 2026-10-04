@@ -661,7 +661,8 @@ class SuggestionEngine: ObservableObject {
 
         // Bonus marée descendante + eau trouble
         if conditions.typeMaree == .descendante && (conditions.turbiditeEau == .trouble || conditions.turbiditeEau == .tresTrouble) {
-            if let contraste = leurre.contraste {
+            do {
+                let contraste = leurre.profilVisuel
                 if contraste == .sombre || contraste == .flashy {
                     probabilite += 3.0
                 }
@@ -674,7 +675,7 @@ class SuggestionEngine: ObservableObject {
     // MARK: - Helpers conditions idéales
 
     private func estLuminositeIdeale(leurre: Leurre, luminosite: Luminosite) -> Bool {
-        guard let contraste = leurre.contraste else { return false }
+        let contraste = leurre.profilVisuel
 
         switch luminosite {
         case .forte:
@@ -691,7 +692,7 @@ class SuggestionEngine: ObservableObject {
     }
 
     private func estTurbiditeOptimale(leurre: Leurre, turbidite: Turbidite) -> Bool {
-        guard let contraste = leurre.contraste else { return false }
+        let contraste = leurre.profilVisuel
 
         switch turbidite {
         case .claire:
@@ -842,183 +843,60 @@ class SuggestionEngine: ObservableObject {
         return (scoreZone, scoreProfondeur, scoreVitesse, scoreEspeces, total)
     }
 
-    // MARK: - Calcul Score Couleur (✅ CORRIGÉ avec .sombre et .nuit)
+    // MARK: - Calcul Score Couleur (modèle validé le 4 octobre 2026)
 
+    /// Score couleur sur 30 : famille 18, teinte 8, éclat 4 (même répartition
+    /// que les 15/7/3 du moteur lagon). La famille est corrigée par la
+    /// profondeur de nage ; elle est comparée au besoin de contraste du jour.
+    /// La couleur départage, elle n'élimine aucun leurre.
+    /// Retour : bonusLuminosite = famille, bonusTurbidite = teinte, bonusContraste = éclat.
     private func calculerScoreCouleur(
         leurre: Leurre,
         conditions: ConditionsPeche
     ) -> (bonusLuminosite: Double, bonusTurbidite: Double, bonusContraste: Double, totalCouleur: Double) {
 
-        var bonusLuminosite: Double = 0
-        var bonusTurbidite: Double = 0
-        var bonusContraste: Double = 0
+        let niveau = SuggestionEngine.niveauContraste(conditions)
+        let f = leurre.ficheDeduction
+        let famille = ReglesCouleur.familleCorrigee(f, profondeur: ReglesDeduction.profondeurMax(f))
 
-        guard let contraste = leurre.contraste else {
-            return (0, 0, 0, 0)
+        // 1. Famille (18)
+        let sFamille = 18 * (niveau.familles.map {
+            ReglesCouleur.similarite(cible: $0, leurre: famille)
+        }.max() ?? 0)
+
+        // 2. Teinte (8)
+        let preferees = ReglesCouleur.teintesConseillees(
+            niveau: niveau,
+            luminosite: conditions.luminosite,
+            turbidite: conditions.turbiditeEau,
+            lagon: false
+        )
+        let sTeinte: Double
+        if preferees.contains(ReglesCouleur.teinte(f)) {
+            sTeinte = 8
+        } else if let t2 = ReglesCouleur.teinteSecondaire(f), preferees.contains(t2) {
+            sTeinte = 4.5
+        } else {
+            sTeinte = 1
         }
 
-        // 1. Luminosité (10 points max)
-        switch (conditions.luminosite, contraste) {
-        case (.forte, .naturel):
-            bonusLuminosite = 10
-        case (.forte, .flashy):
-            bonusLuminosite = 6
-        case (.forte, .sombre):
-            bonusLuminosite = 3
-        case (.forte, .contraste):
-            bonusLuminosite = 7
+        // 3. Éclat (4)
+        let e = ReglesCouleur.eclat(f)
+        let sEclat: Double = niveau.eclats.contains(e) ? 4 : (niveau.eclatsProscrits.contains(e) ? 0 : 1.5)
 
-        case (.diffuse, .contraste):
-            bonusLuminosite = 10
-        case (.diffuse, .flashy):
-            bonusLuminosite = 9
-        case (.diffuse, .naturel):
-            bonusLuminosite = 6
-        case (.diffuse, .sombre):
-            bonusLuminosite = 5
+        return (sFamille, sTeinte, sEclat, sFamille + sTeinte + sEclat)
+    }
 
-        case (.faible, .sombre):
-            bonusLuminosite = 10
-        case (.faible, .contraste):
-            bonusLuminosite = 9
-        case (.faible, .flashy):
-            bonusLuminosite = 6
-        case (.faible, .naturel):
-            bonusLuminosite = 4
-
-        // ✅ NOUVEAU : LUMINOSITÉ SOMBRE
-        case (.sombre, .sombre):
-            bonusLuminosite = 10  // OPTIMAL
-        case (.sombre, .contraste):
-            bonusLuminosite = 8
-        case (.sombre, .flashy):
-            bonusLuminosite = 5
-        case (.sombre, .naturel):
-            bonusLuminosite = 3
-
-        // ✅ NOUVEAU : LUMINOSITÉ NUIT
-        case (.nuit, .sombre):
-            bonusLuminosite = 10  // OPTIMAL
-        case (.nuit, .contraste):
-            bonusLuminosite = 9
-        case (.nuit, .flashy):
-            bonusLuminosite = 7
-        case (.nuit, .naturel):
-            bonusLuminosite = 4
-        }
-
-        // 2. Turbidité (10 points max)
-        switch (conditions.turbiditeEau, contraste) {
-        case (.claire, .naturel):
-            bonusTurbidite = 10
-        case (.claire, .contraste):
-            bonusTurbidite = 7
-        case (.claire, .flashy):
-            bonusTurbidite = 5
-        case (.claire, .sombre):
-            bonusTurbidite = 4
-
-        case (.legerementTrouble, .flashy):
-            bonusTurbidite = 10
-        case (.legerementTrouble, .contraste):
-            bonusTurbidite = 8
-        case (.legerementTrouble, .naturel):
-            bonusTurbidite = 6
-        case (.legerementTrouble, .sombre):
-            bonusTurbidite = 7
-
-        case (.trouble, .sombre):
-            bonusTurbidite = 10
-        case (.trouble, .contraste):
-            bonusTurbidite = 9
-        case (.trouble, .flashy):
-            bonusTurbidite = 8
-        case (.trouble, .naturel):
-            bonusTurbidite = 3
-
-        case (.tresTrouble, .flashy):
-            bonusTurbidite = 10
-        case (.tresTrouble, .sombre):
-            bonusTurbidite = 9
-        case (.tresTrouble, .contraste):
-            bonusTurbidite = 7
-        case (.tresTrouble, .naturel):
-            bonusTurbidite = 2
-        }
-
-        // 3. Bonus contraste spécifique (10 points max)
-        // ✅ AMÉLIORATION : Utiliser les composantes RGB réelles
-        let rgb = leurre.composantesRGBPrincipale
-        let estJauneVert = (rgb.g > 0.7 && rgb.r > 0.4 && rgb.b < 0.3) // Jaune/chartreuse
-        let estRoseFlashy = (rgb.r > 0.8 && rgb.g < 0.5 && rgb.b > 0.4) // Rose flashy
-        let estArgente = (abs(rgb.r - rgb.g) < 0.2 && abs(rgb.g - rgb.b) < 0.2 && rgb.r > 0.5) // Argenté/gris clair
-
-        if conditions.turbiditeEau == .tresTrouble && estJauneVert {
-            bonusContraste = 10
-        }
-        else if conditions.etatMer == .agitee || conditions.etatMer == .formee {
-            if estRoseFlashy {
-                bonusContraste = 10
-            } else if contraste == .flashy {
-                bonusContraste = 7
-            } else {
-                bonusContraste = 4
-            }
-        }
-        else if conditions.turbiditeEau == .claire && estArgente {
-            bonusContraste = 10
-        }
-        else {
-            bonusContraste = 5
-        }
-
-        // 4. Bonus finition selon luminosité et turbidité (0-5 points)
-        var bonusFinition: Double = 0
-        if let finition = leurre.finition {
-            // Scoring de base selon luminosité et profondeur
-            bonusFinition = finition.bonusScoring(
-                luminosite: conditions.luminosite,
-                profondeurMax: leurre.profondeurNageMax
-            )
-
-            // Bonus supplémentaire selon turbidité
-            switch (conditions.turbiditeEau, finition) {
-            case (.claire, .holographique), (.claire, .chrome), (.claire, .miroir):
-                bonusFinition += 1.5  // Excellent en eau claire
-            case (.claire, .paillete):
-                bonusFinition += 1.0
-
-            case (.legerementTrouble, .perlee), (.legerementTrouble, .metallique):
-                bonusFinition += 1.5  // Optimal en eau légèrement trouble
-
-            case (.trouble, .mate):
-                bonusFinition += 2.0  // Mat parfait en eau trouble
-            case (.tresTrouble, .mate):
-                bonusFinition += 2.5  // Mat exceptionnel en eau très trouble
-
-            case (.trouble, .UV), (.tresTrouble, .UV):
-                bonusFinition += 1.0  // UV perce la turbidité
-
-            default:
-                break  // Pas de bonus supplémentaire
-            }
-
-            // Bonus état de mer (finitions résistantes aux remous)
-            if conditions.etatMer == .agitee || conditions.etatMer == .formee {
-                switch finition {
-                case .mate, .phosphorescent:
-                    bonusFinition += 1.0  // Silhouettes sombres meilleures en mer formée
-                case .holographique, .miroir, .chrome:
-                    bonusFinition -= 0.5  // Reflets moins efficaces en mer agitée
-                default:
-                    break
-                }
-            }
-        }
-
-        let total = bonusLuminosite + bonusTurbidite + bonusContraste + bonusFinition
-
-        return (bonusLuminosite, bonusTurbidite, bonusContraste, total)
+    /// Besoin de contraste du jour (cinq niveaux), commun aux deux moteurs.
+    static func niveauContraste(_ c: ConditionsPeche) -> NiveauContraste {
+        NiveauContraste.depuis(
+            luminosite: c.luminosite,
+            turbidite: c.turbiditeEau,
+            etatMer: c.etatMer,
+            moment: c.momentJournee,
+            lune: c.phaseLunaire,
+            maree: c.typeMaree
+        )
     }
 
     // MARK: - Calcul Score Conditions
@@ -1093,7 +971,8 @@ class SuggestionEngine: ObservableObject {
         // Bonus marée descendante + eau trouble
         if conditions.typeMaree == .descendante &&
            (conditions.turbiditeEau == .trouble || conditions.turbiditeEau == .tresTrouble) {
-            if let contraste = leurre.contraste {
+            do {
+                let contraste = leurre.profilVisuel
                 if contraste == .sombre || contraste == .flashy {
                     bonusMaree += 2
                 }
@@ -1173,7 +1052,8 @@ class SuggestionEngine: ObservableObject {
         // JUSTIFICATION COULEUR
         var justifCouleur = ""
 
-        if let contraste = leurre.contraste {
+        do {
+            let contraste = leurre.profilVisuel
             switch conditions.luminosite {
             case .forte:
                 if contraste == .naturel {
@@ -1264,7 +1144,7 @@ class SuggestionEngine: ObservableObject {
         if conditions.turbiditeEau == .tresTrouble {
             if estJauneVertJustif {
                 justifCouleur += "\n\n💡 Eau très trouble : votre \(nomCouleur) sera ultra-visible !"
-            } else if let contraste = leurre.contraste, contraste == .flashy {
+            } else if leurre.profilVisuel == .flashy {
                 justifCouleur += "\n\n⚡️ Flashy parfait pour percer la turbidité."
             }
         } else if conditions.turbiditeEau == .claire {
@@ -1639,8 +1519,8 @@ class SuggestionEngine: ObservableObject {
 
         var score: Double = 0
 
-        // ✅ Utiliser le PROFIL VISUEL (déduit de couleur + finition)
-        let profil = leurre.profilVisuel
+        // Famille visuelle corrigée par la profondeur de nage
+        let profil = leurre.familleCorrigee(profondeur: ReglesDeduction.profondeurMax(leurre.ficheDeduction))
         let finition = leurre.finition
         let couleur = leurre.couleurPrincipale
         let taille = leurre.longueur
@@ -1850,6 +1730,15 @@ class SuggestionEngine: ObservableObject {
         // LIBRE : Position flexible
         case .libre:
             score += 5
+        }
+
+        // Postes physiquement possibles (pas de tangon pour un plongeant
+        // de plus de 2 m) et famille visée par le contraste du jour.
+        if position != .libre && !leurre.positionsSpreadFinales.contains(position) {
+            score -= 40
+        }
+        if SuggestionEngine.niveauContraste(conditions).familles.contains(profil) {
+            score += 3
         }
 
         return score

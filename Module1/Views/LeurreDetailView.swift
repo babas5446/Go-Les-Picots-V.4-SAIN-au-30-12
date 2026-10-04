@@ -421,7 +421,7 @@ struct LeurreDetailView: View {
 
     private var cartePositionsSpread: some View {
         VStack(alignment: .leading, spacing: 16) {
-            SectionHeader(title: "Positions traîne", icon: "arrow.triangle.branch")
+            SectionHeader(title: "Postes possibles (le premier est conseillé)", icon: "arrow.triangle.branch")
 
             VStack(spacing: 8) {
                 ForEach(leurre.positionsSpread ?? [], id: \.self) { position in

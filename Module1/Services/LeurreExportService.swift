@@ -15,6 +15,8 @@
 //  - Sérialisation JSON + compression ZIP
 //  - Décompression ZIP + désérialisation JSON à l'import
 //  - Insertion SwiftData à l'import (doublons ignorés par id)
+//  - Remplacement complet de la boîte (lecture vérifiée, sauvegarde ZIP,
+//    numéros et photos conservés, remise en état en cas d'échec)
 //
 
 import Foundation
@@ -164,6 +166,154 @@ enum LeurreExportService {
         return compteur
     }
 
+    // MARK: - Remplacement de la boîte
+
+    /// Contenu d'un fichier d'import entièrement lu et vérifié, photos
+    /// comprises. Rien n'est encore écrit dans la base.
+    struct LotImport {
+        let dtos: [LeurreDTO]
+        /// Photo de chaque leurre, par numéro (Base64 V4 ou dossier photos/ des anciens ZIP).
+        let photos: [Int: Data]
+        var nombreAvecPhoto: Int { photos.count }
+    }
+
+    enum ErreurRemplacement: LocalizedError {
+        case fichierVide
+        case formatInconnu
+        case numerosEnDouble([Int])
+        case photoIllisible(id: Int, nom: String)
+
+        var errorDescription: String? {
+            switch self {
+            case .fichierVide:
+                return "Le fichier ne contient aucun leurre."
+            case .formatInconnu:
+                return "Format de fichier non reconnu (.zip ou .json attendu)."
+            case .numerosEnDouble(let ids):
+                return "Numéros en double dans le fichier : \(ids.map(String.init).joined(separator: ", "))."
+            case .photoIllisible(let id, let nom):
+                return "Photo illisible pour le leurre \(id) (\(nom))."
+            }
+        }
+    }
+
+    /// Lit et vérifie tout le fichier (ZIP ou JSON) sans toucher à la base.
+    /// Une seule fiche illisible, un numéro en double ou une photo corrompue
+    /// font échouer la lecture : la boîte reste alors intacte.
+    static func lireLot(depuis url: URL) throws -> LotImport {
+        let data: Data
+        var dossierPhotos: URL? = nil
+        var dossierTemporaire: URL? = nil
+        defer { if let dossierTemporaire { try? FileManager.default.removeItem(at: dossierTemporaire) } }
+
+        switch url.pathExtension.lowercased() {
+        case "zip":
+            let dir = FileManager.default.temporaryDirectory
+                .appendingPathComponent("glp_remplacement_\(horodatage())")
+            try? FileManager.default.removeItem(at: dir)
+            do {
+                try FileManager.default.unzipItem(at: url, to: dir)
+            } catch {
+                throw StorageError.decodageEchoue(
+                    detail: "Décompression ZIP échouée : \(error.localizedDescription)"
+                )
+            }
+            dossierTemporaire = dir
+            let jsonURL = try localiserJSON(dans: dir)
+            data = try Data(contentsOf: jsonURL)
+            dossierPhotos = jsonURL.deletingLastPathComponent().appendingPathComponent("photos")
+        case "json":
+            data = try Data(contentsOf: url)
+        default:
+            throw ErreurRemplacement.formatInconnu
+        }
+
+        let dtos = try decoderJSON(data: data)
+        guard !dtos.isEmpty else { throw ErreurRemplacement.fichierVide }
+
+        // Les numéros sont conservés tels quels : ils doivent être uniques.
+        var vus = Set<Int>()
+        var doubles = Set<Int>()
+        for dto in dtos where !vus.insert(dto.id).inserted { doubles.insert(dto.id) }
+        guard doubles.isEmpty else { throw ErreurRemplacement.numerosEnDouble(doubles.sorted()) }
+
+        let chemins = extraireCheminsPhotos(depuis: data)
+        var photos: [Int: Data] = [:]
+        for dto in dtos {
+            if let b64 = dto.photoBase64, !b64.isEmpty {
+                guard let photo = Data(base64Encoded: b64) else {
+                    throw ErreurRemplacement.photoIllisible(id: dto.id, nom: dto.nom)
+                }
+                photos[dto.id] = photo
+            } else if let dossier = dossierPhotos,
+                      let chemin = chemins[dto.id],
+                      let photo = try? Data(contentsOf: dossier.appendingPathComponent(chemin)) {
+                photos[dto.id] = photo
+            }
+        }
+        return LotImport(dtos: dtos, photos: photos)
+    }
+
+    /// Sauvegarde ZIP de la boîte actuelle dans Documents/Sauvegardes boîte,
+    /// visible dans l'app Fichiers (Sur mon iPad › Go Les Picots).
+    static func sauvegarderBoite(leurres: [Leurre]) throws -> URL {
+        let zip = try exporterZIP(leurres: leurres)
+        let documents = try FileManager.default.url(
+            for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true
+        )
+        let dossier = documents.appendingPathComponent("Sauvegardes boîte", isDirectory: true)
+        try FileManager.default.createDirectory(at: dossier, withIntermediateDirectories: true)
+        let destination = dossier.appendingPathComponent("boite_avant_remplacement_\(horodatage()).zip")
+        try? FileManager.default.removeItem(at: destination)
+        try FileManager.default.moveItem(at: zip, to: destination)
+        return destination
+    }
+
+    /// Remplace toute la boîte par le lot. Les numéros du fichier sont
+    /// conservés (le journal désigne les leurres par leur numéro) et chaque
+    /// photo revient sur sa fiche. Si l'enregistrement échoue, la boîte
+    /// d'origine est remise en place, photos comprises.
+    @discardableResult
+    static func remplacerBoite(par lot: LotImport, dans context: ModelContext) throws -> Int {
+        // Nouvelles fiches préparées avant toute suppression.
+        let nouveaux: [Leurre] = lot.dtos.map { dto in
+            let leurre = dto.toLeurre()
+            leurre.photoData = lot.photos[dto.id]
+            return leurre
+        }
+
+        // Copie de secours en mémoire de la boîte actuelle (photos comprises).
+        let anciens = try context.fetch(FetchDescriptor<Leurre>())
+        let secours = anciens.map { leurreVersDTO($0) }
+
+        // 1. Suppression (enregistrée seule : les numéros sont uniques en base).
+        do {
+            for leurre in anciens { context.delete(leurre) }
+            try context.save()
+        } catch {
+            context.rollback()
+            throw error
+        }
+
+        // 2. Insertion de la nouvelle boîte.
+        do {
+            for leurre in nouveaux { context.insert(leurre) }
+            try context.save()
+        } catch {
+            context.rollback()
+            for dto in secours {
+                let leurre = dto.toLeurre()
+                if let b64 = dto.photoBase64 { leurre.photoData = Data(base64Encoded: b64) }
+                context.insert(leurre)
+            }
+            try? context.save()
+            throw error
+        }
+
+        print("✅ Boîte remplacée : \(anciens.count) → \(nouveaux.count) leurres, \(lot.nombreAvecPhoto) photos")
+        return nouveaux.count
+    }
+
     // MARK: - Insertion SwiftData
 
     /// Insère les DTO absents de la base et retourne le nombre de créations.
@@ -274,7 +424,7 @@ enum LeurreExportService {
             vitesseTraineMax:        leurre.vitesseTraineMax,
             notes:                   leurre.notes,
             photoBase64:             photoBase64,
-            contraste:               leurre.contraste,
+            contraste:               leurre.profilVisuel,
             zonesAdaptees:           leurre.zonesAdaptees,
             especesCibles:           leurre.especesCibles,
             positionsSpread:         leurre.positionsSpread,

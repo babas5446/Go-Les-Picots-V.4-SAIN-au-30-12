@@ -29,10 +29,14 @@ struct Go_Les_Picots_V_4App: App {
         let context = LeurreStorageService.shared.mainContext
         LeurreMigrationService.migrerSiNecessaire(dans: context)
 
-        // Leurres migrés, importés ou issus d'une version antérieure :
-        // on complète les champs déduits (zones, contraste, positions)
-        // dont dépendent les filtres et le moteur de suggestion.
-        BoiteLeurresViewModel(context: context).completerChampsDeduitsManquants()
+        // Nouvelles règles de déduction : recalcul unique de toute la boîte
+        // (versionDeductions). Sinon, leurres migrés, importés ou issus d'une
+        // version antérieure : on complète les champs déduits (zones,
+        // contraste, positions) dont dépendent les filtres et le moteur.
+        let boite = BoiteLeurresViewModel(context: context)
+        if !boite.appliquerNouvellesReglesSiNecessaire() {
+            boite.completerChampsDeduitsManquants()
+        }
     }
 
     // MARK: - Scene

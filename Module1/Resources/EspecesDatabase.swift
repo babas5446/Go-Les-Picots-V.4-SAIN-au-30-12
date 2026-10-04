@@ -2464,6 +2464,126 @@ class EspecesDatabase {
             **ESPÈCE À PROTÉGER, PAS À INTERDIRE.** La solution = pêche RAISONNÉE, pas arrêt total.
             """
         )
+        ,
+
+        // ─────────────────────────────────────────────────────────────────────
+        // THON À DENTS DE CHIEN
+        // Sources : CPS 93 « La pêche à la traîne dans les îles du Pacifique »
+        // (chap. 5 C, tombant externe ; chap. 7 D) ; « Critères de choix pour le
+        // leurre » (hors lagon) ; « Consignes pour moteur stratégique ».
+        // Tailles et poids maximaux : FishBase (à vérifier).
+        // ─────────────────────────────────────────────────────────────────────
+        EspeceInfo(
+            identifiant: "thonDentsDeChien",
+            nomCommun: "Thon à dents de chien",
+            nomScientifique: "Gymnosarda unicolor",
+            famille: "Scombridae",
+            zones: [.tombant, .passe, .recif],
+            profondeurMin: 10,
+            profondeurMax: 250,
+            typesPecheCompatibles: [.traine, .jig],
+            traineInfo: TraineInfo(
+                vitesseMin: 5.0,
+                vitesseMax: 7.0,
+                vitesseOptimale: 6.0,
+                profondeurNageOptimale: "4-12m le long de la paroi",
+                tailleLeurreMin: 14.0,
+                tailleLeurreMax: 22.0,
+                typesLeurresRecommandes: ["bavette plongeante (Magnum)", "jupe lestée", "jig (pêche verticale)"],
+                couleursRecommandees: ["bleu/argent", "sardine", "violet/noir (aube, crépuscule)", "rose (eau teintée)"],
+                positionsSpreadRecommandees: [.longCorner, .shotgun],
+                notes: "Passes et tombant externe, à l'aube et au crépuscule. Après une prise, tourner au même endroit : d'autres suivent souvent."
+            ),
+            comportement: "Petites bandes le long des récifs barrière et des passes ; très curieux",
+            momentsFavorables: [.aube, .crepuscule],
+            photoNom: nil,
+            illustrationNom: nil,
+            signesDistinctifs: "Thon élancé à grande bouche garnie de fortes dents coniques bien visibles, absentes chez les autres thons. Dos bleu-noir, flancs argentés sans rayures ni taches. Ligne latérale nettement ondulée. Extrémités de la seconde dorsale et de l'anale blanches.",
+            tailleMinLegale: nil,
+            tailleMaxObservee: 248.0,
+            poidsMaxObserve: 131.0,
+            descriptionPhysique: "Corps fuselé, plus allongé que celui du thon jaune. Mâchoires puissantes armées de dents coniques. Coloration sombre et uniforme sur le dos, argentée sur les flancs et le ventre. Les adultes pèsent en général une trentaine de kilos ; les plus grands dépassent 130 kg (CPS 93).",
+            habitatDescription: "Contrairement aux autres thonidés du Pacifique, il ne s'aventure pas volontiers en pleine mer : il reste à proximité des récifs barrière et des récifs du large (CPS 93). On le trouve sur le tombant externe, là où la pente devient abrupte et où le fond atteint 25 à 50 m, et surtout dans les passes, pour lesquelles il a une prédilection.",
+            comportementDetail: "Évolue en petites bandes de quelques individus. Sans être agressif, il est très curieux et s'approche souvent des plongeurs. Quand on en prend un, il y en a presque toujours d'autres dans le secteur. Les populations locales s'épuisent vite, même sous une pression de pêche modérée : les bonnes prises du début durent rarement (CPS 93).",
+            techniquesDetail: "Traîne plongeante le long du tombant et à l'embouchure des passes, à l'aube ou à la tombée du jour. Suivre le tombant à la limite entre l'eau verte (au-dessus du récif) et l'eau bleue (au large), une couleur de chaque bord. À l'aplomb du tombant, on peut allonger et lester les lignes ou utiliser des leurres plongeants (CPS 93). Après une touche, tourner en rond au même endroit. Le jig vertical le long de la paroi est l'autre technique de référence.",
+            leuresSpecifiques: [
+                "Bavettes plongeantes 14-22 cm (X-Rap Magnum, Magnum Stretch)",
+                "Jupes lestées",
+                "Jigs métalliques (pêche verticale le long du tombant)"
+            ],
+            appatsNaturels: [
+                "Bonite",
+                "Sélar",
+                "Aiguillette"
+            ],
+            meilleursHoraires: "Aube et tombée du jour (CPS 93).",
+            conditionsOptimales: "Courant dans les passes et sur le tombant externe, lumière basse. Bas de ligne épais : ses dents et la paroi usent le nylon fin.",
+            qualiteCulinaire: "Chair rose pâle, presque blanche, et non rouge comme celle des autres thons (CPS 93). Ferme ; plutôt à cuire.",
+            risqueCiguatera: .faible,
+            ciguateraDetail: "Thon récifal, à la différence des thons du large : des cas de ciguatera ont été rapportés dans l'Indo-Pacifique. Prudence avec les gros sujets là où la gratte est connue. À confirmer localement.",
+            reglementationNC: "Pas de règle spécifique relevée dans les documents du Projet. Vérifier la réglementation de la province (Sud, Nord, Îles) avant de garder un poisson.",
+            quotas: nil,
+            zonesInterdites: "Respecter les aires marines protégées et les réserves.",
+            statutConservation: "Populations locales vite épuisées, même par une pêche modérée (CPS 93) : relâcher les gros sujets.",
+            leSaviezVous: "C'est le seul thon du Pacifique qui vit attaché au récif plutôt qu'au large, et le seul à avoir de vraies dents. Sa curiosité le pousse à venir observer les plongeurs.",
+            nePasPecher: false,
+            raisonProtection: nil
+        ),
+
+        // ─────────────────────────────────────────────────────────────────────
+        // SÉRIOLE
+        // Sources : « DIVERS TYPES DE NAGE » (jig high pitch au large, > 150 m ;
+        // flutter et slow jig) ; « FICHES PÉDAGOGIQUES » (jigging vertical sur
+        // tombants et monts sous-marins). Les documents du Projet sont minces
+        // sur cette espèce : morphologie, tailles et risque de ciguatera
+        // viennent de connaissances générales (FishBase), à vérifier.
+        // ─────────────────────────────────────────────────────────────────────
+        EspeceInfo(
+            identifiant: "seriole",
+            nomCommun: "Sériole",
+            nomScientifique: "Seriola spp. (S. dumerili, S. rivoliana, S. lalandi)",
+            famille: "Carangidae",
+            zones: [.tombant, .profond],
+            profondeurMin: 20,
+            profondeurMax: 300,
+            typesPecheCompatibles: [.jig, .montage],
+            traineInfo: nil,
+            comportement: "Bancs ou petits groupes sur le tombant profond, les monts sous-marins et les épaves ; chasse entre deux eaux et près du fond",
+            momentsFavorables: [.aube, .matinee, .crepuscule],
+            photoNom: nil,
+            illustrationNom: nil,
+            signesDistinctifs: "Corps allongé et fuselé, dos bleu-olive à brun, flancs argentés. Bande sombre oblique de l'œil à la nuque, nette chez la sériole couronnée (S. dumerili) et la sériole limon (S. rivoliana). Bande longitudinale jaune-bronze sur le flanc, très marquée chez S. lalandi. Caudale fourchue, sans scutelles.",
+            tailleMinLegale: nil,
+            tailleMaxObservee: 190.0,
+            poidsMaxObserve: 80.0,
+            descriptionPhysique: "Grande carangue pélagique au corps puissant et hydrodynamique, sans les écailles carénées (scutelles) des carangues du genre Caranx. Nageoires dorsale et anale longues et basses.",
+            habitatDescription: "Plus en profondeur que les carangues de récif : bas du tombant, monts sous-marins, ruptures de pente au large. Remonte parfois en chasse vers la surface.",
+            comportementDetail: "Prédateur de pleine eau, souvent en groupe. Suit volontiers un jig jusqu'au bateau avec ses congénères.",
+            techniquesDetail: "Jig vertical : high pitch au large et sur les monts sous-marins au-delà de 150 m, flutter ou slow jig plus près du fond (« DIVERS TYPES DE NAGE »). Descendre le jig jusqu'au fond, puis l'animer par des à-coups brusques en le remontant (« FICHES PÉDAGOGIQUES »). Montage à l'appât vivant au-dessus des structures. Rarement prise à la traîne : seulement avec un leurre très plongeant au-dessus d'un haut-fond.",
+            leuresSpecifiques: [
+                "Jigs métalliques 150-400 g (high pitch, slow pitch)",
+                "Jigs flutter",
+                "Gros leurres souples plombés"
+            ],
+            appatsNaturels: [
+                "Sélar vivant",
+                "Bonite",
+                "Calmar"
+            ],
+            meilleursHoraires: "Début de matinée et crépuscule ; toute la journée en profondeur.",
+            conditionsOptimales: "Courant modéré sur les monts sous-marins et le bas du tombant ; échosondeur indispensable pour repérer les bancs suspendus.",
+            qualiteCulinaire: "Chair blanche et ferme, excellente crue (sashimi) comme cuite pour les sujets moyens.",
+            risqueCiguatera: .modere,
+            ciguateraDetail: "Les grosses sérioles, surtout la sériole couronnée, figurent parmi les poissons impliqués dans des cas de ciguatera. Prudence avec les gros sujets ; garder de préférence les poissons moyens.",
+            reglementationNC: "Pas de règle spécifique relevée dans les documents du Projet. Vérifier la réglementation de la province avant de garder un poisson.",
+            quotas: nil,
+            zonesInterdites: "Respecter les aires marines protégées et les réserves.",
+            statutConservation: nil,
+            leSaviezVous: "La sériole n'est pas une « vraie » carangue du genre Caranx : elle n'a pas la rangée d'écailles dures (scutelles) le long de la queue.",
+            nePasPecher: false,
+            raisonProtection: nil
+        )
+
     ]
     
     // ═══════════════════════════════════════════════════════════════════════════

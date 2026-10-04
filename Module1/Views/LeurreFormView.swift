@@ -791,12 +791,7 @@ struct LeurreFormView: View {
     // MARK: - Utilitaires
 
     private func determinerContrastePrevisu(principale: Couleur, secondaire: Couleur?) -> Contraste {
-        if let sec = secondaire {
-            let cp = principale.contrasteNaturel
-            let cs = sec.contrasteNaturel
-            if (cp == .sombre && cs == .flashy) || (cp == .flashy && cs == .sombre) { return .contraste }
-        }
-        return principale.contrasteNaturel
+        ReglesCouleur.famille(principale: principale, secondaire: secondaire)
     }
 
     // MARK: - Détection Type de Nage

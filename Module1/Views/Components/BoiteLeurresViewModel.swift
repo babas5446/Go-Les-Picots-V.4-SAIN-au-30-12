@@ -137,7 +137,7 @@ class BoiteLeurresViewModel: ObservableObject {
         }
 
         if let contraste = filtreContraste {
-            resultats = resultats.filter { ($0.contraste ?? $0.profilVisuel) == contraste }
+            resultats = resultats.filter { $0.profilVisuel == contraste }
         }
 
         leurresFiltres = resultats
@@ -246,6 +246,7 @@ class BoiteLeurresViewModel: ObservableObject {
     // MARK: - Recalcul forcé
 
     /// Recalcule les champs déduits de tous les leurres existants.
+    /// Ne touche à aucun champ saisi.
     func recalculerTousLesChampsDeduits() {
         isLoading = true
         let descriptor = FetchDescriptor<Leurre>()
@@ -271,34 +272,52 @@ class BoiteLeurresViewModel: ObservableObject {
         return aCompleter.count
     }
 
+    /// Recalcul unique de toute la boîte quand les règles de déduction
+    /// changent (réglage « versionDeductions »). Les champs saisis ne sont
+    /// pas modifiés. Retourne true si le recalcul a eu lieu.
+    @discardableResult
+    func appliquerNouvellesReglesSiNecessaire(_ defaults: UserDefaults = .standard) -> Bool {
+        let version = defaults.integer(forKey: ReglesDeduction.cleVersion)
+        guard version < ReglesDeduction.versionDeductions else { return false }
+        recalculerTousLesChampsDeduits()
+        guard !showError else { return false }   // échec d'enregistrement : on retentera
+        defaults.set(ReglesDeduction.versionDeductions, forKey: ReglesDeduction.cleVersion)
+        print("🧮 Règles de déduction v\(ReglesDeduction.versionDeductions) appliquées à toute la boîte")
+        return true
+    }
+
     // MARK: - Calcul des champs déduits
 
     /// Calcule et assigne les champs déduits directement sur l'entité @Model.
+    /// Règles v2 (LeurreIntelligenceService.swift) ; les lignes repères des
+    /// notes (Espèces, Zones, Postes) priment sur le calcul.
     @discardableResult
     func calculerChampsDeduits(_ leurre: Leurre) -> Leurre {
-        leurre.contraste = determinerContraste(
+        let fiche = leurre.ficheDeduction
+        let famille = ReglesCouleur.famille(fiche)
+        let r = ReglesDeduction.deduire(fiche, famille: famille)
+
+        leurre.contraste     = famille
+        leurre.zonesAdaptees = r.zones
+        leurre.especesCibles = r.especes
+        if leurre.typePeche == .traine {
+            leurre.positionsSpread = r.postes
+        }
+
+        // Conditions optimales : règle inchangée, sur l'ancien contraste.
+        let contrasteHistorique = determinerContraste(
             principale: leurre.couleurPrincipale,
             secondaire: leurre.couleurSecondaire
         )
-        leurre.zonesAdaptees  = determinerZones(leurre)
-        leurre.especesCibles  = determinerEspeces(zones: leurre.zonesAdaptees ?? [])
-
-        if leurre.typePeche == .traine {
-            leurre.positionsSpread = determinerPositionsSpread(
-                typeLeurre: leurre.typeLeurre,
-                contraste:  leurre.contraste ?? .naturel,
-                longueur:   leurre.longueur
-            )
-        }
-
         leurre.conditionsOptimales = determinerConditionsOptimales(
-            contraste:  leurre.contraste ?? .naturel,
+            contraste:  contrasteHistorique,
             typeLeurre: leurre.typeLeurre
         )
         leurre.isComputed = true
         return leurre
     }
 
+    /// Ancien calcul du contraste, conservé pour les conditions optimales.
     private func determinerContraste(principale: Couleur, secondaire: Couleur?) -> Contraste {
         if let sec = secondaire {
             let cp = principale.contrasteNaturel
@@ -308,48 +327,6 @@ class BoiteLeurresViewModel: ObservableObject {
             }
         }
         return principale.contrasteNaturel
-    }
-
-    private func determinerZones(_ leurre: Leurre) -> [Zone] {
-        var zones: [Zone] = []
-        if let profMax = leurre.profondeurNageMax {
-            if profMax <= 5  { zones.append(contentsOf: [.lagon, .recif]) }
-            if profMax >= 3 && profMax <= 10 { zones.append(.passe) }
-            if profMax >= 5  { zones.append(contentsOf: [.large, .dcp]) }
-        }
-        if leurre.longueur <= 15 {
-            if !zones.contains(.lagon) { zones.append(.lagon) }
-            if !zones.contains(.recif) { zones.append(.recif) }
-        } else if leurre.longueur >= 18 {
-            if !zones.contains(.large) { zones.append(.large) }
-            if !zones.contains(.passe) { zones.append(.passe) }
-        }
-        if zones.isEmpty { zones = [.lagon, .passe] }
-        return Array(Set(zones)).sorted { $0.rawValue < $1.rawValue }
-    }
-
-    private func determinerEspeces(zones: [Zone]) -> [String] {
-        var especes = Set<String>()
-        for zone in zones { especes.formUnion(zone.especesTypiques) }
-        return Array(especes).sorted()
-    }
-
-    private func determinerPositionsSpread(
-        typeLeurre: TypeLeurre,
-        contraste: Contraste,
-        longueur: Double
-    ) -> [PositionSpread] {
-        var positions: [PositionSpread] = []
-        switch contraste {
-        case .naturel:   positions.append(.longCorner)
-        case .flashy:    positions.append(contentsOf: [.longRigger, .shortRigger])
-        case .sombre:    positions.append(contentsOf: [.longCorner, .shotgun])
-        case .contraste: positions.append(.shotgun)
-        }
-        if longueur >= 18, !positions.contains(.shortCorner) {
-            positions.append(.shortCorner)
-        }
-        return positions
     }
 
     private func determinerConditionsOptimales(
@@ -430,9 +407,9 @@ class BoiteLeurresViewModel: ObservableObject {
                 throw ImportError.formatInvalide
             }
 
-            // Les leurres importés sans champs déduits doivent être
-            // immédiatement filtrables et utilisables par le moteur.
-            completerChampsDeduitsManquants()
+            // Les champs déduits d'un fichier importé peuvent dater de règles
+            // antérieures : toute la boîte est recalculée (champs saisis intacts).
+            recalculerTousLesChampsDeduits()
 
             return .success(nb)
 
@@ -440,6 +417,106 @@ class BoiteLeurresViewModel: ObservableObject {
             print("❌ BoiteLeurresViewModel : Import échoué : \(error.localizedDescription)")
             return .failure(error)
         }
+    }
+
+    // MARK: - Remplacement de la boîte
+
+    /// Ce que l'utilisateur confirme avant le remplacement.
+    struct ApercuRemplacement {
+        let nombreFichier: Int
+        let photosFichier: Int
+        let nombreActuel: Int
+        let photosActuelles: Int
+        let prisesSansFiche: Int
+        let sortiesSansFiche: Int
+
+        var message: String {
+            var m = "Ta boîte actuelle (\(nombreActuel) leurres, \(photosActuelles) photos) sera remplacée "
+            m += "par celle du fichier (\(nombreFichier) leurres, \(photosFichier) photos). "
+            m += "Les numéros du fichier sont conservés. Une sauvegarde ZIP de la boîte actuelle est faite juste avant."
+            if prisesSansFiche > 0 || sortiesSansFiche > 0 {
+                m += "\n\nJournal : \(prisesSansFiche) prise(s) et \(sortiesSansFiche) sortie(s) citent des numéros "
+                m += "absents du fichier ; elles ne seront plus reliées à une fiche de la boîte."
+            }
+            return m
+        }
+    }
+
+    struct BilanRemplacement {
+        let nombre: Int
+        let photos: Int
+        let sauvegarde: URL
+        let prisesSansFiche: Int
+    }
+
+    /// Fichier lu et vérifié, en attente de confirmation.
+    private var lotEnAttente: LeurreExportService.LotImport?
+
+    /// Étape 1 : lit tout le fichier sans toucher à la base.
+    /// Le fichier local est supprimé en fin de course.
+    func preparerRemplacement(depuis url: URL) async -> Result<ApercuRemplacement, Error> {
+        isLoading = true
+        defer {
+            isLoading = false
+            try? FileManager.default.removeItem(at: url)
+        }
+        do {
+            let lot = try LeurreExportService.lireLot(depuis: url)
+            lotEnAttente = lot
+            let actuels = tousLesLeurres
+            let journal = referencesJournalSansFiche(Set(lot.dtos.map { $0.id }))
+            return .success(ApercuRemplacement(
+                nombreFichier: lot.dtos.count,
+                photosFichier: lot.nombreAvecPhoto,
+                nombreActuel: actuels.count,
+                photosActuelles: actuels.filter { $0.photoData != nil }.count,
+                prisesSansFiche: journal.prises,
+                sortiesSansFiche: journal.sorties
+            ))
+        } catch {
+            lotEnAttente = nil
+            return .failure(error)
+        }
+    }
+
+    func annulerRemplacement() {
+        lotEnAttente = nil
+    }
+
+    /// Étape 2 (après confirmation) : sauvegarde ZIP, remplacement, recalcul.
+    func confirmerRemplacement() async -> Result<BilanRemplacement, Error> {
+        guard let lot = lotEnAttente else { return .failure(ImportError.fichierVide) }
+        lotEnAttente = nil
+        isLoading = true
+        defer { isLoading = false }
+        do {
+            let sauvegarde = try LeurreExportService.sauvegarderBoite(leurres: tousLesLeurres)
+            // La liste affichée ne doit plus rendre des fiches supprimées.
+            leurresFiltres = []
+            let nombre = try LeurreExportService.remplacerBoite(par: lot, dans: context)
+            recalculerTousLesChampsDeduits()
+            let journal = referencesJournalSansFiche(Set(lot.dtos.map { $0.id }))
+            return .success(BilanRemplacement(
+                nombre: nombre,
+                photos: lot.nombreAvecPhoto,
+                sauvegarde: sauvegarde,
+                prisesSansFiche: journal.prises
+            ))
+        } catch {
+            return .failure(error)
+        }
+    }
+
+    /// Prises et sorties du journal qui citent un numéro absent de `ids`.
+    private func referencesJournalSansFiche(_ ids: Set<Int>) -> (prises: Int, sorties: Int) {
+        let prises = (try? context.fetch(FetchDescriptor<Prise>())) ?? []
+        let nbPrises = prises.filter { prise in
+            guard let id = prise.leurreID else { return false }
+            return !ids.contains(id)
+        }.count
+        let sorties = (try? context.fetch(FetchDescriptor<Sortie>())) ?? []
+        let nbSorties = sorties.filter { !$0.leurresSessionIDs.allSatisfy(ids.contains) }.count
+        return (nbPrises, nbSorties)
     }
 
     // MARK: - Utilitaires

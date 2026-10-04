@@ -2,7 +2,8 @@
 //  MoteurLagon.swift
 //  Go les Picots - Module 2 : Suggestion IA
 //
-//  Moteur de traîne propre au lagon (lagon, platier et pâtés, passes),
+//  Moteur de traîne propre au lagon (lagon, platier et pâtés, passes) et,
+//  depuis octobre 2026, au tombant externe (lignes allongées de 4 m),
 //  pensé pour le Clark 4,29 m sans tangons et une boîte de poissons nageurs.
 //  Il remplace, pour ces zones, la logique héritée de la pêche au large.
 //  Référence : audit « Moteur de suggestion — lagon » (octobre 2026).
@@ -12,10 +13,16 @@
 //  2. La profondeur réelle d'une bavette dépend de la longueur de ligne du
 //     poste : profondeur catalogue × (1 − e^(−L/12)). Hypothèse à étalonner
 //     au sondeur ; elle est signalée comme estimation.
-//  3. Couleur = f(luminosité, turbidité), une seule table. La marée et la
-//     lune n'agissent pas sur la couleur ; la lune est hors score.
+//  3. Couleur (modèle validé le 4 octobre 2026) : profil du leurre (famille
+//     corrigée par la profondeur effective, teinte jugée au ventre près de
+//     la surface, éclat) face au besoin de contraste du jour (faible, moyen,
+//     fort, silhouette, nuit claire). La marée descendante relève le niveau
+//     d'un cran ; la lune ne compte que de nuit. La couleur départage, elle
+//     n'élimine jamais : 25 points = famille 15, teinte 7, éclat 3.
 //  4. Postes du Clark : short corner 16 m, long corner 23 m, centre 30 m,
-//     latéraux 20 et 22 m. Short corner contrasté, lignes arrière naturelles.
+//     latéraux 20 et 22 m. Short corner = signal (ventre chaud dans le
+//     bouillon) ; lignes longues discrètes en eau claire, contrastées en
+//     eau trouble.
 //  5. Étages distincts (1,5 m d'écart), le plus profond sur la ligne la plus
 //     longue, au moins deux amplitudes de nage dès trois lignes.
 //  6. Le moteur propose la vitesse commune qui fait le mieux pêcher le spread.
@@ -126,54 +133,84 @@ enum Lagon {
         }
     }
 
-    // MARK: Table couleur unique (luminosité × turbidité)
+    // MARK: Couleur par poste (modèle validé le 4 octobre 2026)
 
-    static func couleurDeBase(_ lum: Lumiere, _ eau: Eau) -> Contraste {
-        switch (lum, eau) {
-        case (.forte, .claire):    return .naturel
-        case (.forte, .teintee):   return .contraste
-        case (.forte, .trouble):   return .flashy
-        case (.diffuse, .claire):  return .contraste
-        case (.diffuse, .teintee): return .flashy
-        case (.diffuse, .trouble): return .sombre
-        case (.faible, _):         return .sombre
+    /// Ce que vise un poste du Clark pour le niveau de contraste du jour.
+    struct CibleCouleur {
+        /// Familles acceptées, la première est la famille visée.
+        let familles: [Contraste]
+        /// Short corner : ventre chaud (rouge, orange, rose) dans le bouillon.
+        let ventreChaud: Bool
+        /// nil : teintes conseillées du jour.
+        let teintes: [Teinte]?
+        let eclats: [Eclat]
+        let eclatsProscrits: [Eclat]
+        let consigne: String
+    }
+
+    /// Répartition sur le Clark (3 postes). Le short corner nage dans le
+    /// bouillon : c'est le poste du signal. Les lignes longues restent
+    /// discrètes en eau claire et prennent du contraste en eau trouble.
+    static func cible(poste: Poste?, niveau: NiveauContraste, nombreLignes: Int) -> CibleCouleur {
+        func c(_ f: [Contraste], ventre: Bool = false, teintes: [Teinte]? = nil,
+               _ e: [Eclat], proscrits: [Eclat] = [], _ texte: String) -> CibleCouleur {
+            CibleCouleur(familles: f, ventreChaud: ventre, teintes: teintes,
+                         eclats: e, eclatsProscrits: proscrits, consigne: texte)
+        }
+        guard let poste else {
+            return c(niveau.familles, niveau.eclats, proscrits: niveau.eclatsProscrits,
+                     "famille \(niveau.familles.map(nomCouleur).joined(separator: " ou "))")
+        }
+        // Une seule ligne : la famille visée par le niveau.
+        if nombreLignes == 1 && poste == .shortCorner && niveau == .moyen {
+            return c([.contraste], ventre: true, [.opaque, .fluoUV, .paillete], "contrasté, ventre chaud, opaque ou UV")
+        }
+        switch (niveau, poste) {
+        case (.faible, .shortCorner):
+            return c([.naturel], ventre: true, [.argente, .translucide], "flancs naturels, ventre chaud (rouge, orange ou rose)")
+        case (.faible, .longCorner):
+            return c([.naturel], [.argente], "naturel, éclat argenté")
+        case (.faible, .centre):
+            return c([.naturel], [.translucide, .argente], "naturel ; translucide si les touches sont rares en pleine lumière")
+
+        case (.moyen, .shortCorner):
+            return c([.flashy], ventre: true, [.opaque, .fluoUV, .paillete], "vif, ventre chaud")
+        case (.moyen, .longCorner):
+            return c([.contraste, .sombre], [.opaque], "contrasté ou sombre, opaque")
+        case (.moyen, .centre):
+            return c([.naturel], [.opaque, .paillete], "naturel, opaque ou pailleté")
+
+        case (.fort, .shortCorner):
+            return c([.flashy], [.fluoUV], proscrits: [.argente], "vif fluo, nage ample")
+        case (.fort, .longCorner):
+            return c([.sombre], [.opaque], proscrits: [.argente], "sombre, nage ample")
+        case (.fort, .centre):
+            return c([.contraste], [.paillete], proscrits: [.argente], "contrasté, pailleté")
+
+        case (.silhouette, .shortCorner):
+            return c([.flashy], teintes: [.rose], [.paillete], proscrits: [.argente], "rose à ventre pailleté argent")
+        case (.silhouette, .longCorner):
+            return c([.sombre], [.opaque], proscrits: [.argente], "sombre (silhouette)")
+        case (.silhouette, .centre):
+            return c([.naturel, .sombre], [.opaque], proscrits: [.argente], "naturel ou sombre")
+
+        case (.nuitClaire, .shortCorner):
+            return c([.sombre], [.lumineux, .argente], "sombre, phosphorescent ou réfléchissant")
+        case (.nuitClaire, .longCorner):
+            return c([.sombre], [.lumineux], "sombre, phosphorescent")
+        case (.nuitClaire, .centre):
+            return c([.contraste, .sombre], [.lumineux, .argente], "contrasté ou sombre, réfléchissant")
+
+        case (_, .lateralTribord), (_, .lateralBabord):
+            return niveau == .faible
+                ? c([.contraste], [.argente, .opaque], "contrasté, signal différent des corners")
+                : c([.flashy], niveau.eclats, proscrits: niveau.eclatsProscrits, "vif, signal différent des corners")
         }
     }
 
-    /// Le rôle du poste décale la couleur de base (règle propre au lagon).
-    static func couleurCible(poste: Poste?, base: Contraste, eau: Eau) -> Contraste {
-        guard let poste else { return base }
-        switch poste {
-        case .shortCorner:
-            return base == .naturel ? .contraste : base
-        case .longCorner, .centre:
-            switch base {
-            case .sombre:    return eau == .claire ? .naturel : .contraste
-            case .flashy:    return .contraste
-            case .contraste: return eau == .claire ? .naturel : .contraste
-            case .naturel:   return .naturel
-            }
-        case .lateralTribord, .lateralBabord:
-            return eau == .claire ? .contraste : .flashy
-        }
-    }
-
-    /// Proximité entre la couleur visée et le profil du leurre (0…1).
+    /// Proximité entre la famille visée et celle du leurre (0…1).
     static func similarite(cible: Contraste, leurre: Contraste) -> Double {
-        if cible == leurre { return 1 }
-        switch (cible, leurre) {
-        case (.naturel, .contraste):   return 0.6
-        case (.naturel, .flashy):      return 0.2
-        case (.naturel, .sombre):      return 0.1
-        case (.contraste, _):          return 0.6
-        case (.flashy, .contraste):    return 0.6
-        case (.flashy, .sombre):       return 0.3
-        case (.flashy, .naturel):      return 0.1
-        case (.sombre, .contraste):    return 0.6
-        case (.sombre, .flashy):       return 0.3
-        case (.sombre, .naturel):      return 0.0
-        default:                       return 0.3
-        }
+        ReglesCouleur.similarite(cible: cible, leurre: leurre)
     }
 
     static func nomCouleur(_ c: Contraste) -> String {
@@ -204,8 +241,12 @@ enum Lagon {
     }
 
     static func preset(pour c: ConditionsPeche) -> Preset {
+        let tombant = c.zone == .tombant
         let tailleMixte: (Double, Double)
-        if c.zone == .passe {
+        if tombant {
+            // Proies du tombant plus grosses (CPS 93 ; « Critères de choix » : 14–20 cm hors lagon).
+            tailleMixte = (14, 20)
+        } else if c.zone == .passe {
             tailleMixte = (12, 18)
         } else if c.etatMer == .calme && c.turbiditeEau == .claire && c.luminosite == .forte {
             tailleMixte = (8, 12)
@@ -213,28 +254,51 @@ enum Lagon {
             tailleMixte = (10, 15)
         }
 
-        let mixte = Preset(
-            nom: "mixte lagon", vitesseMin: 4.5, vitesseMax: 6.5, vitesseCible: 5.5,
-            bandeProfondeur: nil, taille: tailleMixte, nage: nil,
-            basDeLigne: "fluorocarbone 60 à 80 lb ; acier si les thazards sont là",
-            alerteCiguatera: nil, modeConseille: 2, margeFond: nil, horsLagon: nil
-        )
+        let mixte = tombant
+            ? Preset(
+                nom: "mixte tombant", vitesseMin: 5.0, vitesseMax: 7.0, vitesseCible: 6.0,
+                bandeProfondeur: nil, taille: tailleMixte, nage: nil,
+                basDeLigne: "acier ou câble 60 à 90 lb (wahoo, thazards) ; fluorocarbone 100 lb sinon",
+                alerteCiguatera: nil, modeConseille: 3, margeFond: nil, horsLagon: nil
+            )
+            : Preset(
+                nom: "mixte lagon", vitesseMin: 4.5, vitesseMax: 6.5, vitesseCible: 5.5,
+                bandeProfondeur: nil, taille: tailleMixte, nage: nil,
+                basDeLigne: "fluorocarbone 60 à 80 lb ; acier si les thazards sont là",
+                alerteCiguatera: nil, modeConseille: 2, margeFond: nil, horsLagon: nil
+            )
+
+        func horsZone(_ e: Espece) -> Preset {
+            Preset(
+                nom: mixte.nom, vitesseMin: mixte.vitesseMin, vitesseMax: mixte.vitesseMax,
+                vitesseCible: mixte.vitesseCible, bandeProfondeur: nil, taille: mixte.taille,
+                nage: nil, basDeLigne: mixte.basDeLigne, alerteCiguatera: nil,
+                modeConseille: mixte.modeConseille, margeFond: nil, horsLagon: e
+            )
+        }
 
         guard let espece = c.especePrioritaire else { return mixte }
+        let exterieur = tombant || c.zone == .passe
 
         switch espece {
         case .thazard, .thazardBatard:
+            // Sur le tombant, thazards plus gros que dans le lagon (CPS 93).
             return Preset(
-                nom: "thazard", vitesseMin: 6.0, vitesseMax: 6.5, vitesseCible: 6.25,
-                bandeProfondeur: (1, 5), taille: (12, 18), nage: .serree,
+                nom: "thazard", vitesseMin: 6.0, vitesseMax: tombant ? 7.0 : 6.5,
+                vitesseCible: tombant ? 6.5 : 6.25,
+                bandeProfondeur: tombant ? (1, 8) : (1, 5), taille: tombant ? (14, 20) : (12, 18),
+                nage: .serree,
                 basDeLigne: "acier 30 à 60 lb sur toutes les lignes",
                 alerteCiguatera: nil, modeConseille: 3, margeFond: nil, horsLagon: nil
             )
         case .carangue, .carangueBleue, .carangueGT:
+            // Tombant : traîne en zigzag ou en huit le long de la paroi, 5 à 7 nœuds (« Consignes »).
             return Preset(
                 nom: espece == .carangueGT ? "carangue GT" : "carangue",
-                vitesseMin: 4.5, vitesseMax: 5.5, vitesseCible: 5.0,
-                bandeProfondeur: (0, 3), taille: (10, 15), nage: nil,
+                vitesseMin: tombant ? 5.0 : 4.5, vitesseMax: tombant ? 7.0 : 5.5,
+                vitesseCible: tombant ? 6.0 : 5.0,
+                bandeProfondeur: tombant ? (0, 6) : (0, 3), taille: tombant ? (12, 18) : (10, 15),
+                nage: nil,
                 basDeLigne: "fluorocarbone épais (80 à 130 lb)",
                 alerteCiguatera: espece == .carangueGT
                     ? "Carangue GT : risque de ciguatera très élevé ; pêche no-kill conseillée."
@@ -242,6 +306,8 @@ enum Lagon {
                 modeConseille: 2, margeFond: nil, horsLagon: nil
             )
         case .loche, .lochePintade:
+            // Sur le tombant, la loche se pêche au jig, pas à la traîne.
+            if tombant { return horsZone(espece) }
             return Preset(
                 nom: "loche", vitesseMin: 4.25, vitesseMax: 5.25, vitesseCible: 4.75,
                 bandeProfondeur: nil, taille: (10, 15), nage: nil,
@@ -256,23 +322,49 @@ enum Lagon {
                 alerteCiguatera: nil, modeConseille: 3, margeFond: nil, horsLagon: nil
             )
         case .barracuda, .becune:
+            if tombant && espece == .becune { return horsZone(espece) }
             return Preset(
                 nom: espece == .becune ? "bécune" : "barracuda",
                 vitesseMin: 4.5, vitesseMax: 6.5, vitesseCible: 5.5,
-                bandeProfondeur: (1, 3), taille: (12, 18), nage: nil,
+                bandeProfondeur: tombant ? (1, 6) : (1, 3), taille: (12, 18), nage: nil,
                 basDeLigne: "acier 30 à 60 lb",
                 alerteCiguatera: "Barracuda et grosses bécunes : ciguatera fréquente au-delà de 3 à 5 kg.",
                 modeConseille: 2, margeFond: nil, horsLagon: nil
             )
-        default:
+        case .wahoo where exterieur:
+            // Plongeants 6–12 m pour le wahoo (« Critères de choix ») ; le Clark plafonne vers 7,5 nœuds.
             return Preset(
-                nom: mixte.nom, vitesseMin: mixte.vitesseMin, vitesseMax: mixte.vitesseMax,
-                vitesseCible: mixte.vitesseCible, bandeProfondeur: nil, taille: mixte.taille,
-                nage: nil, basDeLigne: mixte.basDeLigne, alerteCiguatera: nil,
-                modeConseille: 2, margeFond: nil, horsLagon: espece
+                nom: "wahoo", vitesseMin: 6.0, vitesseMax: 7.5, vitesseCible: 7.0,
+                bandeProfondeur: (3, 12), taille: (14, 20), nage: nil,
+                basDeLigne: "câble ou acier 60 à 90 lb obligatoire (dents)",
+                alerteCiguatera: nil, modeConseille: 3, margeFond: nil, horsLagon: nil
             )
+        case .thonJaune where exterieur, .thonObese where exterieur:
+            // Thons en subsurface ou en profondeur près du tombant, avant l'aube et après le coucher (CPS 93).
+            return Preset(
+                nom: "thon", vitesseMin: 5.5, vitesseMax: 7.0, vitesseCible: 6.25,
+                bandeProfondeur: (3, 12), taille: (14, 20), nage: nil,
+                basDeLigne: "fluorocarbone 80 à 130 lb",
+                alerteCiguatera: nil, modeConseille: 3, margeFond: nil, horsLagon: nil
+            )
+        case .thonDentsDeChien:
+            // Passes et tombant, à l'aube et au crépuscule (CPS 93) ; plongeants Magnum.
+            return Preset(
+                nom: "thon dents de chien", vitesseMin: 5.0, vitesseMax: 6.5, vitesseCible: 5.75,
+                bandeProfondeur: (4, 12), taille: (14, 22), nage: nil,
+                basDeLigne: "fluorocarbone 100 à 150 lb (dents et rochers)",
+                alerteCiguatera: nil, modeConseille: 2, margeFond: nil, horsLagon: nil
+            )
+        default:
+            return horsZone(espece)
         }
     }
+
+    /// Espèces de fond : sur le tombant, jig ou ligne profonde, jamais la traîne.
+    static let especesDeFond: Set<Espece> = [
+        .loche, .lochePintade, .merou, .seriole, .empereur,
+        .vivaneauRouge, .vivaneauChienRouge, .vivaneauQueueNoire, .becDeCane
+    ]
 
     // MARK: Contexte de calcul
 
@@ -281,23 +373,34 @@ enum Lagon {
         let preset: Preset
         let lumiere: Lumiere
         let eau: Eau
-        let couleurBase: Contraste
+        let niveau: NiveauContraste
+        let teintesDuJour: [Teinte]
         let nageCible: Amplitude
         let marge: Double
         let plafond: Double
         let ajustementDistance: Double
         let allongementArriere: Double
+        /// Tombant externe : lignes allongées (CPS 93).
+        let tombant: Bool
 
         init(_ c: ConditionsPeche) {
             conditions = c
+            tombant = c.zone == .tombant
             preset = Lagon.preset(pour: c)
             lumiere = Lagon.lumiere(c.luminosite)
             eau = Lagon.eau(c.turbiditeEau)
-            couleurBase = Lagon.couleurDeBase(lumiere, eau)
+            niveau = NiveauContraste.depuis(
+                luminosite: c.luminosite, turbidite: c.turbiditeEau, etatMer: c.etatMer,
+                moment: c.momentJournee, lune: c.phaseLunaire, maree: c.typeMaree
+            )
+            teintesDuJour = ReglesCouleur.teintesConseillees(
+                niveau: niveau, luminosite: c.luminosite, turbidite: c.turbiditeEau, lagon: true
+            )
 
-            if eau == .trouble || lumiere == .faible {
+            // Niveaux fort et silhouette : nages amples (le leurre doit déplacer de l'eau).
+            if niveau.nageAmple {
                 nageCible = .large
-            } else if eau == .claire && lumiere == .forte && (c.etatMer == .calme || c.etatMer == .peuAgitee) {
+            } else if niveau == .faible && (c.etatMer == .calme || c.etatMer == .peuAgitee) {
                 nageCible = .serree
             } else {
                 nageCible = .moyenne
@@ -325,7 +428,9 @@ enum Lagon {
         func longueurLigne(_ poste: Poste) -> Double {
             var l = poste.longueurLigne + ajustementDistance
             if poste == .longCorner || poste == .centre { l += allongementArriere }
-            return max(12, l)
+            if tombant { l += 4 }
+            // 35 m au plus : limite du schéma du Clark.
+            return min(35, max(12, l))
         }
     }
 
@@ -394,15 +499,19 @@ enum Lagon {
         let profondeur: Double
         let profondeurEstimee: Bool
         let couleurVisee: Contraste
+        let famille: Contraste
+        let teinte: Teinte
         let amplitude: Amplitude?
         let sProfondeur: Double
         let sCouleur: Double
         let sTaille: Double
         let sNage: Double
         let sEspece: Double
+        /// Tombant : leurre de passe ou du large pris en repli (−8).
+        let sZone: Double
         let donneesIncompletes: Bool
 
-        var total: Double { sProfondeur + sCouleur + sTaille + sNage + sEspece }
+        var total: Double { sProfondeur + sCouleur + sTaille + sNage + sEspece + sZone }
     }
 
     static func evaluer(_ l: Leurre, poste: Poste?, vitesse v: Double, ctx: Contexte) -> Evaluation? {
@@ -420,9 +529,10 @@ enum Lagon {
         var sProf = max(0, 25 - 6 * ecartBande)
         if poste == .shortCorner, prof.valeur > 3 { sProf = max(0, sProf - 5 * (prof.valeur - 3)) }
 
-        // Couleur (25)
-        let cible = couleurCible(poste: poste, base: ctx.couleurBase, eau: ctx.eau)
-        let sCoul = 25 * similarite(cible: cible, leurre: l.profilVisuel)
+        // Couleur (25) : famille 15, teinte 7, éclat 3
+        let cib = cible(poste: poste, niveau: ctx.niveau, nombreLignes: ctx.conditions.nombreLignes)
+        let coul = scoreCouleur(l, profondeur: prof.valeur, poste: poste, cible: cib, ctx: ctx)
+        let sCoul = coul.total
 
         // Taille (20)
         let t = ctx.preset.taille
@@ -446,10 +556,47 @@ enum Lagon {
         return Evaluation(
             leurre: l, poste: poste, longueurLigne: longueur,
             profondeur: prof.valeur, profondeurEstimee: prof.estimee,
-            couleurVisee: cible, amplitude: amp,
+            couleurVisee: cib.familles.first ?? .naturel, famille: coul.famille, teinte: coul.teinte,
+            amplitude: amp,
             sProfondeur: sProf, sCouleur: sCoul, sTaille: sTaille, sNage: sNage, sEspece: sEsp,
+            sZone: (ctx.tombant && !l.zonesAdapteesFinales.contains(.tombant)) ? -8 : 0,
             donneesIncompletes: !plage.complete || l.profondeurNageMax == nil
         )
+    }
+
+    /// Score couleur sur 25 : famille 15 (corrigée par la profondeur
+    /// effective), teinte 7 (ventre d'abord près de la surface), éclat 3.
+    static func scoreCouleur(_ l: Leurre, profondeur p: Double, poste: Poste?,
+                             cible: CibleCouleur, ctx: Contexte) -> (total: Double, famille: Contraste, teinte: Teinte) {
+        let f = l.ficheDeduction
+        let famille = ReglesCouleur.familleCorrigee(f, profondeur: p)
+        let sFamille = 15 * (cible.familles.map { similarite(cible: $0, leurre: famille) }.max() ?? 0)
+
+        let t = ReglesCouleur.teinte(f)
+        let t2 = ReglesCouleur.teinteSecondaire(f)
+        let preferees = cible.teintes ?? ctx.teintesDuJour
+        var sTeinte: Double
+        if cible.ventreChaud && p <= 3 {
+            // Le prédateur, sous le leurre, voit surtout le ventre.
+            sTeinte = ReglesCouleur.ventreChaud(f) ? 7 : (preferees.contains(t) ? 3 : 1)
+        } else if preferees.contains(t) {
+            sTeinte = 7
+        } else if let t2, preferees.contains(t2) {
+            sTeinte = 4
+        } else {
+            sTeinte = 1
+        }
+        // Lagon : pas de contraste agressif rouge/noir hors short corner en eau claire.
+        if poste != .shortCorner && ctx.eau == .claire && famille == .contraste &&
+           (t == .orangeRouge || t2 == .orangeRouge) {
+            sTeinte = 0
+        }
+
+        var e = ReglesCouleur.eclat(f)
+        if ReglesCouleur.ventre(f)?.paillete == true && cible.eclats.contains(.paillete) { e = .paillete }
+        let sEclat: Double = cible.eclats.contains(e) ? 3 : (cible.eclatsProscrits.contains(e) ? 0 : 1)
+
+        return (sFamille + sTeinte + sEclat, famille, t)
     }
 
     static func scoreEspece(_ l: Leurre, profondeur: Double, amplitude: Amplitude?, ctx: Contexte) -> Double {
@@ -468,6 +615,14 @@ enum Lagon {
             return petit && droit ? 15 : (petit || droit ? 10 : 5)
         case "barracuda", "bécune":
             return l.longueur >= 12 ? 15 : 8
+        case "wahoo", "thon":
+            let plonge = profondeur >= 3
+            let taille = l.longueur >= 14
+            return plonge && taille ? 15 : (plonge || taille ? 10 : 5)
+        case "thon dents de chien":
+            let plonge = profondeur >= 4 && !estJupe(l)
+            let taille = l.longueur >= 14
+            return plonge && taille ? 15 : (plonge || taille ? 9 : 4)
         default:
             return estJupe(l) ? 10 : 12
         }
@@ -491,6 +646,8 @@ enum Lagon {
                 // Le plus profond sur la ligne la plus longue.
                 let (court, long) = a.longueurLigne <= b.longueurLigne ? (a, b) : (b, a)
                 if long.profondeur < court.profondeur - 0.5 { p += 15 }
+                // Diversité : ni même famille ni même teinte quand la boîte le permet.
+                if a.famille == b.famille && a.teinte == b.teinte { p += 6 }
             }
         }
         if lignes.count >= 3 {
@@ -622,14 +779,29 @@ enum Lagon {
 
 extension SuggestionEngine {
 
-    /// Le moteur lagon traite le lagon, le platier et les pâtés, et les passes.
+    /// Le moteur lagon traite le lagon, le platier et les pâtés, les passes
+    /// et le tombant externe (trois postes du Clark).
     static func moteurLagonApplicable(_ c: ConditionsPeche) -> Bool {
-        c.zone == .lagon || c.zone == .recif || c.zone == .passe
+        c.zone == .lagon || c.zone == .recif || c.zone == .passe || c.zone == .tombant
     }
 
     func executerMoteurLagon(conditions c: ConditionsPeche) {
         let ctx = Lagon.Contexte(c)
-        let candidats = self.BoiteLeurresViewModel.tousLesLeurres.filter { Lagon.estLeurreDeTraine($0) }
+        var candidats = self.BoiteLeurresViewModel.tousLesLeurres.filter { Lagon.estLeurreDeTraine($0) }
+
+        // Tombant : leurres marqués « tombant » ; ceux de la passe ou du large
+        // seulement en repli, quand la boîte n'en compte pas assez.
+        if c.zone == .tombant {
+            let duTombant = candidats.filter { $0.zonesAdapteesFinales.contains(.tombant) }
+            if duTombant.count >= min(c.nombreLignes, Lagon.postesInstalles) {
+                candidats = duTombant
+            } else {
+                candidats = candidats.filter { l in
+                    let z = l.zonesAdapteesFinales
+                    return z.contains(.tombant) || z.contains(.passe) || z.contains(.large)
+                }
+            }
+        }
 
         guard !candidats.isEmpty else {
             terminerAvecErreur("❌ Aucun leurre de traîne dans la boîte.")
@@ -736,7 +908,13 @@ extension SuggestionEngine {
         let b = ctx.bande
         jTech += " Étage visé : \(Lagon.nb(b.min))–\(Lagon.nb(b.max)) m (fond \(Lagon.nb(ctx.conditions.profondeurZone)) m, marge \(Lagon.nb(ctx.marge)) m)."
 
-        let jCoul = "Lumière \(ctx.lumiere.rawValue), eau \(ctx.eau.rawValue) : couleur visée \(Lagon.nomCouleur(e.couleurVisee)). Profil du leurre : \(Lagon.nomCouleur(l.profilVisuel)) (\(l.descriptionCouleurs))."
+        let cib = Lagon.cible(poste: e.poste, niveau: ctx.niveau, nombreLignes: ctx.conditions.nombreLignes)
+        var jCoul = "Contraste du jour \(ctx.niveau.rawValue) : \(cib.consigne)."
+        jCoul += " Ce leurre : \(Lagon.nomCouleur(e.famille))"
+        if e.famille != l.profilVisuel { jCoul += " (\(Lagon.nomCouleur(l.profilVisuel)) en surface, corrigé à \(Lagon.nb(e.profondeur.arrondi(1))) m)" }
+        jCoul += ", teinte \(l.teinte.rawValue), éclat \(l.eclat.rawValue)"
+        if let v = l.ventre, let ton = v.ton { jCoul += ", ventre \(ton.rawValue)" }
+        jCoul += " (\(l.descriptionCouleurs)). La couleur départage, elle n'élimine pas."
 
         var jCond = "Nage visée \(ctx.nageVisee.rawValue) ; ce leurre : \(e.amplitude?.rawValue ?? "non renseignée")."
         jCond += " Cible : \(ctx.preset.nom). La lune n'entre pas dans le choix."
@@ -783,6 +961,9 @@ extension SuggestionEngine {
         var a: [String] = []
         if ctx.ajustementDistance < 0 { a.append("Mer agitée : toutes les lignes raccourcies de 3 m.") }
         if ctx.allongementArriere > 0 { a.append("Eau très claire et plein soleil : lignes arrière allongées de 3 m.") }
+        if ctx.tombant {
+            a.append("Tombant : lignes allongées de 4 m (CPS 93 : à l'aplomb du tombant, on peut allonger et lester les lignes).")
+        }
         if ctx.conditions.zone == .passe {
             a.append("En passe, la vitesse dans l'eau diffère de la vitesse GPS : à contre-courant, lisez moins au GPS ; avec le courant, plus.")
         }
@@ -802,12 +983,28 @@ extension SuggestionEngine {
         var lignes: [String] = []
 
         lignes.append("TRAÎNER À \(Lagon.nbVitesse(spread.vitesse)) NŒUDS")
-        lignes.append("Lumière \(ctx.lumiere.rawValue), eau \(ctx.eau.rawValue) : base couleur \(Lagon.nomCouleur(ctx.couleurBase)). Short corner contrasté, lignes arrière naturelles. Nage visée : \(ctx.nageVisee.rawValue).")
+        lignes.append("Contraste du jour : \(ctx.niveau.description). Lumière \(ctx.lumiere.rawValue), eau \(ctx.eau.rawValue). Nage visée : \(ctx.nageVisee.rawValue).")
+        for poste in postes {
+            let cb = Lagon.cible(poste: poste, niveau: ctx.niveau, nombreLignes: c.nombreLignes)
+            lignes.append("• \(poste.nom) : \(cb.consigne)")
+        }
 
         // Alertes
         var alertes: [String] = []
         if let hors = ctx.preset.horsLagon {
-            alertes.append("« \(hors.displayName) » ne se pêche pas à la traîne en lagon : suggestion faite en mode mixte lagon.")
+            if c.zone == .tombant {
+                alertes.append(Lagon.especesDeFond.contains(hors)
+                    ? "« \(hors.displayName) » se pêche au jig ou à la ligne profonde sur le tombant, pas à la traîne : suggestion faite en mode mixte tombant."
+                    : "« \(hors.displayName) » se cherche plutôt au large ou sous DCP qu'au tombant : suggestion faite en mode mixte tombant.")
+            } else {
+                alertes.append("« \(hors.displayName) » ne se pêche pas à la traîne en lagon : suggestion faite en mode mixte lagon.")
+            }
+        }
+        if c.zone == .tombant && spread.lignes.contains(where: { !$0.leurre.zonesAdapteesFinales.contains(.tombant) }) {
+            alertes.append("Boîte courte en leurres de tombant : un leurre de passe ou du large complète le spread.")
+        }
+        if c.especePrioritaire == .thonDentsDeChien {
+            alertes.append("Thon à dents de chien : aube et crépuscule, passes et tombant ; après une prise, tournez au même endroit, d'autres suivent souvent (CPS 93).")
         }
         if spread.lignes.count < postes.count {
             alertes.append("Seulement \(spread.lignes.count) leurre(s) nagent correctement ici : spread réduit à \(spread.lignes.count) ligne(s).")
@@ -830,8 +1027,16 @@ extension SuggestionEngine {
         if c.zone == .recif && min(c.nombreLignes, Lagon.postesInstalles) >= 4 {
             alertes.append("Platier et pâtés : passez à 2 ou 3 lignes.")
         }
-        if ctx.preset.horsLagon == nil && ctx.preset.nom != "mixte lagon" && c.nombreLignes != ctx.preset.modeConseille {
+        if ctx.preset.horsLagon == nil && !ctx.preset.nom.hasPrefix("mixte") && c.nombreLignes != ctx.preset.modeConseille {
             alertes.append("Pour la cible \(ctx.preset.nom), le mode conseillé est \(ctx.preset.modeConseille) ligne\(ctx.preset.modeConseille > 1 ? "s" : "").")
+        }
+        let horsFamille = spread.lignes.filter { e in
+            guard let p = e.poste else { return false }
+            return !Lagon.cible(poste: p, niveau: ctx.niveau, nombreLignes: c.nombreLignes).familles.contains(e.famille)
+        }
+        if !horsFamille.isEmpty {
+            let noms = horsFamille.compactMap { $0.poste?.nom.lowercased() }.joined(separator: ", ")
+            alertes.append("Couleur : la famille visée manque dans la boîte à la bonne profondeur (\(noms)) ; voir « À acheter ».")
         }
         alertes.append("Bas de ligne : \(ctx.preset.basDeLigne).")
         if let cig = ctx.preset.alerteCiguatera { alertes.append(cig) }
@@ -861,18 +1066,20 @@ extension SuggestionEngine {
             "• Mettre à l'eau les lignes longues d'abord, remonter les courtes d'abord.",
             "• Vitesse constante, virages larges : un virage serré écrase la nage des lignes intérieures.",
             "• Après une touche : cercle pour repasser sur le lieu ; ramener les autres lignes excite les suiveurs.",
-            "• Le pâté se travaille côté au vent, d'assez près.",
+            c.zone == .tombant
+                ? "• Suivre le tombant à la limite eau verte (au-dessus du récif) et eau bleue (au large), une couleur de chaque bord ; zigzags ou huits le long de la paroi."
+                : "• Le pâté se travaille côté au vent, d'assez près.",
             "• Rien après 30 minutes : changer la profondeur, puis la nage, la couleur en dernier."
         ])
 
         // À acheter : postes servis à moins de 70 points
         var achats: [String] = []
-        for e in spread.lignes where e.total < 70 {
+        for e in spread.lignes where e.total < 70 || horsFamille.contains(where: { $0.leurre.id == e.leurre.id }) {
             guard let poste = e.poste else { continue }
-            achats.append("• \(poste.nom) : leurre \(Lagon.nomCouleur(e.couleurVisee)), \(Lagon.nb(ctx.preset.taille.min))–\(Lagon.nb(ctx.preset.taille.max)) cm, nage \(ctx.nageVisee.rawValue), nageant vers \(etageVise(poste, ctx: ctx)) (meilleur leurre actuel : \(e.leurre.nom), \(Int(e.total))/100).")
+            achats.append("• \(poste.nom) : leurre \(Lagon.cible(poste: poste, niveau: ctx.niveau, nombreLignes: c.nombreLignes).consigne), \(Lagon.nb(ctx.preset.taille.min))–\(Lagon.nb(ctx.preset.taille.max)) cm, nage \(ctx.nageVisee.rawValue), nageant vers \(etageVise(poste, ctx: ctx)) (meilleur leurre actuel : \(e.leurre.nom), \(Int(e.total))/100).")
         }
         for poste in postes.dropFirst(spread.lignes.count) {
-            achats.append("• \(poste.nom) : aucun leurre ne nage ici ; profil \(Lagon.nomCouleur(Lagon.couleurCible(poste: poste, base: ctx.couleurBase, eau: ctx.eau))), \(etageVise(poste, ctx: ctx)).")
+            achats.append("• \(poste.nom) : aucun leurre ne nage ici ; profil \(Lagon.cible(poste: poste, niveau: ctx.niveau, nombreLignes: c.nombreLignes).consigne), \(etageVise(poste, ctx: ctx)).")
         }
         if !achats.isEmpty {
             lignes.append("")

@@ -200,65 +200,66 @@ import SwiftData
     var estCouleurFoncee: Bool { luminositePercueCouleur < 0.3 }
 
     // MARK: - Deductions moteur
+    //
+    // Les champs déduits (zones, espèces, postes, contraste) sont recalculés
+    // à chaque enregistrement par BoiteLeurresViewModel.calculerChampsDeduits,
+    // lignes repères des notes comprises. Les valeurs « Finales » lisent ces
+    // champs et ne recalculent qu'en leur absence.
+
+    /// Champs saisis, sous une forme indépendante de SwiftData.
+    var ficheDeduction: FicheDeduction {
+        func perso(_ c: CouleurCustom?) -> FicheDeduction.CouleurPerso? {
+            guard let c, !c.isRainbow else { return nil }
+            return FicheDeduction.CouleurPerso(contraste: c.contraste, r: c.red, g: c.green, b: c.blue)
+        }
+        return FicheDeduction(
+            typeLeurre: typeLeurre,
+            typePeche: typePeche,
+            typesPecheCompatibles: typesPecheCompatibles ?? [],
+            longueur: longueur,
+            profondeurMin: profondeurNageMin,
+            profondeurMax: profondeurNageMax,
+            typesDeNage: typesDeNage ?? [],
+            couleurPrincipale: couleurPrincipale,
+            couleurSecondaire: couleurSecondaire,
+            persoPrincipale: perso(couleurPrincipaleCustom),
+            persoSecondaire: perso(couleurSecondaireCustom),
+            finition: finition,
+            notes: notes
+        )
+    }
+
+    /// Déduction complète (calcul automatique et lignes repères).
+    var deductions: ReglesDeduction.Resultat {
+        ReglesDeduction.deduire(ficheDeduction, famille: profilVisuel)
+    }
 
     var zonesAdapteesFinales: [Zone] {
         if let zones = zonesAdaptees, !zones.isEmpty { return zones }
-        if let notes = notes, !notes.isEmpty {
-            let z = NoteAnalysisService.detecterZones(dans: notes)
-            if !z.isEmpty { return z }
-        }
-        return LeurreIntelligenceService.deduireZones(leurre: self)
+        return deductions.zones
     }
 
+    /// Famille visuelle du leurre (naturel, sombre, vif, contrasté).
+    /// La finition ne change plus la famille : un violet/noir chromé reste
+    /// une silhouette sombre, avec du flash (voir `eclat`).
     var profilVisuel: Contraste {
-        let base = contrastePrincipaleReel
-        guard let finition = finition else { return base }
-        switch finition {
-        case .holographique, .chrome, .miroir, .paillete:
-            switch base {
-            case .naturel:   return .naturel
-            case .flashy:    return .flashy
-            case .sombre:    return .contraste
-            case .contraste: return .contraste
-            }
-        case .mate:
-            switch base {
-            case .sombre:    return .sombre
-            case .naturel:   return .naturel
-            case .flashy:    return .flashy
-            case .contraste: return .contraste
-            }
-        case .phosphorescent: return .sombre
-        case .UV:
-            switch base {
-            case .sombre:    return .sombre
-            case .naturel:   return .contraste
-            case .flashy:    return .flashy
-            case .contraste: return .contraste
-            }
-        case .metallique, .brillante:
-            switch base {
-            case .naturel:   return .naturel
-            case .sombre:    return .contraste
-            case .flashy:    return .flashy
-            case .contraste: return .contraste
-            }
-        case .perlee: return base
-        }
+        ReglesCouleur.famille(ficheDeduction)
     }
+
+    /// Famille corrigée par la profondeur de nage effective.
+    func familleCorrigee(profondeur: Double) -> Contraste {
+        ReglesCouleur.familleCorrigee(ficheDeduction, profondeur: profondeur)
+    }
+
+    var teinte: Teinte { ReglesCouleur.teinte(ficheDeduction) }
+    var teinteSecondaire: Teinte? { ReglesCouleur.teinteSecondaire(ficheDeduction) }
+    var eclat: Eclat { ReglesCouleur.eclat(ficheDeduction) }
+    var ventre: Ventre? { ReglesCouleur.ventre(ficheDeduction) }
+    var aUnVentreChaud: Bool { ReglesCouleur.ventreChaud(ficheDeduction) }
 
     var especesCiblesFinales: [String] {
-        var especes: [String] = []
-        if let notes = notes, !notes.isEmpty {
-            especes.append(contentsOf: NoteAnalysisService.detecterEspeces(dans: notes))
-        }
-        if let especesJSON = especesCibles {
-            for e in especesJSON where !especes.contains(e) { especes.append(e) }
-        }
-        if especes.isEmpty {
-            especes = LeurreIntelligenceService.deduireEspeces(leurre: self)
-        }
-        return especes
+        if let especes = especesCibles, !especes.isEmpty { return especes }
+        return deductions.especes
     }
 
     var vitessesTraineFinales: (min: Double, max: Double) {
@@ -270,12 +271,10 @@ import SwiftData
         conditionsOptimales ?? LeurreIntelligenceService.deduireConditions(leurre: self)
     }
 
+    /// Postes possibles en traîne, le poste conseillé en tête.
     var positionsSpreadFinales: [PositionSpread] {
         if let p = positionsSpread, !p.isEmpty { return p }
-        if let notes = notes, !notes.isEmpty {
-            let p = NoteAnalysisService.detecterPositionsSpread(dans: notes)
-            if !p.isEmpty { return p }
-        }
+        if let p = deductions.postes, !p.isEmpty { return p }
         return [.libre]
     }
 }
@@ -1136,6 +1135,8 @@ enum Espece: String, Codable, CaseIterable, Hashable {
     case vivaneauQueueNoire = "vivaneauQueueNoire"
     case becDeCane          = "becDeCane"
     case coureurArcEnCiel   = "coureurArcEnCiel"
+    case thonDentsDeChien   = "thonDentsDeChien"
+    case seriole            = "seriole"
 
     var displayName: String {
         switch self {
@@ -1162,21 +1163,28 @@ enum Espece: String, Codable, CaseIterable, Hashable {
         case .vivaneauQueueNoire: return "Vivaneau queue noire"
         case .becDeCane:          return "Bec de cane"
         case .coureurArcEnCiel:   return "Coureur arc-en-ciel"
+        case .thonDentsDeChien:   return "Thon dents de chien"
+        case .seriole:            return "Seriole"
         }
     }
 
     var zonesTypiques: [Zone] {
         switch self {
-        case .thonJaune, .thonObese, .marlin, .voilier:      return [.large, .dcp]
-        case .wahoo, .mahiMahi, .bonite:                      return [.large, .passe, .dcp]
-        case .thazard, .thazardBatard:                        return [.passe, .lagon, .large]
-        case .carangue, .carangueBleue, .barracuda, .becune:  return [.lagon, .recif, .passe]
-        case .carangueGT:                                     return [.passe, .recif, .large]
+        case .thonObese, .marlin, .voilier:                   return [.large, .dcp]
+        case .thonJaune:                                      return [.large, .dcp, .tombant]
+        case .mahiMahi:                                       return [.large, .passe, .dcp]
+        case .wahoo, .bonite:                                 return [.large, .passe, .dcp, .tombant]
+        case .thazard, .thazardBatard:                        return [.passe, .lagon, .large, .tombant]
+        case .carangue, .becune:                              return [.lagon, .recif, .passe]
+        case .carangueBleue, .barracuda:                      return [.lagon, .recif, .passe, .tombant]
+        case .carangueGT:                                     return [.passe, .recif, .large, .tombant]
         case .loche, .lochePintade, .merou:                   return [.recif, .tombant]
         case .empereur:                                       return [.lagon, .recif]
         case .vivaneauRouge, .vivaneauChienRouge,
              .vivaneauQueueNoire, .becDeCane:                 return [.tombant, .recif]
-        case .coureurArcEnCiel:                               return [.large, .passe]
+        case .coureurArcEnCiel:                               return [.large, .passe, .tombant]
+        case .thonDentsDeChien:                               return [.tombant, .passe, .recif]
+        case .seriole:                                        return [.tombant, .profond]
         }
     }
 
@@ -1195,6 +1203,8 @@ enum Espece: String, Codable, CaseIterable, Hashable {
         case .vivaneauChienRouge:                return [.montage, .jig]
         case .vivaneauQueueNoire, .becDeCane:    return [.montage, .palangrotte]
         case .coureurArcEnCiel:                  return [.traine]
+        case .thonDentsDeChien:                  return [.traine, .jig]
+        case .seriole:                           return [.jig, .montage]
         }
     }
 

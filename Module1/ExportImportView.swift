@@ -5,6 +5,8 @@
 //  V4 — Adaptations SwiftData :
 //  - viewModel.leurres supprimé → leurres reçu en paramètre (@Query dans BoiteView)
 //  - ModeImport.remplacer supprimé → import toujours en mode fusionner
+//    (octobre 2026 : mode « Remplacer ma boîte » rétabli, avec lecture
+//    vérifiée, confirmation chiffrée et sauvegarde ZIP automatique)
 //  - exporterBaseDeDonnees() reçoit leurres: en paramètre
 //
 //  Session 9 — correction de l'import security-scoped :
@@ -34,6 +36,11 @@ struct ExportImportView: View {
     @State private var exportURL: URL?
     @State private var showImportPicker = false
     @State private var importEnCours    = false
+
+    // Remplacement de la boîte : fichier lu, en attente de confirmation
+    @State private var modeRemplacement = false
+    @State private var apercuRemplacement: BoiteLeurresViewModel.ApercuRemplacement?
+    @State private var showConfirmationRemplacement = false
 
     // Voie d'alerte unique — succès et échec passent tous deux par ici
     @State private var alerteTitre   = ""
@@ -90,21 +97,51 @@ struct ExportImportView: View {
 
                 // MARK: Import
                 Section {
-                    Button { showImportPicker = true } label: {
+                    Button {
+                        modeRemplacement = false
+                        showImportPicker = true
+                    } label: {
                         HStack(spacing: 12) {
                             Image(systemName: "square.and.arrow.down")
                                 .font(.title2)
                                 .foregroundColor(Color(hex: "FFBC42"))
 
                             VStack(alignment: .leading, spacing: 4) {
-                                Text("Importer une base")
+                                Text("Ajouter des leurres")
                                     .font(.headline).foregroundColor(.primary)
                                 Text("Depuis un fichier .zip ou .json")
                                     .font(.caption).foregroundColor(.secondary)
                             }
                             Spacer()
 
-                            if importEnCours {
+                            if importEnCours && !modeRemplacement {
+                                ProgressView()
+                            } else {
+                                Image(systemName: "chevron.right").foregroundColor(.secondary)
+                            }
+                        }
+                        .padding(.vertical, 8)
+                    }
+                    .disabled(importEnCours)
+
+                    Button {
+                        modeRemplacement = true
+                        showImportPicker = true
+                    } label: {
+                        HStack(spacing: 12) {
+                            Image(systemName: "arrow.triangle.2.circlepath")
+                                .font(.title2)
+                                .foregroundColor(.red)
+
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Remplacer ma boîte")
+                                    .font(.headline).foregroundColor(.primary)
+                                Text("Toute la boîte est remplacée par le fichier")
+                                    .font(.caption).foregroundColor(.secondary)
+                            }
+                            Spacer()
+
+                            if importEnCours && modeRemplacement {
                                 ProgressView()
                             } else {
                                 Image(systemName: "chevron.right").foregroundColor(.secondary)
@@ -116,7 +153,7 @@ struct ExportImportView: View {
                 } header: {
                     Text("Import")
                 } footer: {
-                    Text("Importez des leurres depuis un fichier exporté. Les doublons (même ID) sont ignorés automatiquement.")
+                    Text("Ajouter : les leurres déjà présents (même numéro, même nom) sont ignorés. Remplacer : le fichier est d'abord lu en entier ; si tout est lisible, une sauvegarde ZIP de la boîte actuelle est rangée dans Fichiers › Sur mon iPad › Go Les Picots › Sauvegardes boîte, puis la boîte est remplacée. Numéros et photos du fichier sont conservés.")
                 }
             }
             .navigationTitle("Export/Import")
@@ -138,6 +175,16 @@ struct ExportImportView: View {
             } message: {
                 Text(alerteMessage)
             }
+        }
+        // Confirmation du remplacement, attachée hors de la List :
+        // la List porte déjà l'alerte de résultat.
+        .alert("Remplacer ma boîte ?",
+               isPresented: $showConfirmationRemplacement,
+               presenting: apercuRemplacement) { _ in
+            Button("Remplacer", role: .destructive) { lancerRemplacement() }
+            Button("Annuler", role: .cancel) { viewModel.annulerRemplacement() }
+        } message: { apercu in
+            Text(apercu.message)
         }
     }
 
@@ -166,6 +213,27 @@ struct ExportImportView: View {
 
                 // À partir d'ici, plus aucune dépendance security-scoped.
                 importEnCours = true
+
+                if modeRemplacement {
+                    // Étape 1 : lecture complète, sans toucher à la boîte.
+                    Task {
+                        let resultat = await viewModel.preparerRemplacement(depuis: copieLocale)
+                        importEnCours = false
+
+                        switch resultat {
+                        case .success(let apercu):
+                            apercuRemplacement = apercu
+                            showConfirmationRemplacement = true
+                        case .failure(let erreur):
+                            afficherAlerte(
+                                titre: "Remplacement impossible",
+                                message: "\(erreur.localizedDescription)\n\nTa boîte n'a pas été modifiée."
+                            )
+                        }
+                    }
+                    return
+                }
+
                 Task {
                     let resultat = await viewModel.importerBaseDeDonnees(depuis: copieLocale)
                     importEnCours = false
@@ -218,6 +286,32 @@ struct ExportImportView: View {
         print("📥 Fichier copié en local : \(destination.lastPathComponent) — \(taille ?? 0) octets")
 
         return destination
+    }
+
+    /// Étape 2 : après confirmation, sauvegarde puis remplacement.
+    private func lancerRemplacement() {
+        importEnCours = true
+        Task {
+            let resultat = await viewModel.confirmerRemplacement()
+            importEnCours = false
+            apercuRemplacement = nil
+
+            switch resultat {
+            case .success(let bilan):
+                var message = "\(bilan.nombre) leurre\(bilan.nombre > 1 ? "s" : ""), dont \(bilan.photos) avec photo. "
+                message += "Ancienne boîte sauvegardée dans Fichiers › Sur mon iPad › Go Les Picots › Sauvegardes boîte "
+                message += "(\(bilan.sauvegarde.lastPathComponent))."
+                if bilan.prisesSansFiche > 0 {
+                    message += "\n\n\(bilan.prisesSansFiche) prise(s) du journal citent un numéro absent de la nouvelle boîte."
+                }
+                afficherAlerte(titre: "Boîte remplacée", message: message)
+            case .failure(let erreur):
+                afficherAlerte(
+                    titre: "Remplacement échoué",
+                    message: "\(erreur.localizedDescription)\n\nLa boîte d'origine a été remise en place ; une sauvegarde ZIP a pu être faite dans Fichiers › Sauvegardes boîte."
+                )
+            }
+        }
     }
 
     /// Formule le message de fin d'import en fonction du compteur réel.
