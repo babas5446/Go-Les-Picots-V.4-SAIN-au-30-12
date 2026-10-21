@@ -21,7 +21,9 @@
 //     d'un cran ; la lune ne compte que de nuit. La couleur départage, elle
 //     n'élimine jamais : 25 points = famille 15, teinte 7, éclat 3.
 //  4. Postes du Clark : short corner 16 m, long corner 23 m, centre 30 m,
-//     latéraux 20 et 22 m. Short corner = signal (ventre chaud dans le
+//     latéraux 20 et 22 m ; dans le lagon et sur le platier, long corner
+//     21 m et centre 24 m, 22 et 24 m au plus (CPS 93 : lignes de moins de
+//     25 m, non lestées, dans le lagon). Short corner = signal (ventre chaud dans le
 //     bouillon) ; lignes longues discrètes en eau claire, contrastées en
 //     eau trouble.
 //  5. Étages distincts (1,5 m d'écart), le plus profond sur la ligne la plus
@@ -74,6 +76,24 @@ enum Lagon {
             case .centre:         return 30
             case .lateralTribord: return 20
             case .lateralBabord:  return 22
+            }
+        }
+
+        /// Longueur de base dans le lagon et sur le platier : lignes de moins
+        /// de 25 m, qui s'emmêlent moins quand on vire autour des pâtés (CPS 93).
+        var longueurLigneLagon: Double {
+            switch self {
+            case .longCorner: return 21
+            case .centre:     return 24
+            default:          return longueurLigne
+            }
+        }
+
+        /// Longueur maximale dans le lagon et sur le platier.
+        var longueurMaxLagon: Double {
+            switch self {
+            case .longCorner: return 22
+            default:          return 24
             }
         }
 
@@ -516,10 +536,15 @@ enum Lagon {
             return (0, plafond)
         }
 
+        /// Lagon et platier (pâtés) : lignes courtes (CPS 93).
+        var lagonInterieur: Bool { conditions.zone == .lagon || conditions.zone == .recif }
+
         func longueurLigne(_ poste: Poste) -> Double {
-            var l = poste.longueurLigne + ajustementDistance
+            var l = (lagonInterieur ? poste.longueurLigneLagon : poste.longueurLigne) + ajustementDistance
             if poste == .longCorner || poste == .centre { l += allongementArriere }
             if tombant || large { l += 4 }
+            // Lagon et platier : moins de 25 m (CPS 93).
+            if lagonInterieur { l = min(poste.longueurMaxLagon, l) }
             // 35 m au plus : limite du schéma du Clark.
             return min(35, max(12, l))
         }
