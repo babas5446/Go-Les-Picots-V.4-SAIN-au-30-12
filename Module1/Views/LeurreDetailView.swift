@@ -11,6 +11,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct LeurreDetailView: View {
     @Bindable var leurre: Leurre
@@ -20,6 +21,17 @@ struct LeurreDetailView: View {
     @State private var showingEditer    = false
     @State private var showingDupliquer = false
     @State private var showingSupprimer = false
+
+    /// Journal : sorties terminées, pour le bloc « Dans mon journal ».
+    @Query private var sorties: [Sortie]
+
+    /// Ce que le journal dit du leurre ; nil tant qu'il n'a rien pris (pas de malus).
+    private var bilanJournal: BilanLeurre? {
+        let id = leurre.id
+        guard sorties.contains(where: { $0.etat == .terminee && $0.prises.contains { $0.leurreID == id } }) else { return nil }
+        let donnees = StatistiquesView.donnees(sorties: sorties, leurres: [])
+        return StatistiquesCalcul.bilanLeurre(id: id, sorties: donnees.sorties, marees: TideService.joursEnCache())
+    }
 
     var body: some View {
         ScrollView {
@@ -33,6 +45,10 @@ struct LeurreDetailView: View {
 
                 if leurre.typePeche == .traine {
                     cartePerformance
+                }
+
+                if let bilan = bilanJournal {
+                    carteJournal(bilan)
                 }
 
                 if !leurre.especesCiblesFinales.isEmpty {
@@ -371,6 +387,51 @@ struct LeurreDetailView: View {
         .background(Color.white)
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
+    }
+
+    // MARK: - Carte journal
+
+    private func carteJournal(_ b: BilanLeurre) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            SectionHeader(title: "Dans mon journal", icon: "book.closed.fill")
+
+            VStack(spacing: 10) {
+                ligneJournal("Prises", "\(b.total)" + (b.horsEffort > 0 ? " (dont \(b.horsEffort) hors spread enregistré)" : ""))
+                if b.heures > 0 {
+                    ligneJournal("Temps à l'eau", StatistiquesCalcul.heures(b.heures))
+                }
+                if let r = b.rendement {
+                    ligneJournal("Rendement", "\(StatistiquesCalcul.rendement(r)) prise/h" + (b.echantillonFaible ? " (peu d'heures)" : ""))
+                }
+                if !b.especes.isEmpty {
+                    ligneJournal("Espèces", b.especes.map { $0.nombre > 1 ? "\($0.nom) (\($0.nombre))" : $0.nom }.joined(separator: ", "))
+                }
+                if let m = b.meilleurMoment { ligneJournal("Meilleur moment", m.libelle) }
+                if let m = b.meilleureMaree { ligneJournal("Meilleure marée", m.libelle) }
+                if let m = b.meilleureZone { ligneJournal("Meilleure zone", m.libelle) }
+                if let m = b.meilleurPoste { ligneJournal("Meilleur poste", m.libelle) }
+                if let g = b.plusGros { ligneJournal("Plus gros", g) }
+                if let d = b.dernierePrise {
+                    ligneJournal("Dernière prise", d.formatted(.dateTime.day().month(.wide).year().locale(Locale(identifier: "fr_FR"))))
+                }
+            }
+
+            Text("Rendement : prises par heure à l'eau, d'après les spreads enregistrés. « Meilleur » : là où ce leurre a pris le plus par heure de pêche (une heure au moins).")
+                .font(.caption)
+                .foregroundColor(.secondary)
+        }
+        .padding()
+        .background(Color.white)
+        .cornerRadius(12)
+        .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
+    }
+
+    private func ligneJournal(_ libelle: String, _ valeur: String) -> some View {
+        HStack(alignment: .firstTextBaseline) {
+            Text(libelle).font(.subheadline).foregroundColor(.gray).frame(width: 120, alignment: .leading)
+            Text(valeur).font(.subheadline).fontWeight(.semibold)
+            Spacer()
+        }
     }
 
     // MARK: - Carte zones adaptées

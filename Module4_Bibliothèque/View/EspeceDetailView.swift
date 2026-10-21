@@ -9,9 +9,21 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct EspeceDetailView: View {
     let espece: EspeceInfo
+
+    @Query private var sorties: [Sortie]
+    @Query private var leurres: [Leurre]
+
+    /// Bilan du journal pour cette espèce, s'il y a des prises.
+    private var bilanJournal: BilanEspece? {
+        guard let cle = Espece.allCases.first(where: { $0.ficheIdentifiant == espece.identifiant })?.rawValue,
+              sorties.contains(where: { s in s.prises.contains { Espece.depuis(rawValue: $0.especeNom)?.rawValue == cle } })
+        else { return nil }
+        return StatistiquesView.analyse(sorties: sorties, leurres: leurres).especes.first { $0.cle == cle }
+    }
     
     var body: some View {
         ScrollView {
@@ -289,6 +301,11 @@ struct EspeceDetailView: View {
                     }
                 }
                 
+                // MARK: - Dans mon journal
+                if let bilan = bilanJournal {
+                    BlocJournalEspece(bilan: bilan)
+                }
+
                 // MARK: - 💡 LE SAVIEZ-VOUS ?
                 if let anecdote = espece.leSaviezVous {
                     SectionCard(icon: "💡", title: "LE SAVIEZ-VOUS ?") {
