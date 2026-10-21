@@ -143,7 +143,7 @@ struct PriseFormView: View {
         self.prise        = prise
         self.modeCreation = false
 
-        _especeNom        = State(initialValue: prise.especeNom)
+        _especeNom        = State(initialValue: Espece.depuis(rawValue: prise.especeNom)?.rawValue ?? prise.especeNom)
         _especeLibre      = State(initialValue: prise.especeLibre ?? "")
         _tailleCm         = State(initialValue: prise.tailleCm.map { String(Int($0)) } ?? "")
         _poidsKg          = State(initialValue: prise.poidsKg.map { String(format: "%.1f", $0) } ?? "")

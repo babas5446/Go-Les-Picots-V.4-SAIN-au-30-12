@@ -532,7 +532,7 @@ class BoiteLeurresViewModel: ObservableObject {
             r[id, default: []].append(Lagon.PriseResumee(
                 zone: c?.zone,
                 niveau: c.map { SuggestionEngine.niveauContraste($0) },
-                espece: p.especeNom
+                espece: Espece.depuis(rawValue: p.especeNom)?.rawValue ?? p.especeNom
             ))
         }
         return r

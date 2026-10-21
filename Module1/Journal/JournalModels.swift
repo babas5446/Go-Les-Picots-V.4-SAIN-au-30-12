@@ -580,7 +580,7 @@ final class Prise {
     /// sinon la saisie libre, sinon un libellé de repli.
     var especeAffichee: String {
         if !especeNom.isEmpty {
-            return Espece(rawValue: especeNom)?.displayName ?? especeNom
+            return Espece.depuis(rawValue: especeNom)?.displayName ?? especeNom
         }
         if let libre = especeLibre, !libre.isEmpty { return libre }
         return "Espèce inconnue"

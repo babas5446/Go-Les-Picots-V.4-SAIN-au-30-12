@@ -70,7 +70,7 @@ enum ReglesDeduction {
     /// Version des règles. Un changement de version déclenche, au lancement
     /// suivant, un recalcul unique de toute la boîte (BoiteLeurresViewModel).
     /// 3 : zone tombant et thon à dents de chien (octobre 2026).
-    static let versionDeductions = 3
+    static let versionDeductions = 4
     static let cleVersion = "versionDeductions"
 
     /// Espèces calculées gardées au plus (celles du texte libre s'ajoutent).
@@ -178,7 +178,6 @@ enum ReglesDeduction {
     /// avec la pratique. L'ordre départage les égalités.
     static let profilsTraine: [ProfilTraine] = [
         ProfilTraine(espece: .thazard,          longueurMin: 10, longueurMax: 20, nageJusqua: 6, zones: [.passe, .lagon, .large, .tombant],     nagePreferee: .serree, atteintAuMoins: nil, surfaceObligatoire: false),
-        ProfilTraine(espece: .thazardBatard,    longueurMin: 12, longueurMax: 20, nageJusqua: 6, zones: [.large, .passe, .tombant],             nagePreferee: .serree, atteintAuMoins: nil, surfaceObligatoire: false),
         ProfilTraine(espece: .bonite,           longueurMin: 6,  longueurMax: 14, nageJusqua: 4, zones: [.passe, .large, .dcp, .tombant],       nagePreferee: .serree, atteintAuMoins: nil, surfaceObligatoire: false),
         ProfilTraine(espece: .wahoo,            longueurMin: 14, longueurMax: 25, nageJusqua: 9, zones: [.passe, .large, .dcp, .tombant],       nagePreferee: .serree, atteintAuMoins: nil, surfaceObligatoire: false),
         ProfilTraine(espece: .thonJaune,        longueurMin: 12, longueurMax: 25, nageJusqua: 9, zones: [.large, .dcp, .tombant],               nagePreferee: nil,     atteintAuMoins: nil, surfaceObligatoire: false),
@@ -389,9 +388,12 @@ enum NiveauContraste: String, CaseIterable {
     /// - Fort : eau trouble, mer formée.
     /// - Silhouette : aube, crépuscule, temps très sombre, nuit noire.
     /// - Nuit claire : nuit de pleine lune.
-    /// La marée descendante relève le niveau d'un cran (indice, pas certitude).
+    /// La marée descendante relève le niveau d'un cran (indice, pas certitude),
+    /// le courant fort en passe aussi (« Consignes » : couleurs visibles,
+    /// leurres à forte tenue).
     static func depuis(luminosite: Luminosite, turbidite: Turbidite, etatMer: EtatMer,
-                       moment: MomentJournee, lune: PhaseLunaire, maree: TypeMaree) -> NiveauContraste {
+                       moment: MomentJournee, lune: PhaseLunaire, maree: TypeMaree,
+                       courantFort: Bool = false) -> NiveauContraste {
         if moment == .nuit || luminosite == .nuit {
             return lune == .pleineLune ? .nuitClaire : .silhouette
         }
@@ -407,6 +409,7 @@ enum NiveauContraste: String, CaseIterable {
             cran = 0
         }
         if maree == .descendante { cran = min(2, cran + 1) }
+        if courantFort { cran = min(2, cran + 1) }
         return [.faible, .moyen, .fort][cran]
     }
 

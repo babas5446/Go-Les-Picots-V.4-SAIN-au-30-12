@@ -67,12 +67,11 @@ class NoteAnalysisService {
 
     /// Espèces : du plus précis au plus général (l'ordre compte).
     static let vocabulaireEspeces: [(motifs: [String], espece: Espece)] = [
-        (["thazard batard", "thazard du large"],                        .thazardBatard),
+        (["wahoo", "wahou", "thazard batard", "thazard du large"],        .wahoo),
         (["thazard", "thazard raye", "thazard commun"],                   .thazard),
         (["thon obese", "patudo", "big eye", "bigeye"],                   .thonObese),
         (["thon a dents de chien", "thon dents de chien", "dents de chien", "dogtooth", "gymnosarda"], .thonDentsDeChien),
         (["thon jaune", "albacore", "yellowfin", "thon"],                 .thonJaune),
-        (["wahoo", "wahou"],                                              .wahoo),
         (["bonite", "listao"],                                            .bonite),
         (["mahi mahi", "dorade coryphene", "coryphene", "mahi", "dorado"], .mahiMahi),
         (["marlin"],                                                      .marlin),

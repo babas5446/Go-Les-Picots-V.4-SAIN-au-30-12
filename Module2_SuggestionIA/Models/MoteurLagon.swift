@@ -297,7 +297,7 @@ enum Lagon {
         let exterieur = horsLagonExterieur || c.zone == .passe
 
         switch espece {
-        case .thazard, .thazardBatard:
+        case .thazard:
             // Sur le tombant et au large, thazards plus gros que dans le lagon (CPS 93).
             return Preset(
                 nom: "thazard", vitesseMin: 6.0, vitesseMax: horsLagonExterieur ? 7.0 : 6.5,
@@ -479,7 +479,8 @@ enum Lagon {
             eau = Lagon.eau(c.turbiditeEau)
             niveau = NiveauContraste.depuis(
                 luminosite: c.luminosite, turbidite: c.turbiditeEau, etatMer: c.etatMer,
-                moment: c.momentJournee, lune: c.phaseLunaire, maree: c.typeMaree
+                moment: c.momentJournee, lune: c.phaseLunaire, maree: c.typeMaree,
+                courantFort: c.zone == .passe && c.courant == .fort
             )
             teintesDuJour = ReglesCouleur.teintesConseillees(
                 niveau: niveau, luminosite: c.luminosite, turbidite: c.turbiditeEau, lagon: true
@@ -496,7 +497,9 @@ enum Lagon {
 
             marge = preset.margeFond ?? (c.zone == .passe ? 3 : 5)
             plafond = max(1.0, c.profondeurZone - marge)
-            ajustementDistance = (c.etatMer == .agitee || c.etatMer == .formee) ? -3 : 0
+            // Mer agitée ou courant fort en passe : lignes raccourcies (« Consignes »).
+            ajustementDistance = (c.etatMer == .agitee || c.etatMer == .formee
+                || (c.zone == .passe && c.courant == .fort)) ? -3 : 0
             allongementArriere = (eau == .claire && lumiere == .forte) ? 3 : 0
         }
 
@@ -1078,7 +1081,8 @@ extension SuggestionEngine {
 
     private func ajustementsVitesse(_ ctx: Lagon.Contexte) -> [String] {
         var a: [String] = []
-        if ctx.ajustementDistance < 0 { a.append("Mer agitée : toutes les lignes raccourcies de 3 m.") }
+        let merAgitee = ctx.conditions.etatMer == .agitee || ctx.conditions.etatMer == .formee
+        if ctx.ajustementDistance < 0 && merAgitee { a.append("Mer agitée : toutes les lignes raccourcies de 3 m.") }
         if ctx.allongementArriere > 0 { a.append("Eau très claire et plein soleil : lignes arrière allongées de 3 m.") }
         if ctx.large {
             a.append("Large : lignes allongées de 4 m (CPS 2025 : 30 à 50 m en eaux côtières ; 35 m au plus sur le schéma du Clark).")
@@ -1088,6 +1092,14 @@ extension SuggestionEngine {
         }
         if ctx.conditions.zone == .passe {
             a.append("En passe, la vitesse dans l'eau diffère de la vitesse GPS : à contre-courant, lisez moins au GPS ; avec le courant, plus.")
+            switch ctx.conditions.courant {
+            case .fort?:
+                a.append("Courant fort en passe : \(merAgitee ? "lignes déjà raccourcies" : "toutes les lignes raccourcies de 3 m") et un cran de contraste en plus (« Consignes » : leurres à forte tenue, couleurs visibles). Traînez le long de la ligne de courant, en bordure de la veine principale.")
+            case .faible?:
+                a.append("Courant faible en passe : poissons plus méfiants ; gardez des leurres discrets et changez de couleur avant de changer de taille.")
+            default:
+                break
+            }
         }
         return a
     }

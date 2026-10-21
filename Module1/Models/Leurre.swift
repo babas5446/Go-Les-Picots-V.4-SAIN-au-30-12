@@ -804,7 +804,7 @@ enum Zone: String, Codable, CaseIterable, Hashable {
                     "Merou", "Thon jaune", "Wahoo"]
         case .large:
             return ["Thon jaune", "Thon obese", "Marlin", "Espadon voilier",
-                    "Wahoo", "Mahi-mahi (Coryphene)", "Thazard batard", "Bonite"]
+                    "Wahoo", "Mahi-mahi (Coryphene)", "Bonite"]
         case .profond:
             return ["Vivaneau rubis (200-300m)", "Vivaneau la flamme (200-300m)",
                     "Vivaneau blanc (150-250m)", "Loche pintade profonde",
@@ -1120,7 +1120,6 @@ enum Espece: String, Codable, CaseIterable, Hashable {
     case marlin             = "marlin"
     case voilier            = "voilier"
     case thazard            = "thazard"
-    case thazardBatard      = "thazardBatard"
     case carangue           = "carangue"
     case carangueGT         = "carangueGT"
     case carangueBleue      = "carangueBleue"
@@ -1148,7 +1147,6 @@ enum Espece: String, Codable, CaseIterable, Hashable {
         case .marlin:             return "Marlin"
         case .voilier:            return "Voilier"
         case .thazard:            return "Thazard"
-        case .thazardBatard:      return "Thazard batard"
         case .carangue:           return "Carangue"
         case .carangueGT:         return "Carangue GT"
         case .carangueBleue:      return "Carangue bleue"
@@ -1174,7 +1172,7 @@ enum Espece: String, Codable, CaseIterable, Hashable {
         case .thonJaune:                                      return [.large, .dcp, .tombant]
         case .mahiMahi:                                       return [.large, .passe, .dcp]
         case .wahoo, .bonite:                                 return [.large, .passe, .dcp, .tombant]
-        case .thazard, .thazardBatard:                        return [.passe, .lagon, .large, .tombant]
+        case .thazard:                                        return [.passe, .lagon, .large, .tombant]
         case .carangue, .becune:                              return [.lagon, .recif, .passe]
         case .carangueBleue, .barracuda:                      return [.lagon, .recif, .passe, .tombant]
         case .carangueGT:                                     return [.passe, .recif, .large, .tombant]
@@ -1191,7 +1189,7 @@ enum Espece: String, Codable, CaseIterable, Hashable {
     var typesPecheCompatibles: [TypePeche] {
         switch self {
         case .thonJaune, .thonObese, .wahoo,
-             .marlin, .voilier, .thazardBatard:  return [.traine]
+             .marlin, .voilier:                  return [.traine]
         case .mahiMahi, .bonite, .thazard,
              .carangue, .carangueBleue,
              .barracuda, .becune:                return [.traine, .lancer]
@@ -1209,4 +1207,55 @@ enum Espece: String, Codable, CaseIterable, Hashable {
     }
 
     var estPechableEnTraine: Bool { typesPecheCompatibles.contains(.traine) }
+
+    // MARK: Ancien nom et fiche
+
+    /// « Thazard bâtard » est le nom calédonien du wahoo : l'ancienne valeur
+    /// « thazardBatard », encore présente dans les sorties et les prises
+    /// enregistrées avant octobre 2026, est relue comme wahoo.
+    static let anciensNoms: [String: Espece] = ["thazardBatard": .wahoo]
+
+    /// Valeur brute actuelle ou ancienne.
+    static func depuis(rawValue r: String) -> Espece? {
+        Espece(rawValue: r) ?? anciensNoms[r]
+    }
+
+    init(from decoder: Decoder) throws {
+        let brut = try decoder.singleValueContainer().decode(String.self)
+        guard let e = Espece.depuis(rawValue: brut) else {
+            throw DecodingError.dataCorrupted(.init(codingPath: decoder.codingPath,
+                                                    debugDescription: "Espèce inconnue : \(brut)"))
+        }
+        self = e
+    }
+
+    /// Identifiant de la fiche de la Bibliothèque (nil : pas de fiche propre).
+    var ficheIdentifiant: String? {
+        switch self {
+        case .thonJaune:          return "thonJaune"
+        case .thonObese:          return "thon_obese"
+        case .bonite:             return "bonite"
+        case .wahoo:              return "wahoo"
+        case .mahiMahi:           return "mahiMahi"
+        case .marlin:             return "marlin"
+        case .voilier:            return "Espadon voilier"
+        case .thazard:            return "thazard_raye"
+        case .carangue:           return nil
+        case .carangueGT:         return "carangueGT"
+        case .carangueBleue:      return "carangueBleue"
+        case .barracuda:          return "barracuda"
+        case .becune:             return "becunes"
+        case .loche:              return "locheSaumonee"
+        case .lochePintade:       return "lochePintade"
+        case .merou:              return "merou"
+        case .empereur:           return "empereur"
+        case .vivaneauRouge:      return "vivaneauRouge"
+        case .vivaneauChienRouge: return "vivaneauChienRouge"
+        case .vivaneauQueueNoire: return "vivaneauQueueNoire"
+        case .becDeCane:          return "becDeCane"
+        case .coureurArcEnCiel:   return "coureurArcEnCiel"
+        case .thonDentsDeChien:   return "thonDentsDeChien"
+        case .seriole:            return "seriole"
+        }
+    }
 }

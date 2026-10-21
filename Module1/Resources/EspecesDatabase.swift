@@ -1308,7 +1308,9 @@ class EspecesDatabase {
         ),
         
         // ─────────────────────────────────────────────────────────────────────
-        // LOCHE SAUMONÉE / SAUMONÉE HIRONDELLE (Variola louti) (traîne possible mais jig/montage préféré)
+        // SAUMONÉE HIRONDELLE, CROISSANT QUEUE JAUNE (Variola louti) (traîne possible mais jig/montage préféré)
+        // Ancienne fiche « loche saumonée » : le nom désigne en Nouvelle-Calédonie
+        // Plectropomus leopardus (fiche plus bas).
         // ─────────────────────────────────────────────────────────────────────
         
         EspeceInfo(
@@ -1317,8 +1319,8 @@ class EspecesDatabase {
             // IDENTIFICATION DE BASE
             // ═══════════════════════════════════════════
             
-            identifiant: "locheSaumonee",
-            nomCommun: "Loche saumonée",
+            identifiant: "saumoneeHirondelle",
+            nomCommun: "Saumonée hirondelle (croissant queue jaune)",
             nomScientifique: "Variola louti",
             famille: "Serranidae",
             
@@ -1389,7 +1391,7 @@ class EspecesDatabase {
             // ═══════════════════════════════════════════
             
             photoNom: nil,  // pas de photo dans les Assets
-            illustrationNom: "LocheSaumonee_illustration",
+            illustrationNom: "SaumoneeHirondelle_illustration",
             
             signesDistinctifs: """
             **IDENTIFICATION FACILE - CAUDALE UNIQUE :**
@@ -2587,6 +2589,365 @@ class EspecesDatabase {
             zonesInterdites: "Respecter les aires marines protégées et les réserves.",
             statutConservation: nil,
             leSaviezVous: "La sériole n'est pas une « vraie » carangue du genre Caranx : elle n'a pas la rangée d'écailles dures (scutelles) le long de la queue.",
+            nePasPecher: false,
+            raisonProtection: nil
+        ),
+
+        // ═════════════════════════════════════════════════════════════════════
+        // FICHES AJOUTÉES EN OCTOBRE 2026
+        // Une fiche par espèce du moteur qui n'en avait pas (« Voir la fiche »
+        // depuis le formulaire de suggestion). Identification et tailles
+        // maximales : Guide d'identification des poissons côtiers (CPS, Moore
+        // et Colas, illustrations CSIRO) et Fiches d'identification des
+        // poissons profonds (CPS). Habitat, pêche, ciguatera et règles :
+        // Fiches espèces NC (lots 1 et 2) et manuel CPS de pêche profonde.
+        // Les règles changent : toujours vérifier auprès de la province.
+        // ═════════════════════════════════════════════════════════════════════
+
+        // ─────────────────────────────────────────────────────────────────────
+        // LOCHE SAUMONÉE (Plectropomus leopardus) — espèce « loche » du moteur
+        // ─────────────────────────────────────────────────────────────────────
+        EspeceInfo(
+            identifiant: "locheSaumonee",
+            nomCommun: "Loche saumonée",
+            nomScientifique: "Plectropomus leopardus",
+            famille: "Serranidae",
+            zones: [.lagon, .recif, .passe],
+            profondeurMin: 3,
+            profondeurMax: 50,
+            typesPecheCompatibles: [.traine, .jig, .montage],
+            traineInfo: TraineInfo(
+                vitesseMin: 4.0,
+                vitesseMax: 5.5,
+                vitesseOptimale: 4.75,
+                profondeurNageOptimale: "1 à 2 m au-dessus du fond (3-12 m)",
+                tailleLeurreMin: 10.0,
+                tailleLeurreMax: 15.0,
+                typesLeurresRecommandes: [
+                    "Poisson nageur plongeant à grande bavette",
+                    "Poisson nageur coulant lent"
+                ],
+                couleursRecommandees: ["rouge/orange", "naturel", "or"],
+                positionsSpreadRecommandees: nil,
+                notes: "Traîne lente au ras des patates et des pinacles : le leurre doit taper le fond de temps en temps. Prise fréquente en bordure de récif et en passe à marée montante."
+            ),
+            comportement: "Prédateur territorial posé sur un pinacle ou à l'abri d'une patate de corail ; chasse à l'affût les petits poissons de récif.",
+            momentsFavorables: [.aube, .matinee, .apresMidi, .crepuscule],
+            photoNom: nil,
+            illustrationNom: "LocheSaumonee_illustration",
+            signesDistinctifs: "Livrée rouge, gris pâle ou brune selon l'habitat et l'humeur. Nombreux points bleus bordés de sombre sur la tête, le corps et les nageoires, sauf les pectorales. Cercle bleu presque complet autour de l'œil. La vieille Saint-Silac (P. maculatus) porte de courtes barres bleues sur la tête au lieu de points.",
+            tailleMinLegale: nil,
+            tailleMaxObservee: 75.0,
+            poidsMaxObserve: nil,
+            descriptionPhysique: "Loche élancée à caudale tronquée. Prises courantes de 35 à 60 cm. Taille maximale : 75 cm (longueur fourche, guide CPS).",
+            habitatDescription: "Espèce ubiquiste du lagon, du littoral à l'extérieur du grand récif, entre 3 et 50 m : récifs vivants, dalles à algues, pinacles isolés sur fond de sable, épaves.",
+            comportementDetail: "Change de couleur en quelques secondes, du rouge vif au brun presque noir. Attaque souvent au décollage du leurre du fond. Hermaphrodite protogyne : les gros sujets sont surtout des mâles reproducteurs.",
+            techniquesDetail: "Traîne lente (4 à 5,5 nœuds) d'un plongeant qui frôle les têtes de corail, de préférence dans les 3 à 12 m. Hors traîne : jig et slow jig près du fond (60 à 150 g), vif ou lanière à la dérive sur les pinacles du lagon par 10 à 40 m.",
+            leuresSpecifiques: [
+                "Plongeants 10-15 cm à grande bavette (3-6 m)",
+                "Jigs et slow jigs 60-150 g",
+                "Leurres souples sur tête plombée"
+            ],
+            appatsNaturels: [
+                "Chinchard ou sardine vivants",
+                "Lanières de poisson frais",
+                "Calmar"
+            ],
+            meilleursHoraires: "Tôt le matin et en fin d'après-midi, à l'étale du courant.",
+            conditionsOptimales: "Pinacles et bordures de récif du lagon, eau claire, courant faible.",
+            qualiteCulinaire: "Chair blanche, ferme et parfumée, parmi les plus cotées du marché de Nouméa : four, sashimi, ceviche, court-bouillon, plancha.",
+            risqueCiguatera: .faible,
+            ciguateraDetail: "Rarement toxique en Nouvelle-Calédonie, mais le risque augmente avec la taille et dans les zones connues pour la gratte (côte nord-est, Loyauté, certains récifs). Éviter les plus gros sujets ; ne jamais manger le foie ni les viscères.",
+            reglementationNC: "Province Sud : taille minimale de capture réglementée pour les loches et quotas de pêche plaisancière (se reporter au code de l'environnement en vigueur). Provinces Nord et Îles : règles propres, parfois plus strictes.",
+            quotas: "À vérifier auprès de la DENV (Province Sud), de la DDEE (Province Nord) ou de la Direction de l'Économie (Province des Îles) avant chaque sortie.",
+            zonesInterdites: "Toute capture interdite dans les réserves intégrales du lagon (bien inscrit au patrimoine mondial).",
+            statutConservation: "Quasi menacée (UICN), espèce très ciblée autour de Nouméa et des îlots.",
+            leSaviezVous: "Toutes les loches saumonées naissent femelles ; une partie devient mâle en grandissant. Garder systématiquement les plus gros, c'est prélever les mâles reproducteurs.",
+            nePasPecher: false,
+            raisonProtection: nil
+        ),
+
+        // ─────────────────────────────────────────────────────────────────────
+        // LOCHE PINTADE (Epinephelus chlorostigma) — « mérou pintade » du guide CPS
+        // ─────────────────────────────────────────────────────────────────────
+        EspeceInfo(
+            identifiant: "lochePintade",
+            nomCommun: "Loche pintade",
+            nomScientifique: "Epinephelus chlorostigma",
+            famille: "Serranidae",
+            zones: [.tombant, .profond],
+            profondeurMin: 50,
+            profondeurMax: 280,
+            typesPecheCompatibles: [.jig, .montage, .palangrotte],
+            traineInfo: nil,
+            comportement: "Mérou de profondeur, posé sur le bas du tombant et les monts sous-marins ; fait partie des prises accessoires de la pêche aux vivaneaux profonds.",
+            momentsFavorables: [.aube, .matinee, .crepuscule],
+            photoNom: nil,
+            illustrationNom: "LochePintade_illustration",
+            signesDistinctifs: "Livrée dans les tons bruns, couverte de nombreux petits points brun foncé serrés sur la tête, le corps et les nageoires. Caudale légèrement concave, bordée de blanc.",
+            tailleMinLegale: nil,
+            tailleMaxObservee: 70.0,
+            poidsMaxObserve: nil,
+            descriptionPhysique: "Mérou de taille moyenne au corps assez allongé. Taille maximale : 70 cm (longueur fourche, guide CPS).",
+            habitatDescription: "Pente externe du récif et monts sous-marins, surtout entre 100 et 280 m d'après le manuel CPS de pêche profonde.",
+            comportementDetail: "Démersal strict : ne monte pas vers la surface. Les sujets remontés de grande profondeur souffrent de la décompression (barotraumatisme).",
+            techniquesDetail: "Pêche profonde à la palangrotte verticale (moulinet à main ou électrique) avec appât, ou slow jig de 250 à 400 g sur les tombants extérieurs de 150 à 300 m (« Slow jigging »). Jamais à la traîne. Avec le Clark, seulement par mer calme et courant faible.",
+            leuresSpecifiques: [
+                "Slow jigs 250-400 g",
+                "Jigs papillon (flutter)"
+            ],
+            appatsNaturels: [
+                "Calmar",
+                "Bonite en morceaux",
+                "Sélar"
+            ],
+            meilleursHoraires: "Début de matinée et crépuscule ; en profondeur, toute la journée.",
+            conditionsOptimales: "Dérive lente sur la pente externe, courant faible ; échosondeur indispensable pour suivre la pente.",
+            qualiteCulinaire: "Chair blanche et ferme, de bonne qualité.",
+            risqueCiguatera: .faible,
+            ciguateraDetail: "Peu cité dans les documents du Projet. Les poissons de profondeur sont en général moins concernés que ceux du récif, mais la prudence s'impose pour les gros sujets.",
+            reglementationNC: "Pas de règle spécifique relevée dans les documents du Projet. Vérifier la réglementation de la province avant de garder un poisson.",
+            quotas: nil,
+            zonesInterdites: "Respecter les aires marines protégées et les réserves.",
+            statutConservation: nil,
+            leSaviezVous: "Le guide CPS l'appelle « mérou pintade » : ses points serrés rappellent le plumage de la pintade.",
+            nePasPecher: false,
+            raisonProtection: nil
+        ),
+
+        // ─────────────────────────────────────────────────────────────────────
+        // MÉROU : LOCHE TRUITE, MÉROU BLEU (Epinephelus cyanopodus)
+        // ─────────────────────────────────────────────────────────────────────
+        EspeceInfo(
+            identifiant: "merou",
+            nomCommun: "Mérou (loche truite, mérou bleu)",
+            nomScientifique: "Epinephelus cyanopodus",
+            famille: "Serranidae",
+            zones: [.lagon, .recif, .tombant],
+            profondeurMin: 2,
+            profondeurMax: 150,
+            typesPecheCompatibles: [.jig, .montage],
+            traineInfo: nil,
+            comportement: "Solitaire et territorial, souvent posé à l'entrée d'une cavité, sous une patate ou dans une épave.",
+            momentsFavorables: [.aube, .crepuscule],
+            photoNom: nil,
+            illustrationNom: "MerouBleu_illustration",
+            signesDistinctifs: "Livrée gris bleuté pâle semée de nombreux petits points noirs et de quelques points plus gros, de forme irrégulière, sur la tête, le corps et les nageoires. Marge intérieure noire sur la caudale ; extrémité des pelviennes noire.",
+            tailleMinLegale: nil,
+            tailleMaxObservee: 122.0,
+            poidsMaxObserve: 20.0,
+            descriptionPhysique: "Gros mérou trapu. Prises courantes de 50 à 90 cm. Taille maximale : 122 cm (longueur totale, guide CPS). Ne pas le confondre avec la mère loche (mérou malabar, E. malabaricus), barrée de cinq larges bandes sombres et qui dépasse 2 m.",
+            habitatDescription: "Lagon et grand récif, du récif côtier aux pinacles et aux épaves, de 2 à 150 m, surtout entre 20 et 80 m.",
+            comportementDetail: "Très fidèle à son refuge : un adulte peut occuper la même cavité pendant des années et s'en éloigner de quelques centaines de mètres seulement. Prend souvent violemment à la descente du jig.",
+            techniquesDetail: "Jig lourd (150 à 300 g) ou vif à la dérive sur les pinacles et épaves du lagon et du grand récif, entre 25 et 70 m. Présentation posée au fond, courtes relances. Prévoir un frein serré : le mérou rentre dans son trou dès qu'il est piqué. Pas une espèce de traîne.",
+            leuresSpecifiques: [
+                "Jigs métalliques 150-300 g",
+                "Leurres souples 7-9 pouces sur tête plombée"
+            ],
+            appatsNaturels: [
+                "Gros vifs (coureur, chinchard)",
+                "Calmar entier"
+            ],
+            meilleursHoraires: "Aube et crépuscule, à l'étale du courant.",
+            conditionsOptimales: "Pinacles, épaves et cavités ; courant faible pour tenir le jig à la verticale.",
+            qualiteCulinaire: "Chair blanche, épaisse et ferme, très appréciée : four, sashimi, plancha, ceviche.",
+            risqueCiguatera: .modere,
+            ciguateraDetail: "Risque modéré qui augmente avec la taille. Prudence avec les sujets de plus de 10 kg dans les zones à gratte (côte nord-est, certains récifs des Loyauté). Ne jamais manger le foie ni les viscères.",
+            reglementationNC: "Province Sud (délibération n° 787-2021) : chasse sous-marine interdite toute l'année pour les mères loches, loches carites et loches à taches orange de plus de 15 kg ou de plus d'un mètre ; les poissons pêchés doivent être conservés entiers. Chasse sous-marine de nuit et en bouteille interdite.",
+            quotas: "Province Sud : 40 kg par jour et par navire hors pélagiques (à vérifier dans le code en vigueur).",
+            zonesInterdites: "Capture interdite dans les réserves intégrales.",
+            statutConservation: "Préoccupation mineure (UICN), mais localement sensible à la surpêche à cause de sa sédentarité.",
+            leSaviezVous: "Remonté de plus de 30 m, un mérou a la vessie gonflée : pour le relâcher, il faut le redescendre (descendeur) plutôt que le lâcher en surface.",
+            nePasPecher: false,
+            raisonProtection: nil
+        ),
+
+        // ─────────────────────────────────────────────────────────────────────
+        // EMPEREUR : GUEULE ROUGE (Lethrinus miniatus)
+        // ─────────────────────────────────────────────────────────────────────
+        EspeceInfo(
+            identifiant: "empereur",
+            nomCommun: "Empereur (gueule rouge)",
+            nomScientifique: "Lethrinus miniatus",
+            famille: "Lethrinidae",
+            zones: [.lagon, .recif, .passe],
+            profondeurMin: 5,
+            profondeurMax: 110,
+            typesPecheCompatibles: [.montage, .palangrotte, .jig],
+            traineInfo: nil,
+            comportement: "Solitaire ou en petits groupes lâches sur les fonds sableux et les pourtours de pinacles ; très actif en début de marée montante.",
+            momentsFavorables: [.aube, .matinee, .apresMidi, .crepuscule],
+            photoNom: nil,
+            illustrationNom: "GueuleRouge_illustration",
+            signesDistinctifs: "Corps gris, tête brun rougeâtre. Orange à rouge vif sur la dorsale épineuse, à la base des pectorales, autour des yeux et à l'intérieur de la bouche. Le bec-de-cane (L. nebulosus) a des écailles « étoilées » et des traits bleus sur les joues.",
+            tailleMinLegale: nil,
+            tailleMaxObservee: 80.0,
+            poidsMaxObserve: nil,
+            descriptionPhysique: "Empereur au museau allongé. Prises courantes de 40 à 65 cm. Taille maximale : 80 cm (longueur fourche, guide CPS).",
+            habitatDescription: "Lagon, passes et grand récif, sur sable, dalles à algues et autour des pinacles, de 5 à 110 m, surtout entre 20 et 40 m.",
+            comportementDetail: "Carnivore benthique (coquillages, oursins, crustacés, petits poissons). Goûte souvent l'appât avant de l'engamer : laisser filer avant de ferrer.",
+            techniquesDetail: "Ligne à main ou canne légère, plomb coulissant et bas de ligne fluorocarbone, à la dérive sur les fonds de 20 à 40 m autour des îlots et des pinacles. Jig léger ou leurre souple crème ou rose de 3 à 4 pouces sur tête plombée (20 à 60 g), relances lentes près du fond. Pas une espèce de traîne.",
+            leuresSpecifiques: [
+                "Leurres souples 3-4 pouces sur tête plombée 20-60 g",
+                "Jigs légers"
+            ],
+            appatsNaturels: [
+                "Calmar",
+                "Chair de bonite",
+                "Crevettes vivantes"
+            ],
+            meilleursHoraires: "Toute la journée ; prises plus régulières autour de la marée haute.",
+            conditionsOptimales: "Fonds sableux de 20 à 40 m près des pinacles, début de marée montante.",
+            qualiteCulinaire: "Chair blanche et fine, un peu plus ferme que celle du bec-de-cane : four, carpaccio, grillade.",
+            risqueCiguatera: .faible,
+            ciguateraDetail: "Peu concerné en Nouvelle-Calédonie, mais le risque augmente avec la taille et selon la zone. Éviter les très gros sujets sur les sites connus pour la gratte.",
+            reglementationNC: "Province Sud : chasse sous-marine de nuit et en bouteille interdite ; chasse sous-marine interdite à moins de 50 m d'un DCP. Provinces Nord et Îles : règles propres.",
+            quotas: "Province Sud : 40 kg par jour et par navire hors pélagiques (à vérifier dans le code en vigueur).",
+            zonesInterdites: "Toute capture interdite dans les réserves intégrales du lagon.",
+            statutConservation: "Préoccupation mineure (UICN).",
+            leSaviezVous: "Comme la plupart des empereurs, la gueule rouge naît femelle et devient mâle en grandissant, vers 45 cm en moyenne.",
+            nePasPecher: false,
+            raisonProtection: nil
+        ),
+
+        // ─────────────────────────────────────────────────────────────────────
+        // VIVANEAU ROUGE (Etelis carbunculus, Etelis sp.) — pêche profonde
+        // ─────────────────────────────────────────────────────────────────────
+        EspeceInfo(
+            identifiant: "vivaneauRouge",
+            nomCommun: "Vivaneau rouge (vivaneau rubis)",
+            nomScientifique: "Etelis carbunculus, Etelis sp.",
+            famille: "Lutjanidae",
+            zones: [.tombant, .profond],
+            profondeurMin: 150,
+            profondeurMax: 400,
+            typesPecheCompatibles: [.palangrotte, .jig],
+            traineInfo: nil,
+            comportement: "Vivaneau des grandes profondeurs, en bancs au-dessus du bas du tombant et des monts sous-marins.",
+            momentsFavorables: [.aube, .matinee, .crepuscule, .nuit],
+            photoNom: nil,
+            illustrationNom: "VivaneauRubis_illustration",
+            signesDistinctifs: "Corps rouge vif, dorsale profondément échancrée, caudale fourchue à lobe inférieur blanc à l'extrémité, ligne jaunâtre le long de la ligne latérale. Le vivaneau rubis (Etelis sp.) porte de petites marques noires sur le lobe supérieur de la caudale ; le vivaneau rubis pygmée (E. carbunculus) n'en a pas. Le vivaneau flamme (E. coruscans) a des lobes de caudale filamenteux.",
+            tailleMinLegale: nil,
+            tailleMaxObservee: 125.0,
+            poidsMaxObserve: nil,
+            descriptionPhysique: "Taille maximale : 125 cm pour le vivaneau rubis (Etelis sp.), 70 cm pour le vivaneau rubis pygmée (E. carbunculus) (fiches CPS des poissons profonds).",
+            habitatDescription: "Pente externe et monts sous-marins, le plus souvent vers 200 à 300 m (manuel CPS de pêche profonde). Les petits sujets sont plus nombreux dans le haut de la zone, les gros plus bas.",
+            comportementDetail: "Les prises varient beaucoup d'un site à l'autre : la profondeur reste le facteur décisif.",
+            techniquesDetail: "Palangrotte verticale à plusieurs hameçons, appâtée au calmar ou à la bonite, au moulinet à main, électrique ou hydraulique ; slow jig de 250 à 400 g sur les tombants extérieurs de 150 à 300 m. Bateau à la dérive, ligne tenue verticale. Jamais à la traîne. Avec le Clark, seulement par mer calme et courant faible, et sans s'éloigner seul au large.",
+            leuresSpecifiques: [
+                "Slow jigs 250-400 g",
+                "Lignes à plusieurs hameçons avec leurres lumineux"
+            ],
+            appatsNaturels: [
+                "Calmar",
+                "Bonite en morceaux"
+            ],
+            meilleursHoraires: "Aube, crépuscule et nuit ; en profondeur, toute la journée.",
+            conditionsOptimales: "Mer calme, courant faible, sondeur capable de lire 300 m pour suivre la pente.",
+            qualiteCulinaire: "Chair rosée, fine et très recherchée (sashimi, four) ; l'un des poissons les mieux payés du marché.",
+            risqueCiguatera: .faible,
+            ciguateraDetail: "Poisson de profondeur rarement mis en cause dans les documents du Projet. Rester prudent avec les très gros sujets.",
+            reglementationNC: "Pas de règle spécifique relevée dans les documents du Projet. Vérifier la réglementation de la province avant de garder un poisson.",
+            quotas: nil,
+            zonesInterdites: "Respecter les aires marines protégées et les réserves.",
+            statutConservation: "Croissance lente : les populations de vivaneaux profonds supportent mal une pêche intensive.",
+            leSaviezVous: "Le manuel CPS de pêche profonde appelle E. carbunculus « vivaneau rouge » ; les fiches CPS récentes le nomment « vivaneau rubis pygmée » et réservent « vivaneau rubis » à une espèce plus grande, longtemps confondue avec lui.",
+            nePasPecher: false,
+            raisonProtection: nil
+        ),
+
+        // ─────────────────────────────────────────────────────────────────────
+        // VIVANEAU CHIEN ROUGE (Lutjanus bohar) — ciguatera élevée
+        // ─────────────────────────────────────────────────────────────────────
+        EspeceInfo(
+            identifiant: "vivaneauChienRouge",
+            nomCommun: "Vivaneau chien rouge (anglais)",
+            nomScientifique: "Lutjanus bohar",
+            famille: "Lutjanidae",
+            zones: [.recif, .passe, .tombant],
+            profondeurMin: 5,
+            profondeurMax: 180,
+            typesPecheCompatibles: [.jig, .montage, .lancer],
+            traineInfo: nil,
+            comportement: "Prédateur territorial et farouche, posé sur les tombants ou en patrouille à mi-hauteur ; réputé très combatif.",
+            momentsFavorables: [.aube, .matinee, .apresMidi, .crepuscule],
+            photoNom: nil,
+            illustrationNom: "VivaneauChienRouge_illustration",
+            signesDistinctifs: "Gros adulte rouge à gris rougeâtre. Profond sillon allongé sur le museau, entre les yeux et les narines. Nageoires rouge foncé virant au noir sur l'extérieur. Juvénile et jeune adulte : deux points blanc argenté sur le dos. Fortes canines.",
+            tailleMinLegale: nil,
+            tailleMaxObservee: 80.0,
+            poidsMaxObserve: nil,
+            descriptionPhysique: "Corps massif. Prises courantes de 45 à 70 cm. Taille maximale : 80 cm (longueur fourche, guide CPS).",
+            habitatDescription: "Récifs extérieurs et tombants du grand récif-barrière, de 5 à 180 m, surtout entre 10 et 70 m ; aussi sur les pinacles profonds du lagon.",
+            comportementDetail: "Longévité exceptionnelle (plus de 55 ans) et croissance très lente : c'est ce qui explique l'accumulation de ciguatoxine chez les gros sujets.",
+            techniquesDetail: "Jig lourd (150 à 300 g) et slow jig sur les tombants extérieurs de 30 à 80 m, à la dérive ; vif ou chair à la palangrotte ; popper sur les hauts-fonds extérieurs. Il prend parfois un plongeant traîné au ras du tombant, mais ce n'est pas une espèce que le moteur cible à la traîne.",
+            leuresSpecifiques: [
+                "Jigs 150-300 g argentés ou roses",
+                "Poppers 120-150 mm",
+                "Leurres souples 7-9 pouces"
+            ],
+            appatsNaturels: [
+                "Gros vifs (chinchard, coureur)",
+                "Calmar"
+            ],
+            meilleursHoraires: "Tôt le matin, fin d'après-midi et étale de courant.",
+            conditionsOptimales: "Tombant extérieur de 30 à 80 m, courant faible à modéré.",
+            qualiteCulinaire: "Chair blanche et ferme, mais à éviter pour raison sanitaire : voir ciguatera.",
+            risqueCiguatera: .eleve,
+            ciguateraDetail: "L'une des espèces les plus souvent en cause dans les cas de gratte du Pacifique sud, surtout les gros sujets. Plusieurs communes recommandent de ne pas consommer les chiens rouges de plus de 3 kg, voire de les éviter selon la zone (se renseigner en mairie et auprès de la DASS). Relâcher les gros poissons, surtout en zone à gratte.",
+            reglementationNC: "Pas de règle de capture propre à l'espèce dans les documents du Projet ; recommandations sanitaires locales de non-consommation à vérifier en mairie et auprès de la DASS-NC.",
+            quotas: "Province Sud : 40 kg par jour et par navire hors pélagiques (à vérifier dans le code en vigueur).",
+            zonesInterdites: "Capture interdite dans les réserves intégrales.",
+            statutConservation: "Préoccupation mineure (UICN), mais très vulnérable à la surpêche du fait de sa longévité.",
+            leSaviezVous: "Des chiens rouges de plus de 55 ans ont été datés par la lecture de leurs otolithes, les « pierres » de l'oreille interne.",
+            nePasPecher: false,
+            raisonProtection: nil
+        ),
+
+        // ─────────────────────────────────────────────────────────────────────
+        // VIVANEAU QUEUE NOIRE (Lutjanus fulvus)
+        // ─────────────────────────────────────────────────────────────────────
+        EspeceInfo(
+            identifiant: "vivaneauQueueNoire",
+            nomCommun: "Vivaneau queue noire",
+            nomScientifique: "Lutjanus fulvus",
+            famille: "Lutjanidae",
+            zones: [.lagon, .recif],
+            profondeurMin: 1,
+            profondeurMax: 40,
+            typesPecheCompatibles: [.montage, .palangrotte, .lancer],
+            traineInfo: nil,
+            comportement: "Petit vivaneau du lagon et des récifs, abrité le jour sous les coraux, plus actif au crépuscule et la nuit.",
+            momentsFavorables: [.crepuscule, .nuit],
+            photoNom: nil,
+            illustrationNom: "VivaneauQueueNoire_illustration",
+            signesDistinctifs: "Haut du corps brun à gris jaunâtre, bas du corps jaune pâle ; bord des écailles jaune à brun formant parfois de fines rayures. Caudale noir rougeâtre à bord blanc. Pectorales, pelviennes et anale jaunes.",
+            tailleMinLegale: nil,
+            tailleMaxObservee: 35.0,
+            poidsMaxObserve: nil,
+            descriptionPhysique: "Petit vivaneau de 20 à 30 cm en général. Taille maximale : 35 cm (longueur fourche, guide CPS).",
+            habitatDescription: "Lagon et récifs coralliens, près des massifs et des herbiers.",
+            comportementDetail: "Se nourrit surtout de nuit de petits poissons et de crustacés.",
+            techniquesDetail: "Petite ligne à main ou canne légère au crépuscule, petits appâts près des massifs coralliens ; petits leurres souples ou poissons nageurs au lancer. Trop petit pour les leurres de traîne du Clark.",
+            leuresSpecifiques: [
+                "Petits leurres souples",
+                "Petits poissons nageurs 5-7 cm"
+            ],
+            appatsNaturels: [
+                "Crevette",
+                "Morceaux de calmar ou de poisson"
+            ],
+            meilleursHoraires: "Crépuscule et début de nuit.",
+            conditionsOptimales: "Massifs coralliens du lagon, eau calme.",
+            qualiteCulinaire: "Bon petit poisson de friture ou de soupe.",
+            risqueCiguatera: .faible,
+            ciguateraDetail: "Risque faible, mais l'espèce figure parmi les poissons de récif consommés potentiellement vecteurs.",
+            reglementationNC: "Pas de règle spécifique relevée dans les documents du Projet. Vérifier la réglementation de la province avant de garder un poisson.",
+            quotas: nil,
+            zonesInterdites: "Respecter les aires marines protégées et les réserves.",
+            statutConservation: nil,
+            leSaviezVous: "Son nom vient de la caudale sombre bordée de blanc, qui contraste avec ses nageoires jaunes.",
             nePasPecher: false,
             raisonProtection: nil
         )

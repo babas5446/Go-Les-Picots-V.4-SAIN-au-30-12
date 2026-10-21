@@ -171,7 +171,7 @@ class SuggestionEngine: ObservableObject {
                 plageMax = 10.0
                 justification = "Chasseur visuel et curieux. 7-10 kts permet d'explorer zone tout en laissant temps d'investigation depuis profondeur."
 
-            case .thazard, .thazardBatard:
+            case .thazard:
                 vitesseBase = 5.5
                 plageMin = 4.0
                 plageMax = 7.0
@@ -895,7 +895,8 @@ class SuggestionEngine: ObservableObject {
             etatMer: c.etatMer,
             moment: c.momentJournee,
             lune: c.phaseLunaire,
-            maree: c.typeMaree
+            maree: c.typeMaree,
+            courantFort: c.zone == .passe && c.courant == .fort
         )
     }
 

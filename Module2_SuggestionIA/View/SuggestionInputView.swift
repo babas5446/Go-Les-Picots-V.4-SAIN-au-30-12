@@ -47,6 +47,9 @@ struct SuggestionInputView: View {
     // Moment, luminosité, marée et lune proposés à l'ouverture, modifiables ensuite.
     @State private var propositionAuto: PropositionConditions?
     @State private var propositionFaite = false
+    // Turbidité et courant choisis à la main : plus de réestimation automatique.
+    @State private var turbiditeManuelle = false
+    @State private var courantManuel = false
     
     var body: some View {
         ZStack {
@@ -101,6 +104,8 @@ struct SuggestionInputView: View {
             // Une seule fois : un retour depuis les résultats garde les choix faits à la main.
             if !propositionFaite { appliquerPropositionAuto() }
         }
+        .onChange(of: conditions.zone) { _, _ in reestimerEauEtCourant() }
+        .onChange(of: conditions.etatMer) { _, _ in reestimerEauEtCourant() }
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button("Fermer") {
@@ -509,9 +514,18 @@ struct SuggestionInputView: View {
     private var sectionConditionsMarines: some View {
         CarteFormulaire(titre: "Conditions marines", icone: "water.waves") {
             VStack(spacing: 16) {
-                PickerRow(label: "Turbidité eau", selection: $conditions.turbiditeEau, cases: Turbidite.allCases)
+                PickerRow(label: "Turbidité eau", selection: Binding(
+                    get: { conditions.turbiditeEau },
+                    set: { conditions.turbiditeEau = $0; turbiditeManuelle = true }
+                ), cases: Turbidite.allCases)
                 PickerRow(label: "État de la mer", selection: $conditions.etatMer, cases: EtatMer.allCases)
                 PickerRow(label: "Type de marée", selection: $conditions.typeMaree, cases: TypeMaree.allCases)
+                if conditions.zone == .passe {
+                    PickerRow(label: "Courant en passe", selection: Binding(
+                        get: { conditions.courant ?? .modere },
+                        set: { conditions.courant = $0; courantManuel = true }
+                    ), cases: ForceCourant.allCases)
+                }
                 PickerRow(label: "Phase lunaire", selection: $conditions.phaseLunaire, cases: PhaseLunaire.allCases)
             }
         }
@@ -533,6 +547,17 @@ struct SuggestionInputView: View {
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .padding(.top, 4)
+                }
+
+                if let id = conditions.especePrioritaire?.ficheIdentifiant,
+                   let fiche = EspecesDatabase.shared.espece(identifiant: id) {
+                    NavigationLink {
+                        EspeceDetailView(espece: fiche)
+                    } label: {
+                        Label("Voir la fiche : \(fiche.nomCommun)", systemImage: "book")
+                            .font(.subheadline)
+                    }
+                    .padding(.top, 4)
                 }
             }
         }
@@ -726,13 +751,30 @@ struct SuggestionInputView: View {
     /// Moment, luminosité, marée et lune proposés d'après l'heure, le soleil,
     /// les marées en cache et la lune. Chaque valeur reste modifiable à la main.
     private func appliquerPropositionAuto() {
-        let p = PropositionConditions.proposer(joursMaree: TideService.joursEnCache())
+        let p = PropositionConditions.proposer(joursMaree: TideService.joursEnCache(),
+                                               zone: conditions.zone, etatMer: conditions.etatMer)
         conditions.momentJournee = p.moment
         conditions.luminosite = p.luminosite
         if let m = p.maree { conditions.typeMaree = m }
         conditions.phaseLunaire = p.lune
+        conditions.turbiditeEau = p.turbidite
+        conditions.courant = p.courant
+        turbiditeManuelle = false
+        courantManuel = false
         propositionAuto = p
         propositionFaite = true
+    }
+
+    /// Zone ou état de la mer modifiés : nouvelle estimation de l'eau et du
+    /// courant, sauf s'ils ont été choisis à la main. Le moment, la marée et
+    /// la lune ne bougent pas.
+    private func reestimerEauEtCourant() {
+        guard propositionFaite else { return }
+        let p = PropositionConditions.proposer(joursMaree: TideService.joursEnCache(),
+                                               zone: conditions.zone, etatMer: conditions.etatMer)
+        if !turbiditeManuelle { conditions.turbiditeEau = p.turbidite }
+        if !courantManuel { conditions.courant = p.courant }
+        propositionAuto = p
     }
 
     private func genererSuggestions() {
@@ -876,6 +918,9 @@ extension EtatMer: Identifiable, DisplayNamed {
     public var id: String { rawValue }
 }
 extension TypeMaree: Identifiable, DisplayNamed { 
+    public var id: String { rawValue }
+}
+extension ForceCourant: Identifiable, DisplayNamed {
     public var id: String { rawValue }
 }
 extension PhaseLunaire: Identifiable, DisplayNamed { 

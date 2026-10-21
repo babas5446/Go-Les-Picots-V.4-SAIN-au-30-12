@@ -37,6 +37,10 @@ struct ConditionsPeche: Codable, Hashable {
     /// true : le moteur choisit la vitesse ; false : vitesse fixée à la main.
     /// Optionnel pour rester lisible par les conditions déjà enregistrées.
     var vitesseLibre: Bool? = nil
+
+    /// Courant de marée en passe (proposé à l'ouverture, modifiable).
+    /// Optionnel pour rester lisible par les conditions déjà enregistrées.
+    var courant: ForceCourant? = nil
     
     // MARK: - Initialisation par défaut (Scénario 1 - Lagon aube)
     static var scenario1LagunAube: ConditionsPeche {
@@ -228,7 +232,24 @@ extension ConditionsPeche {
     }
 }
 
-// MARK: - Proposition automatique à l'ouverture (moment, luminosité, marée, lune)
+// MARK: - Courant de marée en passe
+
+/// Force du courant de marée dans les passes (estimée à l'ouverture, modifiable).
+enum ForceCourant: String, Codable, CaseIterable, Hashable {
+    case faible = "faible"
+    case modere = "modere"
+    case fort   = "fort"
+
+    var displayName: String {
+        switch self {
+        case .faible: return "Faible"
+        case .modere: return "Modéré"
+        case .fort:   return "Fort"
+        }
+    }
+}
+
+// MARK: - Proposition automatique à l'ouverture (moment, luminosité, marée, lune, eau, courant)
 
 /// Conditions proposées à l'ouverture du formulaire, toujours modifiables à la main.
 /// - Moment : lever et coucher du soleil (cache des marées, sinon calcul
@@ -238,15 +259,27 @@ extension ConditionsPeche {
 /// - Marée : horaires des pleines et basses mers en cache ; étale à
 ///   30 minutes ou moins d'une pleine ou basse mer.
 /// - Lune : calcul astronomique local, phase la plus proche.
+/// - Courant en passe : règle des douzièmes (le courant est maximal à
+///   mi-marée, nul à l'étale) pondérée par le marnage de la marée en cours
+///   (vives-eaux à 1,2 m ou plus, mortes-eaux sous 0,7 m, à Nouméa).
+/// - Turbidité : estimée d'après la zone, l'état de la mer et le marnage.
+///   La marée descendante n'y entre pas : le moteur l'ajoute déjà au besoin
+///   de contraste. La pluie n'est pas connue : à corriger à la main.
 struct PropositionConditions {
     var moment: MomentJournee
     var luminosite: Luminosite
     var maree: TypeMaree?
     var lune: PhaseLunaire
+    var turbidite: Turbidite
+    var courant: ForceCourant?
+    /// Marnage de la marée en cours (m), si les hauteurs sont en cache.
+    var marnage: Double?
     var explication: String
 
     static let transitionLumiere: TimeInterval = 45 * 60
     static let etaleMaree: TimeInterval = 30 * 60
+    static let marnageVivesEaux = 1.2
+    static let marnageMortesEaux = 0.7
     static let latitudeNoumea = -22.2758
     static let longitudeNoumea = 166.4580
     static let fuseau = TimeZone(identifier: "Pacific/Noumea") ?? .current
@@ -274,6 +307,47 @@ struct PropositionConditions {
             return precedent.haute ? .descendante : .montante
         }
         return tries[0].haute ? .montante : .descendante
+    }
+
+    /// Courant en passe à l'instant donné, d'après la pleine ou basse mer
+    /// précédente et la suivante. Nil sans encadrement complet.
+    static func courant(a date: Date, evenements: [(heure: Date, haute: Bool, hauteur: Double)])
+        -> (force: ForceCourant, marnage: Double, sortant: Bool)? {
+        let tries = evenements.sorted { $0.heure < $1.heure }
+        guard let avant = tries.last(where: { $0.heure <= date }),
+              let apres = tries.first(where: { $0.heure > date }) else { return nil }
+        let marnage = abs(apres.hauteur - avant.hauteur)
+        let sortant = avant.haute   // après la pleine mer, l'eau sort du lagon
+        let duree = apres.heure.timeIntervalSince(avant.heure)
+        guard duree > 0 else { return nil }
+        let depuis = date.timeIntervalSince(avant.heure)
+        if depuis <= etaleMaree || duree - depuis <= etaleMaree {
+            return (.faible, marnage, sortant)
+        }
+        let poids = marnage >= marnageVivesEaux ? 1.5 : (marnage >= marnageMortesEaux ? 1.0 : 0.5)
+        let intensite = poids * sin(Double.pi * depuis / duree)
+        let force: ForceCourant = intensite >= 0.9 ? .fort : (intensite >= 0.45 ? .modere : .faible)
+        return (force, marnage, sortant)
+    }
+
+    /// Turbidité probable (hors pluie) : eau claire au large et au tombant ;
+    /// dans le lagon, sur le récif et en passe, un cran par mer agitée (deux
+    /// par mer formée) et un cran en vives-eaux (courants qui remettent le
+    /// sédiment en suspension).
+    static func turbidite(zone: CategoriePeche, etatMer: EtatMer, marnage: Double?) -> Turbidite {
+        switch zone {
+        case .large, .dcp, .profond, .tombant:
+            return .claire
+        case .lagon, .recif, .passe:
+            var cran: Int
+            switch etatMer {
+            case .calme, .peuAgitee: cran = 0
+            case .agitee:            cran = 1
+            case .formee:            cran = 2
+            }
+            if let m = marnage, m >= marnageVivesEaux { cran += 1 }
+            return [Turbidite.claire, .legerementTrouble, .trouble][min(cran, 2)]
+        }
     }
 
     /// Phase lunaire la plus proche de l'âge de la lune (cycle de 29,53 jours).
@@ -313,8 +387,11 @@ struct PropositionConditions {
     }
 
     /// Proposition complète pour l'instant donné.
-    /// - Parameter joursMaree: jours de marée en cache (lever, coucher, pleines et basses mers).
-    static func proposer(maintenant: Date = Date(), joursMaree: [CabaigneDay]) -> PropositionConditions {
+    /// - Parameters:
+    ///   - joursMaree: jours de marée en cache (lever, coucher, pleines et basses mers).
+    ///   - zone, etatMer: choix du formulaire, pour l'eau et le courant.
+    static func proposer(maintenant: Date = Date(), joursMaree: [CabaigneDay],
+                         zone: CategoriePeche = .lagon, etatMer: EtatMer = .calme) -> PropositionConditions {
         var cal = Calendar(identifier: .gregorian)
         cal.timeZone = fuseau
         let fmt = DateFormatter()
@@ -340,10 +417,11 @@ struct PropositionConditions {
         }
 
         // Marée : événements d'hier, d'aujourd'hui et de demain.
-        let evenements = joursMaree
+        let evenementsComplets = joursMaree
             .filter { abs($0.date.timeIntervalSince(maintenant)) < 2 * 86_400 }
             .flatMap { $0.events }
-            .map { (heure: $0.time, haute: $0.isHigh) }
+            .map { (heure: $0.time, haute: $0.isHigh, hauteur: $0.height) }
+        let evenements = evenementsComplets.map { (heure: $0.heure, haute: $0.haute) }
         let mar = maree(a: maintenant, evenements: evenements)
         if let mar {
             var texte = "marée \(mar == .etale ? "étale" : mar.displayName.lowercased())"
@@ -355,6 +433,32 @@ struct PropositionConditions {
             morceaux.append("marée à choisir (pas d'horaires en cache)")
         }
 
+        // Courant en passe et marnage.
+        let c = courant(a: maintenant, evenements: evenementsComplets)
+        let marnageTexte = c.map { String(format: "%.1f", $0.marnage).replacingOccurrences(of: ".", with: ",") }
+        if zone == .passe {
+            if let c, let marnageTexte {
+                morceaux.append("courant \(c.sortant ? "sortant" : "entrant") \(c.force.displayName.lowercased()) en passe (marnage \(marnageTexte) m)")
+            } else {
+                morceaux.append("courant à choisir")
+            }
+        }
+
+        // Eau.
+        let eau = turbidite(zone: zone, etatMer: etatMer, marnage: c?.marnage)
+        let libelleEau: String
+        switch eau {
+        case .claire:            libelleEau = "claire"
+        case .legerementTrouble: libelleEau = "légèrement trouble"
+        case .trouble:           libelleEau = "trouble"
+        case .tresTrouble:       libelleEau = "très trouble"
+        }
+        var texteEau = "eau \(libelleEau) estimée"
+        if let c, c.marnage >= marnageVivesEaux, zone != .large, zone != .dcp, zone != .profond, zone != .tombant {
+            texteEau += " (vives-eaux)"
+        }
+        morceaux.append(texteEau + ", à corriger après la pluie")
+
         // Lune.
         let age = SolunarCalculator.moonPhaseData(jde: SolunarCalculator.julianEphemerisDay(from: maintenant)).age
         let l = lune(age: age)
@@ -365,6 +469,9 @@ struct PropositionConditions {
             luminosite: ConditionsPeche.luminositeAutoDepuisMoment(m),
             maree: mar,
             lune: l,
+            turbidite: eau,
+            courant: c?.force,
+            marnage: c?.marnage,
             explication: "Proposé à \(fmt.string(from: maintenant)) : " + morceaux.joined(separator: ", ") + ". Modifiable à la main."
         )
     }
