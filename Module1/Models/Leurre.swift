@@ -751,7 +751,8 @@ enum Transparence: String, Codable, CaseIterable, Hashable {
 /// - Tigré : bandes transversales. Sombres sur un corps vif ou clair, elles
 ///   font un contrasté (fire tiger) ; sur un corps naturel, c'est un motif
 ///   d'imitation (maquereau).
-/// - Pois : taches. Le contour reste celui du corps : la famille ne change pas.
+/// - Pois : taches d'une proie tachetée (loche saumonée, mahi-mahi,
+///   sardine) : le leurre est une imitation, famille naturel.
 enum Motif: String, Codable, CaseIterable, Hashable {
     case tigre = "tigre"
     case pois  = "pois"

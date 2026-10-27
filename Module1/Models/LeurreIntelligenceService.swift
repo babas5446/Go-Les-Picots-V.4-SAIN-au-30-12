@@ -527,6 +527,10 @@ enum ReglesCouleur {
     /// sur un corps sombre aussi. Sur un corps naturel (bleu, vert, argent),
     /// des bandes sombres restent un motif d'imitation : naturel.
     static func famille(_ f: FicheDeduction, tigre: Couleur?) -> Contraste {
+        // Pois : motif d'imitation d'une proie tachetée (loche saumonée,
+        // mahi-mahi, sardine) : naturel, quelles que soient les couleurs
+        // (décision de Sébastien, 28 octobre 2026).
+        if f.motif == .pois { return .naturel }
         let fp = f.persoPrincipale?.contraste ?? famille(f.couleurPrincipale)
         let clairP = f.persoPrincipale.map { $0.luminosite > 0.8 } ?? clairesFranches.contains(f.couleurPrincipale)
         let fs: Contraste? = f.persoSecondaire?.contraste ?? f.couleurSecondaire.map { famille($0) }

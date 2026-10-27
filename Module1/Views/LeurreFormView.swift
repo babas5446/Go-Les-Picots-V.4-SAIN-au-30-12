@@ -490,7 +490,7 @@ struct LeurreFormView: View {
 
     /// Couleurs proposées pour un motif (bandes ou pois).
     private static let couleursMotif: [Couleur] = [
-        .noir, .rouge, .orange, .violet, .bleuFonce, .vert, .marron, .blanc, .jaune
+        .noir, .rouge, .orange, .violet, .bleu, .bleuFonce, .vert, .marron, .blanc, .jaune
     ]
 
     /// Couleurs proposées pour le ventre.
@@ -562,7 +562,7 @@ struct LeurreFormView: View {
                     .font(.caption2).foregroundColor(.secondary)
                 Text("Corps transparent : coque transparente, colorée ou non (Yo-Zuri 3D Magnum, Crystal). Dos transparent : le dos seul, ventre opaque.")
                     .font(.caption2).foregroundColor(.secondary)
-                Text("Tigré : des bandes sombres sur un corps vif ou clair font un leurre contrasté (fire tiger) ; les rayures d'une imitation de maquereau restent naturelles. Les pois ne changent pas la famille.")
+                Text("Tigré : des bandes sombres sur un corps vif ou clair font un leurre contrasté (fire tiger) ; les rayures d'une imitation de maquereau restent naturelles. Pois : imitation d'une proie tachetée (loche saumonée, mahi-mahi), le leurre est vu naturel.")
                     .font(.caption2).foregroundColor(.secondary)
             }
         }
