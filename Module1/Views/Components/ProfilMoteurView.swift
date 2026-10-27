@@ -28,6 +28,9 @@ struct ProfilMoteurView: View {
             ligne("Teinte", ReglesCouleur.teinte(fiche).rawValue)
             ligne("Éclat", ReglesCouleur.eclats(fiche).map(\.rawValue).joined(separator: ", "))
             ligne("Ventre", texteVentre)
+            if let m = fiche.motif {
+                ligne("Motif", m.displayName + (fiche.couleurMotif.map { " " + $0.displayName.lowercased() } ?? ""))
+            }
             if familleEnProfondeur != famille {
                 Text("En nageant vers \(ProfilMoteurView.nb(profondeurMax)) m : vu « \(familleEnProfondeur.displayName) » (le rouge s'éteint vers 4 à 5 m, l'orange vers 6 m).")
                     .font(.caption2)

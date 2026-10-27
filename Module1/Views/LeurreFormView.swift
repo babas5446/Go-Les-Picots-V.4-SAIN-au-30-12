@@ -80,6 +80,8 @@ struct LeurreFormView: View {
     @State private var couleurVentre:           Couleur?     = nil
     @State private var eclatVentre:             EclatVentre? = nil
     @State private var transparence:            Transparence = .aucune
+    @State private var motif:                   Motif?       = nil
+    @State private var couleurMotif:            Couleur?     = nil
 
     @State private var typesDeNage:              [TypeDeNage] = []
     @State private var showWobblingChoice        = false
@@ -143,6 +145,8 @@ struct LeurreFormView: View {
         _couleurVentre           = State(initialValue: leurre.couleurVentre)
         _eclatVentre             = State(initialValue: leurre.eclatVentre)
         _transparence            = State(initialValue: leurre.transparence ?? .aucune)
+        _motif                   = State(initialValue: leurre.motif)
+        _couleurMotif            = State(initialValue: leurre.couleurMotif)
         _typesDeNage             = State(initialValue: leurre.typesDeNage ?? [])
 
         _profondeurMin = State(initialValue: leurre.profondeurNageMin.map { String(format: "%.1f", $0) } ?? "")
@@ -484,6 +488,11 @@ struct LeurreFormView: View {
 
     // MARK: - Section Couleurs
 
+    /// Couleurs proposées pour un motif (bandes ou pois).
+    private static let couleursMotif: [Couleur] = [
+        .noir, .rouge, .orange, .violet, .bleuFonce, .vert, .marron, .blanc, .jaune
+    ]
+
     /// Couleurs proposées pour le ventre.
     private static let couleursVentre: [Couleur] = [
         .blanc, .argente, .rose, .roseFluo, .orange, .rouge, .jaune, .chartreuse, .or
@@ -510,6 +519,24 @@ struct LeurreFormView: View {
                 ).padding(.vertical, 4)
             }
 
+            Picker("Motif", selection: $motif) {
+                Text("Uni").tag(nil as Motif?)
+                ForEach(Motif.allCases, id: \.self) { m in
+                    Text(m.displayName).tag(m as Motif?)
+                }
+            }
+            .onChange(of: motif) { _, nouveau in
+                if nouveau == nil { couleurMotif = nil }
+                else if couleurMotif == nil { couleurMotif = .noir }
+            }
+            if motif != nil {
+                Picker(motif == .tigre ? "Couleur des bandes" : "Couleur des pois", selection: $couleurMotif) {
+                    ForEach(Self.couleursMotif, id: \.self) { couleur in
+                        Text(couleur.displayName).tag(couleur as Couleur?)
+                    }
+                }
+            }
+
             Picker("Ventre", selection: $couleurVentre) {
                 Text("Non renseigné").tag(nil as Couleur?)
                 ForEach(Self.couleursVentre, id: \.self) { couleur in
@@ -534,6 +561,8 @@ struct LeurreFormView: View {
                 Text("Le ventre compte le plus pour les leurres qui nagent près de la surface : le poisson attaque par-dessous.")
                     .font(.caption2).foregroundColor(.secondary)
                 Text("Corps transparent : coque transparente, colorée ou non (Yo-Zuri 3D Magnum, Crystal). Dos transparent : le dos seul, ventre opaque.")
+                    .font(.caption2).foregroundColor(.secondary)
+                Text("Tigré : des bandes sombres sur un corps vif ou clair font un leurre contrasté (fire tiger) ; les rayures d'une imitation de maquereau restent naturelles. Les pois ne changent pas la famille.")
                     .font(.caption2).foregroundColor(.secondary)
             }
         }
@@ -562,7 +591,9 @@ struct LeurreFormView: View {
             notes: notes,
             couleurVentre: couleurVentre,
             eclatVentre: eclatVentre,
-            transparence: transparence == .aucune ? nil : transparence
+            transparence: transparence == .aucune ? nil : transparence,
+            motif: motif,
+            couleurMotif: motif == nil ? nil : couleurMotif
         )
     }
 
@@ -726,6 +757,8 @@ struct LeurreFormView: View {
             nouveauLeurre.couleurVentre  = couleurVentre
             nouveauLeurre.eclatVentre    = eclatVentre
             nouveauLeurre.transparence   = transparence == .aucune ? nil : transparence
+            nouveauLeurre.motif          = motif
+            nouveauLeurre.couleurMotif   = motif == nil ? nil : couleurMotif
             viewModel.ajouterLeurre(nouveauLeurre)
 
         case .edition(let leurreOriginal):
@@ -746,6 +779,8 @@ struct LeurreFormView: View {
             leurreOriginal.couleurVentre           = couleurVentre
             leurreOriginal.eclatVentre             = eclatVentre
             leurreOriginal.transparence            = transparence == .aucune ? nil : transparence
+            leurreOriginal.motif                   = motif
+            leurreOriginal.couleurMotif            = motif == nil ? nil : couleurMotif
             leurreOriginal.typesDeNage             = typesDeNage.isEmpty ? nil : typesDeNage
             leurreOriginal.profondeurNageMin       = profMinValue
             leurreOriginal.profondeurNageMax       = profMaxValue

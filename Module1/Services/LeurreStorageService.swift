@@ -30,7 +30,7 @@ enum LeurreStorageService {
     /// d'origine — qui reste récupérable après correction.
     static let shared: ModelContainer = {
         // 1. Base versionnée, avec plan de migration (cas normal).
-        let schemaVersionne = Schema(versionedSchema: GLPSchemaV2.self)
+        let schemaVersionne = Schema(versionedSchema: GLPSchemaV3.self)
         do {
             let config = ModelConfiguration(schema: schemaVersionne, isStoredInMemoryOnly: false)
             return try ModelContainer(

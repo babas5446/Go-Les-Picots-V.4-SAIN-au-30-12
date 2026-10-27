@@ -420,6 +420,8 @@ enum LeurreExportService {
             couleurVentre:           leurre.couleurVentre,
             eclatVentre:             leurre.eclatVentre,
             transparence:            leurre.transparence,
+            motif:                   leurre.motif,
+            couleurMotif:            leurre.couleurMotif,
             typesDeNage:             leurre.typesDeNage,
             profondeurNageMin:       leurre.profondeurNageMin,
             profondeurNageMax:       leurre.profondeurNageMax,

@@ -57,6 +57,12 @@ struct FicheDeduction {
     var couleurVentre: Couleur? = nil
     var eclatVentre: EclatVentre? = nil
     var transparence: Transparence? = nil
+    /// Schéma V3 : motif (tigré, pois) et sa couleur.
+    var motif: Motif? = nil
+    var couleurMotif: Couleur? = nil
+
+    /// Couleur des bandes si le leurre est tigré.
+    var couleurTigre: Couleur? { motif == .tigre ? couleurMotif : nil }
 
     var estTraine: Bool { typePeche == .traine || typesPecheCompatibles.contains(.traine) }
 }
@@ -513,12 +519,24 @@ enum ReglesCouleur {
 
     /// Famille d'un leurre (couleurs personnalisées comprises).
     static func famille(_ f: FicheDeduction) -> Contraste {
+        famille(f, tigre: f.couleurTigre)
+    }
+
+    /// Famille avec une couleur de bandes donnée. Des bandes sombres sur un
+    /// corps vif ou clair font un contrasté (fire tiger) ; des bandes vives
+    /// sur un corps sombre aussi. Sur un corps naturel (bleu, vert, argent),
+    /// des bandes sombres restent un motif d'imitation : naturel.
+    static func famille(_ f: FicheDeduction, tigre: Couleur?) -> Contraste {
         let fp = f.persoPrincipale?.contraste ?? famille(f.couleurPrincipale)
         let clairP = f.persoPrincipale.map { $0.luminosite > 0.8 } ?? clairesFranches.contains(f.couleurPrincipale)
         let fs: Contraste? = f.persoSecondaire?.contraste ?? f.couleurSecondaire.map { famille($0) }
         let clairS = f.persoSecondaire.map { $0.luminosite > 0.8 }
             ?? f.couleurSecondaire.map { clairesFranches.contains($0) } ?? false
-        return combiner(fp: fp, clairP: clairP, fs: fs, clairS: clairS)
+        let base = combiner(fp: fp, clairP: clairP, fs: fs, clairS: clairS)
+        guard let tigre else { return base }
+        let avecBandes = combiner(fp: fp, clairP: clairP, fs: famille(tigre),
+                                  clairS: clairesFranches.contains(tigre))
+        return avecBandes == .contraste ? .contraste : base
     }
 
     /// Sous l'eau, le rouge disparaît vers 4 à 5 m, l'orange vers 6 m, le
@@ -530,8 +548,13 @@ enum ReglesCouleur {
         switch teinte(f) {
         case .orangeRouge where p > 5:      return .sombre
         case .chartreuseJaune where p > 12: return .sombre
-        default:                            return base
+        default:                            break
         }
+        // Bandes rouges ou orange au-delà de 5 m : vues sombres.
+        if let t = f.couleurTigre, teinte(t) == .orangeRouge, p > 5 {
+            return famille(f, tigre: .noir)
+        }
+        return base
     }
 
     // MARK: Teinte

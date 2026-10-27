@@ -281,6 +281,9 @@ struct LeurreDetailView: View {
                 if let t = leurre.transparence, t != .aucune {
                     InfoRow(label: "Transparence", value: t.displayName)
                 }
+                if let m = leurre.motif {
+                    InfoRow(label: "Motif", value: m.displayName + (leurre.couleurMotif.map { " " + $0.displayName.lowercased() } ?? ""))
+                }
 
                 ProfilMoteurView(fiche: leurre.ficheDeduction)
                     .padding(10)

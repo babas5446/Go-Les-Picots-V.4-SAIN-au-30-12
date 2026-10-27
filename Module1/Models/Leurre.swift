@@ -53,6 +53,12 @@ import SwiftData
     /// Transparence du corps. nil : non renseignée (opaque).
     var transparence: Transparence?
 
+    // Schéma V3 (octobre 2026) : motif.
+    /// Motif du corps (tigré, pois). nil : uni.
+    var motif: Motif?
+    /// Couleur du motif (bandes ou pois). nil : non renseignée.
+    var couleurMotif: Couleur?
+
     var typesDeNage: [TypeDeNage]?
 
     var profondeurNageMin: Double?
@@ -237,7 +243,9 @@ import SwiftData
             notes: notes,
             couleurVentre: couleurVentre,
             eclatVentre: eclatVentre,
-            transparence: transparence
+            transparence: transparence,
+            motif: motif,
+            couleurMotif: couleurMotif
         )
     }
 
@@ -735,6 +743,23 @@ enum Transparence: String, Codable, CaseIterable, Hashable {
         case .aucune: return "Opaque"
         case .dos:    return "Dos transparent"
         case .corps:  return "Corps transparent"
+        }
+    }
+}
+
+/// Motif du corps (schéma V3).
+/// - Tigré : bandes transversales. Sombres sur un corps vif ou clair, elles
+///   font un contrasté (fire tiger) ; sur un corps naturel, c'est un motif
+///   d'imitation (maquereau).
+/// - Pois : taches. Le contour reste celui du corps : la famille ne change pas.
+enum Motif: String, Codable, CaseIterable, Hashable {
+    case tigre = "tigre"
+    case pois  = "pois"
+
+    var displayName: String {
+        switch self {
+        case .tigre: return "Tigré"
+        case .pois:  return "Pois"
         }
     }
 }
