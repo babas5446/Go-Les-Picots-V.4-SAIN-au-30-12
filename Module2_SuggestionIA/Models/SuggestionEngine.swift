@@ -881,8 +881,8 @@ class SuggestionEngine: ObservableObject {
         }
 
         // 3. Éclat (4)
-        let e = ReglesCouleur.eclat(f)
-        let sEclat: Double = niveau.eclats.contains(e) ? 4 : (niveau.eclatsProscrits.contains(e) ? 0 : 1.5)
+        let sEclat = ReglesCouleur.noteEclat(f, voulus: niveau.eclats, proscrits: niveau.eclatsProscrits,
+                                             plein: 4, neutre: 1.5)
 
         return (sFamille, sTeinte, sEclat, sFamille + sTeinte + sEclat)
     }

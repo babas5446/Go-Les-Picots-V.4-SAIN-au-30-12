@@ -188,18 +188,18 @@ enum Lagon {
         }
         switch (niveau, poste) {
         case (.faible, .shortCorner):
-            return c([.naturel], ventre: true, [.argente, .translucide], "flancs naturels, ventre chaud (rouge, orange ou rose)")
+            return c([.naturel], ventre: true, [.argente, .holographique, .translucide], "flancs naturels, ventre chaud (rouge, orange ou rose)")
         case (.faible, .longCorner):
-            return c([.naturel], [.argente], "naturel, éclat argenté")
+            return c([.naturel], [.argente, .holographique], "naturel, éclat argenté ou holographique")
         case (.faible, .centre):
-            return c([.naturel], [.translucide, .argente], "naturel ; translucide si les touches sont rares en pleine lumière")
+            return c([.naturel], [.translucide, .holographique, .argente], "naturel ; translucide si les touches sont rares en pleine lumière")
 
         case (.moyen, .shortCorner):
             return c([.flashy], ventre: true, [.opaque, .fluoUV, .paillete], "vif, ventre chaud")
         case (.moyen, .longCorner):
             return c([.contraste, .sombre], [.opaque], "contrasté ou sombre, opaque")
         case (.moyen, .centre):
-            return c([.naturel], [.opaque, .paillete], "naturel, opaque ou pailleté")
+            return c([.naturel], [.opaque, .paillete, .holographique], "naturel, opaque, pailleté ou holographique")
 
         case (.fort, .shortCorner):
             return c([.flashy], [.fluoUV], proscrits: [.argente], "vif fluo, nage ample")
@@ -216,11 +216,11 @@ enum Lagon {
             return c([.naturel, .sombre], [.opaque], proscrits: [.argente], "naturel ou sombre")
 
         case (.nuitClaire, .shortCorner):
-            return c([.sombre], [.lumineux, .argente], "sombre, phosphorescent ou réfléchissant")
+            return c([.sombre], [.lumineux, .argente, .holographique], "sombre, phosphorescent ou réfléchissant")
         case (.nuitClaire, .longCorner):
             return c([.sombre], [.lumineux], "sombre, phosphorescent")
         case (.nuitClaire, .centre):
-            return c([.contraste, .sombre], [.lumineux, .argente], "contrasté ou sombre, réfléchissant")
+            return c([.contraste, .sombre], [.lumineux, .argente, .holographique], "contrasté ou sombre, réfléchissant")
 
         case (_, .lateralTribord), (_, .lateralBabord):
             return niveau == .faible
@@ -567,7 +567,8 @@ enum Lagon {
 
     static func amplitude(_ l: Leurre) -> Amplitude? {
         let nages = l.typesDeNage ?? []
-        if nages.contains(where: { [.wobblingLarge, .balayageLarge, .thumping].contains($0) }) { return .large }
+        // Slashing : écarts violents et erratiques, le leurre déplace beaucoup d'eau.
+        if nages.contains(where: { [.wobblingLarge, .balayageLarge, .thumping, .slashing].contains($0) }) { return .large }
         if nages.contains(where: { [.wobblingSerré, .rectiligneStable, .vibration].contains($0) }) { return .serree }
         if nages.contains(where: { [.wobbling, .wobblingRolling, .rolling].contains($0) }) { return .moyenne }
         switch l.typeLeurre {
@@ -715,9 +716,10 @@ enum Lagon {
             sTeinte = 0
         }
 
-        var e = ReglesCouleur.eclat(f)
-        if ReglesCouleur.ventre(f)?.paillete == true && cible.eclats.contains(.paillete) { e = .paillete }
-        let sEclat: Double = cible.eclats.contains(e) ? 3 : (cible.eclatsProscrits.contains(e) ? 0 : 1)
+        // Transparence, reflet et éclat du ventre comptent ensemble : la
+        // meilleure correspondance l'emporte.
+        let sEclat = ReglesCouleur.noteEclat(f, voulus: cible.eclats, proscrits: cible.eclatsProscrits,
+                                             plein: 3, neutre: 1)
 
         return (sFamille + sTeinte + sEclat, famille, t)
     }

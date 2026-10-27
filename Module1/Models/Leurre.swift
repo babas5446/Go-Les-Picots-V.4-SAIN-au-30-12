@@ -44,6 +44,15 @@ import SwiftData
     var couleurSecondaireCustomData: Data?
     var finition: Finition?
 
+    // Schéma V2 (octobre 2026) : ventre et transparence, lus par le moteur
+    // (teinte jugée au ventre près de la surface, éclat translucide).
+    /// Couleur du ventre. nil : non renseignée.
+    var couleurVentre: Couleur?
+    /// Éclat du ventre (pailleté, holographique). nil : non renseigné.
+    var eclatVentre: EclatVentre?
+    /// Transparence du corps. nil : non renseignée (opaque).
+    var transparence: Transparence?
+
     var typesDeNage: [TypeDeNage]?
 
     var profondeurNageMin: Double?
@@ -225,7 +234,10 @@ import SwiftData
             persoPrincipale: perso(couleurPrincipaleCustom),
             persoSecondaire: perso(couleurSecondaireCustom),
             finition: finition,
-            notes: notes
+            notes: notes,
+            couleurVentre: couleurVentre,
+            eclatVentre: eclatVentre,
+            transparence: transparence
         )
     }
 
@@ -673,19 +685,25 @@ enum Finition: String, Codable, CaseIterable, Hashable {
 
     var conditionsIdeales: String {
         switch self {
-        case .holographique, .chrome, .miroir, .paillete: return "Eau claire, forte luminosite"
-        case .metallique, .brillante:                     return "Polyvalent, toutes conditions"
-        case .mate:                                       return "Faible luminosite, eau trouble"
-        case .UV:                                         return "Profondeur, faible luminosite"
-        case .phosphorescent:                             return "Crepuscule, nuit"
-        case .perlee:                                     return "Eau legerement trouble"
+        // Modèle de contraste validé le 4 octobre 2026 : le flash miroir ne
+        // vaut qu'en soleil direct ; les paillettes gardent un halo par
+        // lumière basse et en eau chargée.
+        case .holographique, .chrome, .miroir, .metallique: return "Soleil direct, eau claire"
+        case .paillete:   return "Lumière basse, eau chargée (halo)"
+        case .brillante:  return "Polyvalent"
+        case .mate:       return "Lumière diffuse ou basse, eau trouble"
+        case .UV:         return "Ciel couvert, eau teintée, profondeur"
+        case .phosphorescent: return "Nuit, aube, crépuscule"
+        case .perlee:     return "Eau légèrement teintée"
         }
     }
 
     func bonusScoring(luminosite: Luminosite, profondeurMax: Double?) -> Double {
         switch (luminosite, self) {
         case (.forte, .holographique), (.forte, .chrome),
-             (.forte, .miroir), (.forte, .paillete):  return 3.0
+             (.forte, .miroir):                       return 3.0
+        case (.faible, .paillete), (.sombre, .paillete),
+             (.diffuse, .paillete):                   return 3.0
         case (.faible, .mate), (.sombre, .mate),
              (.nuit, .mate):                          return 3.0
         case (_, .UV):
@@ -694,6 +712,42 @@ enum Finition: String, Codable, CaseIterable, Hashable {
         case (.diffuse, .perlee):                     return 2.0
         case (_, .metallique), (_, .brillante):       return 1.0
         default:                                      return 0.5
+        }
+    }
+}
+
+// MARK: - Transparence (schéma V2)
+
+/// Transparence du corps.
+/// - Dos transparent : dos seul, ventre opaque et visible ; la proie paraît
+///   plus petite (Nicolas Cadiou).
+/// - Corps transparent : tout le corps, coloré ou non (Yo-Zuri 3D Magnum,
+///   Crystal : coque teintée sur le dos et les flancs, prisme holographique
+///   visible à travers le ventre). Le leurre se voit, se perd de vue et
+///   déclenche l'attaque réflexe (forte lumière, eau claire, poisson repu).
+enum Transparence: String, Codable, CaseIterable, Hashable {
+    case aucune = "aucune"
+    case dos    = "dos"
+    case corps  = "corps"
+
+    var displayName: String {
+        switch self {
+        case .aucune: return "Opaque"
+        case .dos:    return "Dos transparent"
+        case .corps:  return "Corps transparent"
+        }
+    }
+}
+
+/// Éclat propre au ventre (schéma V2).
+enum EclatVentre: String, Codable, CaseIterable, Hashable {
+    case paillete      = "paillete"
+    case holographique = "holographique"
+
+    var displayName: String {
+        switch self {
+        case .paillete:      return "Pailleté"
+        case .holographique: return "Holographique"
         }
     }
 }

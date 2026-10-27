@@ -246,7 +246,8 @@ class BoiteLeurresViewModel: ObservableObject {
     // MARK: - Recalcul forcé
 
     /// Recalcule les champs déduits de tous les leurres existants.
-    /// Ne touche à aucun champ saisi.
+    /// Seul champ saisi modifié : une ligne « Ventre : » des notes devient
+    /// le champ ventre du schéma V2 (voir convertirLigneVentre).
     func recalculerTousLesChampsDeduits() {
         isLoading = true
         let descriptor = FetchDescriptor<Leurre>()
@@ -274,7 +275,8 @@ class BoiteLeurresViewModel: ObservableObject {
 
     /// Recalcul unique de toute la boîte quand les règles de déduction
     /// changent (réglage « versionDeductions »). Les champs saisis ne sont
-    /// pas modifiés. Retourne true si le recalcul a eu lieu.
+    /// pas modifiés, sauf la ligne « Ventre : » convertie en champ (version 5).
+    /// Retourne true si le recalcul a eu lieu.
     @discardableResult
     func appliquerNouvellesReglesSiNecessaire(_ defaults: UserDefaults = .standard) -> Bool {
         let version = defaults.integer(forKey: ReglesDeduction.cleVersion)
@@ -286,6 +288,19 @@ class BoiteLeurresViewModel: ObservableObject {
         return true
     }
 
+    // MARK: - Ventre (schéma V2)
+
+    /// Une ligne « Ventre : » des notes (saisie avant le schéma V2, ou tapée
+    /// à la main) devient le champ ventre : la couleur reconnue remplace la
+    /// valeur du champ, l'éclat (pailleté, holographique) aussi, et la ligne est retirée
+    /// des notes. Une ligne dont aucun mot n'est reconnu reste dans les notes.
+    func convertirLigneVentre(_ leurre: Leurre) {
+        guard let c = ReglesCouleur.conversionLigneVentre(leurre.notes) else { return }
+        if let couleur = c.couleur { leurre.couleurVentre = couleur }
+        if let e = c.eclat { leurre.eclatVentre = e }
+        leurre.notes = NoteAnalysisService.retirerLigneVentre(leurre.notes)
+    }
+
     // MARK: - Calcul des champs déduits
 
     /// Calcule et assigne les champs déduits directement sur l'entité @Model.
@@ -293,6 +308,7 @@ class BoiteLeurresViewModel: ObservableObject {
     /// notes (Espèces, Zones, Postes) priment sur le calcul.
     @discardableResult
     func calculerChampsDeduits(_ leurre: Leurre) -> Leurre {
+        convertirLigneVentre(leurre)
         let fiche = leurre.ficheDeduction
         let famille = ReglesCouleur.famille(fiche)
         let r = ReglesDeduction.deduire(fiche, famille: famille)

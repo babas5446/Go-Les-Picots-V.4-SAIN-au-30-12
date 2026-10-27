@@ -53,6 +53,10 @@ struct FicheDeduction {
     var persoSecondaire: CouleurPerso?
     var finition: Finition?
     var notes: String?
+    /// Schéma V2 : couleur et éclat du ventre, transparence.
+    var couleurVentre: Couleur? = nil
+    var eclatVentre: EclatVentre? = nil
+    var transparence: Transparence? = nil
 
     var estTraine: Bool { typePeche == .traine || typesPecheCompatibles.contains(.traine) }
 }
@@ -70,7 +74,9 @@ enum ReglesDeduction {
     /// Version des règles. Un changement de version déclenche, au lancement
     /// suivant, un recalcul unique de toute la boîte (BoiteLeurresViewModel).
     /// 3 : zone tombant et thon à dents de chien (octobre 2026).
-    static let versionDeductions = 4
+    /// 4 : fusion wahoo et thazard bâtard.
+    /// 5 : schéma V2, lignes « Ventre : » converties en champ ; slashing = nage ample.
+    static let versionDeductions = 5
     static let cleVersion = "versionDeductions"
 
     /// Espèces calculées gardées au plus (celles du texte libre s'ajoutent).
@@ -109,7 +115,8 @@ enum ReglesDeduction {
 
     static func amplitude(_ f: FicheDeduction) -> AmplitudeNage? {
         let n = f.typesDeNage
-        if n.contains(where: { [.wobblingLarge, .balayageLarge, .thumping].contains($0) }) { return .large }
+        // Slashing : écarts violents et erratiques, le leurre déplace beaucoup d'eau.
+        if n.contains(where: { [.wobblingLarge, .balayageLarge, .thumping, .slashing].contains($0) }) { return .large }
         if n.contains(where: { [.wobblingSerré, .rectiligneStable, .vibration].contains($0) }) { return .serree }
         if n.contains(where: { [.wobbling, .wobblingRolling, .rolling].contains($0) }) { return .moyenne }
         switch f.typeLeurre {
@@ -359,20 +366,26 @@ enum Teinte: String, CaseIterable {
 }
 
 /// Éclat (le flash), sur une seule échelle.
+/// Le miroir (chrome, miroir, métallique, argenté) renvoie la lumière dans
+/// une seule direction : flash fort, soleil direct seulement. L'holographique
+/// (prisme) la diffracte sous de nombreux angles, avec des irisations : flash
+/// plus diffus, utile au soleil et par ciel voilé (correction du 27 octobre).
 enum Eclat: String, CaseIterable {
-    case translucide = "translucide"
-    case argente     = "argenté ou holographique"
+    case translucide   = "translucide"
+    case argente       = "miroir ou argenté"
+    case holographique = "holographique"
     case opaque      = "opaque ou mat"
     case paillete    = "pailleté"
     case fluoUV      = "fluo ou UV"
     case lumineux    = "phosphorescent"
 }
 
-/// Couleur du ventre, donnée par la ligne « Ventre : » des notes.
+/// Ventre du leurre : ton de la couleur et éclat propre au ventre.
 struct Ventre: Equatable {
     enum Ton: String { case chaud, clair, vif }
     var ton: Ton?
-    var paillete: Bool
+    var eclat: EclatVentre?
+    var paillete: Bool { eclat == .paillete }
 }
 
 /// Besoin de contraste du jour (calculé à chaque sortie).
@@ -426,15 +439,16 @@ enum NiveauContraste: String, CaseIterable {
 
     var eclats: [Eclat] {
         switch self {
-        case .faible:     return [.translucide, .argente]
-        case .moyen:      return [.opaque, .fluoUV, .paillete]
+        case .faible:     return [.translucide, .argente, .holographique]
+        case .moyen:      return [.opaque, .fluoUV, .paillete, .holographique]
         case .fort:       return [.fluoUV, .paillete]
         case .silhouette: return [.opaque, .paillete]
-        case .nuitClaire: return [.lumineux, .argente]
+        case .nuitClaire: return [.lumineux, .argente, .holographique]
         }
     }
 
-    /// Chrome et argenté ne valent qu'en soleil direct.
+    /// Chrome et argenté ne valent qu'en soleil direct. L'holographique
+    /// n'est écarté nulle part (neutre en eau trouble et lumière basse).
     var eclatsProscrits: [Eclat] {
         switch self {
         case .fort, .silhouette: return [.argente]
@@ -571,11 +585,63 @@ enum ReglesCouleur {
 
     // MARK: Ventre
 
-    /// Ligne « Ventre : » des notes. Mots reconnus : rouge, orange, rose
-    /// (chaud) ; blanc, argenté, nacré (clair) ; jaune, chartreuse (vif) ;
-    /// pailleté, doré (éclat).
+    /// Ventre du leurre : champs du schéma V2 d'abord, sinon l'ancienne
+    /// ligne « Ventre : » des notes (fiche pas encore convertie).
     static func ventre(_ f: FicheDeduction) -> Ventre? {
-        guard let brut = NoteAnalysisService.lireLignesReperes(dans: f.notes).ventre else { return nil }
+        if f.couleurVentre != nil || f.eclatVentre != nil {
+            return Ventre(ton: f.couleurVentre.flatMap { ton(duVentre: $0) }, eclat: f.eclatVentre)
+        }
+        return ventre(ligne: NoteAnalysisService.lireLignesReperes(dans: f.notes).ventre)
+    }
+
+    /// Ton d'une couleur de ventre.
+    static func ton(duVentre c: Couleur) -> Ventre.Ton? {
+        switch teinte(c) {
+        case .rose, .orangeRouge:   return .chaud
+        case .chartreuseJaune:      return c == .or ? .clair : .vif
+        case .blanc, .bleuArgent:   return .clair
+        default:                    return nil
+        }
+    }
+
+    /// Éclat cité dans une ligne « Ventre : » (pailleté, doré, holographique).
+    static func eclatVentre(mots m: [String]) -> EclatVentre? {
+        func cite(_ liste: [String]) -> Bool {
+            m.contains { mot in liste.contains { mot.hasPrefix($0) } }
+        }
+        if cite(["paillet", "glitter"]) || m.contains(where: { ["or", "dore", "doree", "dores"].contains($0) }) {
+            return .paillete
+        }
+        if cite(["holo", "prism", "irise"]) { return .holographique }
+        return nil
+    }
+
+    /// Ligne « Ventre : » convertie en champs du schéma V2 : couleur et éclat
+    /// reconnus. nil si la ligne est absente ou si aucun mot n'est reconnu.
+    static func conversionLigneVentre(_ notes: String?) -> (couleur: Couleur?, eclat: EclatVentre?)? {
+        guard let brut = NoteAnalysisService.lireLignesReperes(dans: notes).ventre else { return nil }
+        let m = NoteAnalysisService.mots(brut)
+        func cite(_ liste: [String]) -> Bool {
+            m.contains { mot in liste.contains { mot.hasPrefix($0) } }
+        }
+        var couleur: Couleur? = nil
+        if cite(["chartreuse"])                      { couleur = .chartreuse }
+        else if cite(["jaune"])                      { couleur = .jaune }
+        else if cite(["orange"])                     { couleur = .orange }
+        else if cite(["rouge"])                      { couleur = .rouge }
+        else if cite(["rose", "saumon", "corail"])   { couleur = .rose }
+        else if cite(["argent"])                     { couleur = .argente }
+        else if cite(["blanc", "nacr", "perl"])      { couleur = .blanc }
+        let eclat = eclatVentre(mots: m)
+        guard couleur != nil || eclat != nil else { return nil }
+        return (couleur, eclat)
+    }
+
+    /// Lecture de l'ancienne ligne « Ventre : ». Mots reconnus : rouge,
+    /// orange, rose (chaud) ; blanc, argenté, nacré (clair) ; jaune,
+    /// chartreuse (vif) ; pailleté, doré (éclat).
+    static func ventre(ligne: String?) -> Ventre? {
+        guard let brut = ligne else { return nil }
         let m = NoteAnalysisService.mots(brut)
         func cite(_ liste: [String]) -> Bool {
             m.contains { mot in liste.contains { mot.hasPrefix($0) } }
@@ -584,8 +650,7 @@ enum ReglesCouleur {
         if cite(["rouge", "orange", "rose", "saumon", "corail"]) { ton = .chaud }
         else if cite(["jaune", "chartreuse"])                   { ton = .vif }
         else if cite(["blanc", "argent", "nacr", "perl"])       { ton = .clair }
-        let paillete = cite(["paillet", "glitter"]) || m.contains { ["or", "dore", "doree", "dores"].contains($0) }
-        return Ventre(ton: ton, paillete: paillete)
+        return Ventre(ton: ton, eclat: eclatVentre(mots: m))
     }
 
     /// Ventre chaud (rouge, orange, rose) : ligne « Ventre : » d'abord,
@@ -600,29 +665,59 @@ enum ReglesCouleur {
 
     // MARK: Éclat
 
-    static func eclat(_ f: FicheDeduction) -> Eclat {
-        if f.finition == .phosphorescent { return .lumineux }
-        if f.persoPrincipale == nil && f.couleurPrincipale == .transparent { return .translucide }
+    /// Tous les éclats du leurre : transparence, reflet de la finition (ou des
+    /// couleurs sans finition) et éclat du ventre. Un Yo-Zuri 3D Magnum est à
+    /// la fois translucide et holographique.
+    static func eclats(_ f: FicheDeduction) -> [Eclat] {
+        var r: [Eclat] = []
+        func ajouter(_ e: Eclat) { if !r.contains(e) { r.append(e) } }
+        if f.finition == .phosphorescent { ajouter(.lumineux) }
+        let translucide = f.transparence == .corps || f.transparence == .dos
+            || (f.persoPrincipale == nil && f.couleurPrincipale == .transparent)
+        if translucide { ajouter(.translucide) }
         switch f.finition {
-        case .holographique, .chrome, .miroir, .metallique: return .argente
-        case .paillete:                                     return .paillete
-        case .UV:                                           return .fluoUV
-        case .mate, .brillante, .perlee:                    return .opaque
-        case .phosphorescent:                               return .lumineux
+        case .holographique:                  ajouter(.holographique)
+        case .chrome, .miroir, .metallique:   ajouter(.argente)
+        case .paillete:                       ajouter(.paillete)
+        case .UV:                             ajouter(.fluoUV)
+        case .mate, .brillante, .perlee:      if !translucide { ajouter(.opaque) }
+        case .phosphorescent:                 break
         case nil:
             if f.persoPrincipale == nil {
                 switch f.couleurPrincipale {
-                case .argente, .argenteBleu, .bleuArgente, .sardine, .vertArgente,
-                     .roseHolographique, .jauneHolographique, .or:
-                    return .argente
+                case .roseHolographique, .jauneHolographique:
+                    ajouter(.holographique)
+                case .argente, .argenteBleu, .bleuArgente, .sardine, .vertArgente, .or:
+                    ajouter(.argente)
                 case .roseFluo, .jauneFluo, .chartreuse:
-                    return .fluoUV
+                    ajouter(.fluoUV)
                 default:
                     break
                 }
             }
-            return .opaque
         }
+        switch f.eclatVentre {
+        case .paillete?:      ajouter(.paillete)
+        case .holographique?: ajouter(.holographique)
+        case nil:             break
+        }
+        if r.isEmpty { ajouter(.opaque) }
+        return r
+    }
+
+    /// Éclat principal (affichage, compatibilité).
+    static func eclat(_ f: FicheDeduction) -> Eclat {
+        eclats(f).first ?? .opaque
+    }
+
+    /// Note d'éclat : pleine si l'un des éclats du leurre est voulu, nulle si
+    /// aucun ne l'est et que l'un est proscrit, neutre sinon.
+    static func noteEclat(_ f: FicheDeduction, voulus: [Eclat], proscrits: [Eclat],
+                          plein: Double, neutre: Double) -> Double {
+        let e = eclats(f)
+        if e.contains(where: voulus.contains) { return plein }
+        if e.contains(where: proscrits.contains) { return 0 }
+        return neutre
     }
 
     // MARK: Besoin du jour

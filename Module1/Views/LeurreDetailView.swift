@@ -271,6 +271,21 @@ struct LeurreDetailView: View {
                         .padding(.leading, 100)
                     }
                 }
+
+                // Ventre et transparence (schéma V2)
+                if let ventre = leurre.couleurVentre {
+                    InfoRow(label: "Ventre", value: ventre.displayName + (leurre.eclatVentre.map { ", " + $0.displayName.lowercased() } ?? ""))
+                } else if let e = leurre.eclatVentre {
+                    InfoRow(label: "Ventre", value: e.displayName.lowercased())
+                }
+                if let t = leurre.transparence, t != .aucune {
+                    InfoRow(label: "Transparence", value: t.displayName)
+                }
+
+                ProfilMoteurView(fiche: leurre.ficheDeduction)
+                    .padding(10)
+                    .background(Color.blue.opacity(0.06))
+                    .cornerRadius(8)
             }
         }
         .padding()

@@ -77,6 +77,9 @@ struct LeurreFormView: View {
     @State private var couleurSecondaireCustom: CouleurCustom? = nil
     @State private var hasCouleurSecondaire:    Bool         = false
     @State private var finitionSelectionnee:    Finition?    = nil
+    @State private var couleurVentre:           Couleur?     = nil
+    @State private var eclatVentre:             EclatVentre? = nil
+    @State private var transparence:            Transparence = .aucune
 
     @State private var typesDeNage:              [TypeDeNage] = []
     @State private var showWobblingChoice        = false
@@ -137,6 +140,9 @@ struct LeurreFormView: View {
         _couleurSecondaireCustom = State(initialValue: leurre.couleurSecondaireCustom)
         _hasCouleurSecondaire    = State(initialValue: leurre.couleurSecondaire != nil || leurre.couleurSecondaireCustom != nil)
         _finitionSelectionnee    = State(initialValue: leurre.finition)
+        _couleurVentre           = State(initialValue: leurre.couleurVentre)
+        _eclatVentre             = State(initialValue: leurre.eclatVentre)
+        _transparence            = State(initialValue: leurre.transparence ?? .aucune)
         _typesDeNage             = State(initialValue: leurre.typesDeNage ?? [])
 
         _profondeurMin = State(initialValue: leurre.profondeurNageMin.map { String(format: "%.1f", $0) } ?? "")
@@ -478,15 +484,20 @@ struct LeurreFormView: View {
 
     // MARK: - Section Couleurs
 
+    /// Couleurs proposées pour le ventre.
+    private static let couleursVentre: [Couleur] = [
+        .blanc, .argente, .rose, .roseFluo, .orange, .rouge, .jaune, .chartreuse, .or
+    ]
+
     private var sectionCouleurs: some View {
         Section {
             CouleurSearchField(
                 couleurSelectionnee: $couleurPrincipale,
                 couleurCustomSelectionnee: $couleurPrincipaleCustom,
-                titre: "Couleur principale"
+                titre: "Couleur dominante (dos et flancs)"
             ).padding(.vertical, 4)
 
-            Toggle("Couleur secondaire", isOn: $hasCouleurSecondaire)
+            Toggle("Couleur secondaire (motif, tête, bandes)", isOn: $hasCouleurSecondaire)
 
             if hasCouleurSecondaire {
                 CouleurSearchField(
@@ -498,16 +509,61 @@ struct LeurreFormView: View {
                     titre: "Couleur secondaire"
                 ).padding(.vertical, 4)
             }
-        } header: { Text("Couleurs") } footer: {
-            VStack(alignment: .leading, spacing: 4) {
-                if let secondaire = hasCouleurSecondaire ? couleurSecondaire : nil {
-                    Text("Contraste détecté : \(determinerContrastePrevisu(principale: couleurPrincipale, secondaire: secondaire).displayName)")
-                } else {
-                    Text("Contraste détecté : \(couleurPrincipale.contrasteNaturel.displayName)")
+
+            Picker("Ventre", selection: $couleurVentre) {
+                Text("Non renseigné").tag(nil as Couleur?)
+                ForEach(Self.couleursVentre, id: \.self) { couleur in
+                    Text(couleur.displayName).tag(couleur as Couleur?)
                 }
-                Text("💡 Tapez pour rechercher rapidement").font(.caption2).foregroundColor(.secondary)
+            }
+            Picker("Éclat du ventre", selection: $eclatVentre) {
+                Text("Aucun").tag(nil as EclatVentre?)
+                ForEach(EclatVentre.allCases, id: \.self) { e in
+                    Text(e.displayName).tag(e as EclatVentre?)
+                }
+            }
+
+            Picker("Transparence", selection: $transparence) {
+                ForEach(Transparence.allCases, id: \.self) { t in
+                    Text(t.displayName).tag(t)
+                }
+            }
+        } header: { Text("Couleurs") } footer: {
+            VStack(alignment: .leading, spacing: 6) {
+                ProfilMoteurView(fiche: ficheApercu)
+                Text("Le ventre compte le plus pour les leurres qui nagent près de la surface : le poisson attaque par-dessous.")
+                    .font(.caption2).foregroundColor(.secondary)
+                Text("Corps transparent : coque transparente, colorée ou non (Yo-Zuri 3D Magnum, Crystal). Dos transparent : le dos seul, ventre opaque.")
+                    .font(.caption2).foregroundColor(.secondary)
             }
         }
+    }
+
+    /// Fiche de déduction construite à partir de la saisie en cours.
+    private var ficheApercu: FicheDeduction {
+        func perso(_ c: CouleurCustom?) -> FicheDeduction.CouleurPerso? {
+            guard let c, !c.isRainbow else { return nil }
+            return FicheDeduction.CouleurPerso(contraste: c.contraste, r: c.red, g: c.green, b: c.blue)
+        }
+        func nombre(_ t: String) -> Double? { Double(t.replacingOccurrences(of: ",", with: ".")) }
+        return FicheDeduction(
+            typeLeurre: typeLeurre,
+            typePeche: typePeche,
+            typesPecheCompatibles: showTechniquesCompatibles ? Array(typesPecheCompatibles) : [],
+            longueur: nombre(longueur) ?? 0,
+            profondeurMin: nombre(profondeurMin),
+            profondeurMax: nombre(profondeurMax),
+            typesDeNage: typesDeNage,
+            couleurPrincipale: couleurPrincipale,
+            couleurSecondaire: hasCouleurSecondaire ? couleurSecondaire : nil,
+            persoPrincipale: perso(couleurPrincipaleCustom),
+            persoSecondaire: hasCouleurSecondaire ? perso(couleurSecondaireCustom) : nil,
+            finition: finitionSelectionnee,
+            notes: notes,
+            couleurVentre: couleurVentre,
+            eclatVentre: eclatVentre,
+            transparence: transparence == .aucune ? nil : transparence
+        )
     }
 
     // MARK: - Section Finition
@@ -667,6 +723,9 @@ struct LeurreFormView: View {
                 notes: notes.isEmpty ? nil : notes,
                 photoData: photoData
             )
+            nouveauLeurre.couleurVentre  = couleurVentre
+            nouveauLeurre.eclatVentre    = eclatVentre
+            nouveauLeurre.transparence   = transparence == .aucune ? nil : transparence
             viewModel.ajouterLeurre(nouveauLeurre)
 
         case .edition(let leurreOriginal):
@@ -684,6 +743,9 @@ struct LeurreFormView: View {
             leurreOriginal.couleurSecondaire       = couleurSec
             leurreOriginal.couleurSecondaireCustom = hasCouleurSecondaire ? couleurSecondaireCustom : nil
             leurreOriginal.finition                = finitionSelectionnee
+            leurreOriginal.couleurVentre           = couleurVentre
+            leurreOriginal.eclatVentre             = eclatVentre
+            leurreOriginal.transparence            = transparence == .aucune ? nil : transparence
             leurreOriginal.typesDeNage             = typesDeNage.isEmpty ? nil : typesDeNage
             leurreOriginal.profondeurNageMin       = profMinValue
             leurreOriginal.profondeurNageMax       = profMaxValue
@@ -789,10 +851,6 @@ struct LeurreFormView: View {
     }
 
     // MARK: - Utilitaires
-
-    private func determinerContrastePrevisu(principale: Couleur, secondaire: Couleur?) -> Contraste {
-        ReglesCouleur.famille(principale: principale, secondaire: secondaire)
-    }
 
     // MARK: - Détection Type de Nage
 

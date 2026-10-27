@@ -225,7 +225,7 @@ enum TypeDeNage: String, CaseIterable, Codable {
         case .walkTheDog:
             return "Lancer surface, twitchs réguliers du scion"
         case .slashing:
-            return "Lancer rapide, récupération agressive"
+            return "Traîne (bavettes à action slashing, comme le X-Rap Magnum) ou lancer rapide, récupération agressive"
         case .flutter:
             return "Jigging vertical, descente libre, relâcher complet"
         case .falling:

@@ -46,6 +46,10 @@ struct LeurreDTO: Codable {
     var couleurSecondaire: Couleur?
     var couleurSecondaireCustom: CouleurCustom?
     var finition: Finition?
+    /// Schéma V2 : absents des exports antérieurs (lus comme non renseignés).
+    var couleurVentre: Couleur?
+    var eclatVentre: EclatVentre?
+    var transparence: Transparence?
     var typesDeNage: [TypeDeNage]?
 
     var profondeurNageMin: Double?
@@ -93,6 +97,9 @@ struct LeurreDTO: Codable {
         couleurSecondaire: Couleur? = nil,
         couleurSecondaireCustom: CouleurCustom? = nil,
         finition: Finition? = nil,
+        couleurVentre: Couleur? = nil,
+        eclatVentre: EclatVentre? = nil,
+        transparence: Transparence? = nil,
         typesDeNage: [TypeDeNage]? = nil,
         profondeurNageMin: Double? = nil,
         profondeurNageMax: Double? = nil,
@@ -125,6 +132,9 @@ struct LeurreDTO: Codable {
         self.couleurSecondaire       = couleurSecondaire
         self.couleurSecondaireCustom = couleurSecondaireCustom
         self.finition                = finition
+        self.couleurVentre           = couleurVentre
+        self.eclatVentre             = eclatVentre
+        self.transparence            = transparence
         self.typesDeNage             = typesDeNage
         self.profondeurNageMin       = profondeurNageMin
         self.profondeurNageMax       = profondeurNageMax
@@ -162,6 +172,9 @@ struct LeurreDTO: Codable {
         case couleurSecondaire  = "couleursSecondaires"
         case couleurSecondaireCustom
         case finition
+        case couleurVentre
+        case eclatVentre
+        case transparence
         case typesDeNage        = "types_de_nage"
         case typeDeNage         = "type_de_nage"    // Ancien champ — migration
         case profondeurNageMin  = "profondeurMin"
@@ -225,6 +238,10 @@ struct LeurreDTO: Codable {
 
         couleurSecondaireCustom = try container.decodeIfPresent(CouleurCustom.self, forKey: .couleurSecondaireCustom)
         finition = try container.decodeIfPresent(Finition.self, forKey: .finition)
+        // Schéma V2 : une valeur inconnue est ignorée plutôt que de bloquer l'import.
+        couleurVentre  = try? container.decodeIfPresent(Couleur.self, forKey: .couleurVentre)
+        eclatVentre    = try? container.decodeIfPresent(EclatVentre.self, forKey: .eclatVentre)
+        transparence   = try? container.decodeIfPresent(Transparence.self, forKey: .transparence)
 
         // Migration typeDeNage (ancien, scalaire) → typesDeNage (nouveau, array)
         typesDeNage = try container.decodeIfPresent([TypeDeNage].self, forKey: .typesDeNage)
@@ -275,6 +292,9 @@ struct LeurreDTO: Codable {
         try container.encodeIfPresent(couleurSecondaire, forKey: .couleurSecondaire)
         try container.encodeIfPresent(couleurSecondaireCustom, forKey: .couleurSecondaireCustom)
         try container.encodeIfPresent(finition, forKey: .finition)
+        try container.encodeIfPresent(couleurVentre, forKey: .couleurVentre)
+        try container.encodeIfPresent(eclatVentre, forKey: .eclatVentre)
+        try container.encodeIfPresent(transparence, forKey: .transparence)
         try container.encodeIfPresent(typesDeNage, forKey: .typesDeNage)
         // Rétro-compatibilité : on encode aussi le premier type dans l'ancien champ scalaire
         if let premier = typesDeNage?.first {
@@ -343,6 +363,11 @@ struct LeurreDTO: Codable {
         leurre.conditionsOptimales = conditionsOptimales
         leurre.isComputed          = isComputed ?? false
         if let dateAjout { leurre.dateAjout = dateAjout }
+
+        // Schéma V2.
+        leurre.couleurVentre  = couleurVentre
+        leurre.eclatVentre    = eclatVentre
+        leurre.transparence   = transparence
 
         return leurre
     }

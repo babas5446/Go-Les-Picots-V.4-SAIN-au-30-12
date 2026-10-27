@@ -209,6 +209,18 @@ class NoteAnalysisService {
         return r
     }
 
+    /// Notes sans la ligne « Ventre : » (convertie en champ au schéma V2).
+    /// nil si rien d'autre ne reste.
+    static func retirerLigneVentre(_ notes: String?) -> String? {
+        guard let notes else { return nil }
+        let lignes = notes.components(separatedBy: .newlines).filter { ligne in
+            guard let (cle, _) = repere(de: ligne.trimmingCharacters(in: .whitespaces)) else { return true }
+            return cle != .ventre
+        }
+        let resultat = lignes.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
+        return resultat.isEmpty ? nil : resultat
+    }
+
     /// Notes sans les lignes repères.
     static func texteLibre(_ notes: String?) -> String {
         guard let notes else { return "" }
